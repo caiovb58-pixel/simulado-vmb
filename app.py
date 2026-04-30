@@ -3,88 +3,103 @@ import random
 import time
 from questoes import BANCO_QUESTOES
 
-st.set_page_config(page_title="Simulado ANCORD Pro - VMB", page_icon="⚖️")
+st.set_page_config(page_title="Simulado ANCORD - VMB Invest", page_icon="⚖️")
 
-# 1. Configurações e Filtros na Lateral
-st.sidebar.title("⚙️ Configurações")
+# 1. ESTADO INICIAL E CONFIGURAÇÃO
+if 'simulado_iniciado' not in st.session_state:
+    st.session_state.simulado_iniciado = False
 
-# Extrair módulos únicos do banco de dados
-modulos_disponiveis = sorted(list(set(q['modulo'] for q in BANCO_QUESTOES)))
-selecao_modulos = st.sidebar.multiselect(
-    "Filtrar por Módulos (Deixe vazio para tudo):",
-    options=modulos_disponiveis,
-    default=[]
-)
-
-quantidade_questoes = st.sidebar.slider("Quantidade de questões:", 5, 40, 20)
-tempo_limite = st.sidebar.number_input("Tempo (minutos):", 10, 120, 60)
-
-# Botão para Resetar / Iniciar novo sorteio
-if st.sidebar.button("Gerar Novo Simulado"):
-    for key in list(st.session_state.keys()):
-        del st.session_state[key]
-    st.rerun()
-
-# 2. Lógica de Sorteio Filtrado
-if 'questoes_sorteadas' not in st.session_state:
-    # Filtrar banco se houver seleção
-    if selecao_modulos:
-        banco_filtrado = [q for q in BANCO_QUESTOES if q['modulo'] in selecao_modulos]
-    else:
-        banco_filtrado = BANCO_QUESTOES
+# 2. MENU INICIAL (Antes de começar)
+if not st.session_state.simulado_iniciado:
+    st.title("🚀 Central de Simulados ANCORD")
+    st.subheader("Configuração do Teste")
     
-    # Sorteio aleatório
-    if len(banco_filtrado) >= quantidade_questoes:
-        st.session_state.questoes_sorteadas = random.sample(banco_filtrado, k=quantidade_questoes)
-    else:
-        st.session_state.questoes_sorteadas = banco_filtrado # Pega o que tiver se o banco for menor que o pedido
-        
-    st.session_state.respostas_usuario = {}
-    st.session_state.finalizado = False
-    st.session_state.inicio_tempo = time.time()
-
-# 3. Cronômetro
-tempo_passado = time.time() - st.session_state.inicio_tempo
-tempo_restante = (tempo_limite * 60) - tempo_passado
-
-if tempo_restante > 0 and not st.session_state.finalizado:
-    mins, secs = divmod(int(tempo_restante), 60)
-    st.sidebar.subheader(f"⏳ Tempo: {mins:02d}:{secs:02d}")
-else:
-    if not st.session_state.finalizado:
-        st.session_state.finalizado = True
-        st.rerun()
-
-st.title("🎓 Simulado Personalizado ANCORD")
-st.info(f"Modo: {', '.join(selecao_modulos) if selecao_modulos else 'Simulado Completo'}")
-
-# 4. Exibição
-for i, q in enumerate(st.session_state.questoes_sorteadas):
-    st.markdown(f"**Questão {i+1}** | `{q['modulo']}`")
-    st.write(q['pergunta'])
+    # Extrair módulos únicos para o menu
+    modulos_existentes = sorted(list(set(q['modulo'] for q in BANCO_QUESTOES)))
     
-    key = f"q_{i}"
-    st.session_state.respostas_usuario[key] = st.radio(
-        "Selecione:", q['opcoes'], key=key, index=None, disabled=st.session_state.finalizado
+    materias_selecionadas = st.multiselect(
+        "Selecione as matérias que deseja treinar:",
+        options=modulos_existentes,
+        help="Se deixar vazio, o simulado será sobre todo o conteúdo."
     )
-    st.divider()
-
-if not st.session_state.finalizado:
-    if st.button("Finalizar Simulado"):
-        st.session_state.finalizado = True
-        st.rerun()
-
-# 5. Feedback e Gabarito
-if st.session_state.finalizado:
-    acertos = sum(1 for i, q in enumerate(st.session_state.questoes_sorteadas) 
-                  if st.session_state.respostas_usuario.get(f"q_{i}") and st.session_state.respostas_usuario.get(f"q_{i}").startswith(q['correta']))
     
-    nota = (acertos / len(st.session_state.questoes_sorteadas)) * 100
-    st.metric("Resultado", f"{nota:.1f}%", f"{acertos} acertos")
+    st.info("ℹ️ Configuração fixa: 20 questões | Tempo: 30 minutos.")
+    
+    if st.button("🚀 Iniciar Simulado"):
+        # Filtrar questões
+        if materias_selecionadas:
+            banco_filtrado = [q for q in BANCO_QUESTOES if q['modulo'] in materias_selecionadas]
+        else:
+            banco_filtrado = BANCO_QUESTOES
+            
+        if len(banco_filtrado) < 20:
+            st.warning(f"O banco possui apenas {len(banco_filtrado)} questões para estas matérias. Adicione mais questões ou selecione mais temas.")
+        else:
+            st.session_state.questoes_sorteadas = random.sample(banco_filtrado, k=20)
+            st.session_state.respostas_usuario = {}
+            st.session_state.finalizado = False
+            st.session_state.inicio_tempo = time.time()
+            st.session_state.simulado_iniciado = True
+            st.rerun()
 
-    st.subheader("📝 Revisão Técnica")
+# 3. INTERFACE DO SIMULADO (Após o Start)
+else:
+    # Cronômetro fixo de 30 minutos
+    tempo_limite = 30 * 60
+    tempo_passado = time.time() - st.session_state.inicio_tempo
+    tempo_restante = tempo_limite - tempo_passado
+
+    # Sidebar com Cronômetro
+    st.sidebar.title("⏳ Tempo Restante")
+    if tempo_restante > 0 and not st.session_state.finalizado:
+        mins, secs = divmod(int(tempo_restante), 60)
+        st.sidebar.header(f"{mins:02d}:{secs:02d}")
+        if tempo_restante < 300:
+            st.sidebar.warning("⚠️ Faltam menos de 5 minutos!")
+    else:
+        if not st.session_state.finalizado:
+            st.session_state.finalizado = True
+            st.sidebar.error("🚨 Tempo Esgotado!")
+            st.rerun()
+
+    st.title("✍️ Simulado em Andamento")
+    
+    # Exibição das 20 questões
     for i, q in enumerate(st.session_state.questoes_sorteadas):
-        with st.expander(f"Questão {i+1} - Gabarito"):
-            st.write(f"**Sua resposta:** {st.session_state.respostas_usuario.get(f'q_{i}')}")
-            st.write(f"**Correta:** {q['correta']}")
-            st.info(f"**Explicação:** {q['feedback']}")
+        st.markdown(f"**Questão {i+1} de 20** | `{q['modulo']}`")
+        st.write(q['pergunta'])
+        
+        key = f"q_{i}"
+        st.session_state.respostas_usuario[key] = st.radio(
+            "Escolha a alternativa:", q['opcoes'], key=key, index=None, disabled=st.session_state.finalizado
+        )
+        st.divider()
+
+    if not st.session_state.finalizado:
+        if st.button("🏁 Finalizar Simulado"):
+            st.session_state.finalizado = True
+            st.rerun()
+
+    # 4. GABARITO E FEEDBACK
+    if st.session_state.finalizado:
+        acertos = sum(1 for i, q in enumerate(st.session_state.questoes_sorteadas) 
+                      if st.session_state.respostas_usuario.get(f"q_{i}") and st.session_state.respostas_usuario.get(f"q_{i}").startswith(q['correta']))
+        
+        nota = (acertos / 20) * 100
+        st.header(f"Resultado: {nota:.1f}%")
+        
+        if nota >= 70:
+            st.success(f"Excelente! Você acertou {acertos} de 20 questões.")
+        else:
+            st.error(f"Atenção! Você acertou {acertos} de 20. O mínimo para aprovação é 14 acertos (70%).")
+
+        st.subheader("📚 Revisão das Respostas")
+        for i, q in enumerate(st.session_state.questoes_sorteadas):
+            with st.expander(f"Questão {i+1} - Feedback Técnico"):
+                st.write(f"**Sua resposta:** {st.session_state.respostas_usuario.get(f'q_{i}')}")
+                st.write(f"**Gabarito:** {q['correta']}")
+                st.info(f"**Por que esta é a correta?** {q['feedback']}")
+
+        if st.button("🔄 Voltar ao Menu Inicial"):
+            del st.session_state.simulado_iniciado
+            st.rerun()
