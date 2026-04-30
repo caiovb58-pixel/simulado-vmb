@@ -8,7 +8,7 @@ st.set_page_config(page_title="Simulado ANCORD - VMB Invest", page_icon="⚖️"
 # --- FUNÇÃO DO CRONÔMETRO EM TEMPO REAL ---
 @st.fragment
 def renderizar_cronometro(sidebar_placeholder):
-    
+    # O loop agora usa o placeholder que passamos como "terreno" para trabalhar
     while not st.session_state.finalizado:
         tempo_limite = 30 * 60
         tempo_passado = time.time() - st.session_state.inicio_tempo
@@ -64,15 +64,18 @@ if not st.session_state.simulado_iniciado:
 
 # 3. INTERFACE DO SIMULADO
 else:
-    # Chama o cronômetro em tempo real na Sidebar
+    # --- AQUI ESTÁ A CORREÇÃO ---
     if not st.session_state.finalizado:
-        renderizar_cronometro()
+        # Primeiro criamos o espaço na sidebar
+        espaco_vazio_sidebar = st.sidebar.empty()
+        # Depois passamos esse espaço para a função
+        renderizar_cronometro(espaco_vazio_sidebar)
     else:
         st.sidebar.error("🚨 Simulado Encerrado")
+    # ----------------------------
 
     st.title("✍️ Simulado em Andamento")
     
-    # Formulário para evitar que o rádio recarregue a página toda vez que clicar
     with st.form("form_simulado"):
         for i, q in enumerate(st.session_state.questoes_sorteadas):
             st.markdown(f"**Questão {i+1} de 20** | `{q['modulo']}`")
@@ -91,8 +94,7 @@ else:
             )
             st.divider()
 
-        # Botão de envio dentro do formulário
-        submeteu = st.form_submit_state = st.form_submit_button("🏁 Finalizar e Ver Resultado")
+        submeteu = st.form_submit_button("🏁 Finalizar e Ver Resultado")
         if submeteu:
             st.session_state.finalizado = True
             st.rerun()
