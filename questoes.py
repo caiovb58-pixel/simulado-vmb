@@ -1,56 +1,78 @@
-BANCO_QUESTOES = [
-    # --- MÓDULO: ATIVIDADE DO ASSESSOR ---
+# questoes.py
+
+simulado_ancord = [
     {
-        "pergunta": "Qual é o prazo de validade do credenciamento do Assessor de Investimento?",
-        "opcoes": ["A) 1 ano.", "B) 5 anos.", "C) Indeterminado, desde que mantenha a certificação e o vínculo.", "D) 2 anos."],
-        "correta": "C",
-        "modulo": "Atividade do Assessor",
-        "feedback": "O credenciamento não tem validade fixa, mas depende da manutenção da certificação e do vínculo com a instituição financeira ou sociedade de assessoria."
+        "id": 1,
+        "tema": "Prevenção à Lavagem de Dinheiro",
+        "pergunta": "Um cliente realiza depósitos em espécie de R$ 9.000,00 em cinco dias consecutivos para evitar a notificação automática de depósitos acima de R$ 50.000,00. Essa prática é conhecida como:",
+        "opcoes": {
+            "A": "Tipificação",
+            "B": "Estruturação (Smurfing)",
+            "C": "Integração",
+            "D": "Ocultação"
+        },
+        "resposta_correta": "B",
+        "explicacao": "A estruturação consiste em fracionar valores para burlar os limites de comunicação automática aos órgãos de controle."
     },
     {
-        "pergunta": "É permitido ao Assessor de Investimento utilizar material de prospecção que não tenha sido aprovado pela instituição financeira a que está vinculado?",
-        "opcoes": ["A) Sim, para agilizar o processo comercial.", "B) Não, todo material de publicidade e prospecção deve ser previamente aprovado pelo intermediário.", "C) Sim, desde que não prometa rentabilidade.", "D) Apenas se for enviado via WhatsApp pessoal."],
-        "correta": "B",
-        "modulo": "Atividade do Assessor",
-        "feedback": "Conforme a regulação da CVM, a instituição financeira é responsável pelo conteúdo divulgado por seus prepostos."
-    },
-    # --- MÓDULO: LAVAGEM DE DINHEIRO ---
-    {
-        "pergunta": "A fase da Lavagem de Dinheiro que visa dificultar o rastreamento dos recursos através de diversas transações financeiras é a:",
-        "opcoes": ["A) Colocação.", "B) Ocultação (ou Estratificação).", "C) Integração.", "D) Lavagem final."],
-        "correta": "B",
-        "modulo": "Lavagem de Dinheiro",
-        "feedback": "A ocultação/estratificação consiste em criar camadas de transações para quebrar a trilha de auditoria do dinheiro ilícito."
-    },
-    # --- MÓDULO: ESTRUTURA DO SFN ---
-    {
-        "pergunta": "A quem compete fiscalizar o funcionamento das Bolsas de Valores no Brasil?",
-        "opcoes": ["A) Banco Central.", "B) CVM.", "C) Conselho Monetário Nacional.", "D) Ministério da Economia."],
-        "correta": "B",
-        "modulo": "Estrutura do SFN",
-        "feedback": "A CVM é a autarquia responsável pelo mercado de valores mobiliários, o que inclui as bolsas de valores."
-    },
-    # --- MÓDULO: RENDA VARIÁVEL E DERIVATIVOS ---
-    {
-        "pergunta": "Um contrato de SWAP é um derivativo que consiste na:",
-        "opcoes": ["A) Compra de uma ação com preço fixo.", "B) Troca de fluxos de caixa entre duas partes (ex: CDI por Dólar).", "C) Obrigação de vender um ativo em bolsa com ajuste diário.", "D) Opção de não pagar uma dívida."],
-        "correta": "B",
-        "modulo": "Derivativos",
-        "feedback": "O Swap é um contrato de troca de rentabilidades ou indexadores entre duas partes."
+        "id": 2,
+        "tema": "Economia",
+        "pergunta": "Quando o Comitê de Política Monetária (COPOM) decide elevar a taxa SELIC meta, o objetivo principal é:",
+        "opcoes": {
+            "A": "Aumentar a liquidez do mercado financeiro",
+            "B": "Estimular o consumo das famílias",
+            "C": "Combater a inflação através da contração da demanda agregada",
+            "D": "Reduzir o custo da dívida pública"
+        },
+        "resposta_correta": "C",
+        "explicacao": "A alta da SELIC encarece o crédito e incentiva a poupança, reduzindo a pressão sobre os preços[cite: 1]."
     },
     {
-        "pergunta": "Quem detém o direito de exercício em um contrato de Opção de Compra (CALL)?",
-        "opcoes": ["A) O Lançador.", "B) O Titular.", "C) A Bolsa de Valores.", "D) O Banco Central."],
-        "correta": "B",
-        "modulo": "Derivativos",
-        "feedback": "O Titular (quem comprou a opção) é quem tem o direito de decidir se exerce ou não o contrato."
+        "id": 3,
+        "tema": "Ética e Conduta",
+        "pergunta": "De acordo com as normas de conduta, o Assessor de Investimentos deve priorizar as ordens de quais clientes?",
+        "opcoes": {
+            "A": "Dos clientes que pagam as maiores taxas de corretagem",
+            "B": "Dos clientes que possuem maior patrimônio investido",
+            "C": "Não há prioridade; deve-se seguir o princípio da equidade e ordem de chegada",
+            "D": "As ordens próprias do assessor devem ser executadas antes das dos clientes"
+        },
+        "resposta_correta": "C",
+        "explicacao": "O AI deve agir com boa fé e transparência, tratando todos os clientes com equidade, sem privilégios baseados em receita."
     },
-    # --- MÓDULO: FUNDOS DE INVESTIMENTO ---
     {
-        "pergunta": "Em um fundo de investimento, quem é o responsável legal pela guarda dos ativos e pela liquidação física e financeira das operações?",
-        "opcoes": ["A) Gestor.", "B) Administrador.", "C) Custodiante.", "D) Auditor Independente."],
-        "correta": "C",
-        "modulo": "Fundos de Investimento",
-        "feedback": "O custodiante guarda os títulos e garante que as transações de compra e venda ocorram de fato."
+        "id": 4,
+        "tema": "Lavagem de Dinheiro",
+        "pergunta": "Na lavagem de dinheiro, a etapa que consiste em dificultar o rastreamento dos recursos através de diversas transações financeiras complexas é a:",
+        "opcoes": {
+            "A": "Colocação",
+            "B": "Ocultação (Camuflagem/Layering)",
+            "C": "Integração",
+            "D": "Peculato"
+        },
+        "resposta_correta": "B",
+        "explicacao": "A ocultação é a segunda fase, onde se busca quebrar a cadeia de evidências sobre a origem do dinheiro."
+    },
+    {
+        "id": 5,
+        "tema": "Economia - Índices",
+        "pergunta": "Qual índice de inflação é utilizado pelo Conselho Monetário Nacional (CMN) para o estabelecimento da meta de inflação no Brasil?",
+        "opcoes": {
+            "A": "IGP-M",
+            "B": "IPA",
+            "C": "IPCA",
+            "D": "INPC"
+        },
+        "resposta_correta": "C",
+        "explicacao": "O IPCA, calculado pelo IBGE, é o índice oficial para o regime de metas de inflação do país[cite: 1]."
     }
 ]
+
+# Exemplo de uso simples:
+if __name__ == "__main__":
+    for q in simulado_ancord:
+        print(f"Questão {q['id']} - {q['tema']}")
+        print(q['pergunta'])
+        for letra, opcao in q['opcoes'].items():
+            print(f"{letra}) {opcao}")
+        print("-" * 30)
