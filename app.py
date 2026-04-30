@@ -2,19 +2,26 @@ import streamlit as st
 import random
 import time
 from questoes import BANCO_QUESTOES
-from streamlit_theme import st_theme
 
+# Tenta importar a biblioteca de tema. Se falhar, define st_theme como None
+try:
+    from streamlit_theme import st_theme
+except ImportError:
+    st_theme = None
 
 st.set_page_config(page_title="Simulado ANCORD - VMB Invest", page_icon="⚖️")
 
-theme = st_theme()
+# --- LÓGICA DE LOGO BASEADA NO TEMA ---
+# Tratamos o tema como opcional para evitar que o app pare de funcionar na Cloud
+theme = st_theme() if st_theme else None
+base_theme = theme.get('base') if theme else 'light'
 
-if theme and theme['base'] == 'dark':
+if base_theme == 'dark':
    st.image("vmb_logo_fundo_branco.png", use_container_width=True) 
 else:
     st.image("vmb_logo_fundo_preto.png", use_container_width=True) 
     
-# --- FUNÇÃO DO CRONÔMETRO CORRIGIDA ---
+# --- FUNÇÃO DO CRONÔMETRO ---
 @st.fragment(run_every=1)
 def renderizar_cronometro():
     tempo_limite = 30 * 60
@@ -77,7 +84,6 @@ else:
 
     st.title("✍️ Simulado em Andamento")
     
-    # Só mostramos o formulário se ainda NÃO foi finalizado
     if not st.session_state.finalizado:
         with st.form("form_simulado"):
             for i, q in enumerate(st.session_state.questoes_sorteadas):
@@ -109,7 +115,6 @@ else:
                       if st.session_state.respostas_usuario.get(f"q_{i}") == q['resposta_correta'])
         percentual = (acertos / total) * 100
 
-        # Cabeçalho do Resultado
         st.header("📊 Resultado do Simulado")
         
         col1, col2 = st.columns(2)
@@ -124,19 +129,14 @@ else:
         st.divider()
         st.subheader("📝 Revisão das Questões")
 
-        # Loop de Feedback
         for i, q in enumerate(st.session_state.questoes_sorteadas):
             resp_usuario = st.session_state.respostas_usuario.get(f"q_{i}")
             correta = q['resposta_correta']
             foi_correta = resp_usuario == correta
-
-            # Ícone e cor baseados no acerto
             titulo_expander = f"Questão {i+1}: {'✅ ACERTO' if foi_correta else '❌ ERRO'}"
             
             with st.expander(titulo_expander):
                 st.write(f"**{q['pergunta']}**")
-                
-                # Exibe as opções destacando a certa e a errada (se houver)
                 for letra, texto in q['opcoes'].items():
                     if letra == correta:
                         st.markdown(f"🟢 **{letra}) {texto} (Correta)**")
@@ -144,10 +144,8 @@ else:
                         st.markdown(f"🔴 ~~{letra}) {texto} (Sua resposta)~~")
                     else:
                         st.write(f"{letra}) {texto}")
-                
                 st.info(f"**Explicação:** {q.get('explicacao', 'Sem explicação disponível.')}")
 
-        # Botão para reiniciar
         if st.button("🔄 Iniciar Novo Simulado"):
             for k in ['simulado_iniciado', 'finalizado', 'questoes_sorteadas', 'respostas_usuario']:
                 if k in st.session_state: 
