@@ -1,72 +1,40 @@
 BANCO_QUESTOES = [
-    # MÓDULO: ATIVIDADE DO ASSESSOR (CVM 497)
+    # --- MÓDULO: ATIVIDADE DO ASSESSOR ---
     {
-        "pergunta": "O Assessor de Investimento (AI) pode receber diretamente do cliente numerário, títulos ou valores mobiliários?",
-        "opcoes": ["A) Sim, desde que emita recibo.", "B) Não, é vedado receber qualquer valor diretamente do cliente.", "C) Sim, apenas se for para custódia.", "D) Sim, apenas cheques nominais à instituição."],
+        "pergunta": "O Assessor de Investimento pode atuar na gestão de carteiras de valores mobiliários?",
+        "opcoes": ["A) Sim, desde que autorizado pelo cliente.", "B) Não, a atividade de gestão é privativa de administradores de carteira autorizados pela CVM.", "C) Sim, se possuir certificação CGA.", "D) Sim, apenas para clientes qualificados."],
         "correta": "B",
-        "modulo": "Atividade do Assessor (CVM 497)",
-        "feedback": "É expressamente vedado ao AI receber do cliente, ou em nome deste entregar ao cliente, por qualquer motivo, numerário, títulos ou valores mobiliários."
+        "modulo": "Atividade do Assessor",
+        "feedback": "O Assessor atua na mediação e prospecção; a gestão (decidir onde investir o dinheiro do cliente) é uma atividade distinta e vedada ao AI."
     },
     {
-        "pergunta": "O contrato entre o Assessor de Investimento (Pessoa Jurídica) e a Instituição Financeira deve ser mantido à disposição de qual órgão?",
-        "opcoes": ["A) COAF", "B) B3", "C) CVM", "D) Banco Central"],
+        "pergunta": "É dever do Assessor de Investimento manter o sigilo sobre informações de seus clientes?",
+        "opcoes": ["A) Apenas se o cliente solicitar por escrito.", "B) Sim, é um dever ético e legal previsto na norma.", "C) Não há dever de sigilo perante outros corretores.", "D) Apenas para contas acima de R$ 1 milhão."],
+        "correta": "B",
+        "modulo": "Atividade do Assessor",
+        "feedback": "O sigilo profissional é um pilar da atividade de assessoria conforme a CVM 497/11."
+    },
+    # --- MÓDULO: DERIVATIVOS ---
+    {
+        "pergunta": "No mercado de derivativos, o contrato que estabelece a obrigação de compra ou venda de um ativo em data futura por preço fixado, mas permite o ajuste diário de perdas e ganhos é o:",
+        "opcoes": ["A) Mercado a Termo", "B) Mercado de Opções", "C) Mercado Futuro", "D) Swap"],
         "correta": "C",
-        "modulo": "Atividade do Assessor (CVM 497)",
-        "feedback": "A CVM é o órgão regulador que exige a manutenção e transparência desses contratos."
-    },
-    # MÓDULO: LAVAGEM DE DINHEIRO
-    {
-        "pergunta": "Qual das fases abaixo NÃO pertence ao processo de lavagem de dinheiro?",
-        "opcoes": ["A) Colocação", "B) Ocultação", "C) Integração", "D) Capitalização"],
-        "correta": "D",
-        "modulo": "Lavagem de Dinheiro",
-        "feedback": "As três fases clássicas são: Colocação (Placement), Ocultação (Layering) e Integração (Integration)."
+        "modulo": "Derivativos",
+        "feedback": "A principal característica do Mercado Futuro que o diferencia do Mercado a Termo é o mecanismo de ajuste diário."
     },
     {
-        "pergunta": "As instituições financeiras devem conservar os cadastros dos clientes por um período mínimo de quanto tempo após o encerramento da conta?",
-        "opcoes": ["A) 2 anos", "B) 5 anos", "C) 10 anos", "D) Permanente"],
+        "pergunta": "O comprador de uma opção de venda (PUT) tem o objetivo de se proteger contra:",
+        "opcoes": ["A) A alta dos preços do ativo objeto.", "B) A queda dos preços do ativo objeto.", "C) A variação da taxa de juros.", "D) A volatilidade do câmbio."],
         "correta": "B",
-        "modulo": "Lavagem de Dinheiro",
-        "feedback": "De acordo com a norma vigente, o prazo mínimo para conservação de cadastros e registros de operações é de 5 anos."
+        "modulo": "Derivativos",
+        "feedback": "A PUT funciona como um seguro contra a desvalorização; se o preço cair, o investidor garante o preço de venda fixado."
     },
-    # MÓDULO: ESTRUTURA DO SFN
+    # --- MÓDULO: ECONOMIA ---
     {
-        "pergunta": "Quem é o responsável por formular a política da moeda e do crédito no Brasil?",
-        "opcoes": ["A) Banco Central (BCB)", "B) Conselho Monetário Nacional (CMN)", "C) CVM", "D) Ministério da Fazenda"],
+        "pergunta": "Um cenário de 'Déficit Nominal' nas contas públicas indica que:",
+        "opcoes": ["A) As receitas foram maiores que as despesas.", "B) O governo gastou mais do que arrecadou, incluindo o pagamento de juros da dívida.", "C) O governo teve superávit primário.", "D) A inflação está controlada."],
         "correta": "B",
-        "modulo": "Estrutura do SFN",
-        "feedback": "O CMN é o órgão deliberativo máximo do SFN responsável por formular as diretrizes de moeda e crédito."
-    },
-    # MÓDULO: FUNDAMENTOS DE ECONOMIA
-    {
-        "pergunta": "Se o COPOM decide elevar a meta da Taxa Selic, o objetivo principal costuma ser:",
-        "opcoes": ["A) Aumentar o consumo", "B) Combater a inflação", "C) Desvalorizar o Real", "D) Estimular o crédito"],
-        "correta": "B",
-        "modulo": "Fundamentos de Economia",
-        "feedback": "A alta da Selic encarece o crédito e desestimula o consumo, sendo a principal ferramenta de política monetária para conter a inflação."
-    },
-    # MÓDULO: RENDA FIXA
-    {
-        "pergunta": "Qual a principal diferença entre uma LFT (Tesouro Selic) e uma LTN (Tesouro Prefixado)?",
-        "opcoes": ["A) LFT é prefixada e LTN é pós-fixada.", "B) LFT é pós-fixada pela Selic e LTN é prefixada.", "C) LFT é corrigida pelo IPCA.", "D) Não há diferença técnica."],
-        "correta": "B",
-        "modulo": "Renda Fixa",
-        "feedback": "LFT (Letra Financeira do Tesouro) segue a taxa Selic (pós), enquanto a LTN (Letra do Tesouro Nacional) tem taxa definida no momento da compra (pre)."
-    },
-    # MÓDULO: RENDA VARIÁVEL E DERIVATIVOS
-    {
-        "pergunta": "O titular de uma opção de venda (PUT) possui o:",
-        "opcoes": ["A) Direito de comprar o ativo.", "B) Direito de vender o ativo.", "C) Obrigação de comprar o ativo.", "D) Obrigação de vender o ativo."],
-        "correta": "B",
-        "modulo": "Renda Variável",
-        "feedback": "O titular (comprador) de uma PUT adquire o DIREITO de vender o ativo objeto pelo preço de exercício."
-    },
-    # MÓDULO: FUNDOS DE INVESTIMENTO
-    {
-        "pergunta": "Em um fundo de investimento aberto, o 'come-cotas' ocorre nos meses de:",
-        "opcoes": ["A) Janeiro e Julho", "B) Maio e Novembro", "C) Dezembro apenas", "D) Todos os meses"],
-        "correta": "B",
-        "modulo": "Fundos de Investimento",
-        "feedback": "A antecipação de IR (come-cotas) ocorre no último dia útil dos meses de maio e novembro."
+        "modulo": "Economia",
+        "feedback": "O déficit nominal considera o saldo total das contas públicas, somando o resultado primário e as despesas com juros."
     }
 ]
