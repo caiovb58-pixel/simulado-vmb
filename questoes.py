@@ -1,5 +1,4 @@
 # questoes.py
-
 simulado_ancord = [
     {
         "id": 1,
