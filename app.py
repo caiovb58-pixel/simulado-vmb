@@ -5,30 +5,28 @@ from questoes import BANCO_QUESTOES
 
 st.set_page_config(page_title="Simulado ANCORD - VMB Invest", page_icon="⚖️")
 
-# --- FUNÇÃO DO CRONÔMETRO EM TEMPO REAL ---
-@st.fragment
-def renderizar_cronometro(sidebar_placeholder):
-    while not st.session_state.get('finalizado', False):
+# --- FUNÇÃO DO CRONÔMETRO REFORMULADA ---
+# O segredo é o run_every=1. Ele substitui o loop 'while' e o 'time.sleep'
+@st.fragment(run_every=1)
+def renderizar_cronometro():
+    if st.session_state.simulado_iniciado and not st.session_state.finalizado:
         tempo_limite = 30 * 60
-        inicio = st.session_state.get('inicio_tempo', time.time())
-        tempo_passado = time.time() - inicio
+        tempo_passado = time.time() - st.session_state.inicio_tempo
         tempo_restante = max(0, tempo_limite - tempo_passado)
 
         if tempo_restante <= 0:
             st.session_state.finalizado = True
             st.rerun()
-            break
 
         mins, secs = divmod(int(tempo_restante), 60)
         
-        with sidebar_placeholder.container():
+        # Renderiza direto na sidebar dentro do fragmento
+        with st.sidebar:
             st.title("⏳ Tempo")
             cor = "red" if tempo_restante < 300 else "white"
             st.markdown(f"<h1 style='text-align: center; color: {cor};'>{mins:02d}:{secs:02d}</h1>", unsafe_allow_html=True)
             if tempo_restante < 300:
                 st.warning("⚠️ Menos de 5 min!")
-        
-        time.sleep(1)
 
 # 1. ESTADO INICIAL
 if 'simulado_iniciado' not in st.session_state:
@@ -37,6 +35,8 @@ if 'finalizado' not in st.session_state:
     st.session_state.finalizado = False
 if 'questoes_sorteadas' not in st.session_state:
     st.session_state.questoes_sorteadas = []
+if 'respostas_usuario' not in st.session_state:
+    st.session_state.respostas_usuario = {}
 
 # 2. MENU INICIAL
 if not st.session_state.simulado_iniciado:
@@ -54,9 +54,8 @@ if not st.session_state.simulado_iniciado:
         banco_filtrado = [q for q in BANCO_QUESTOES if q.get('modulo') in materias_selecionadas] if materias_selecionadas else BANCO_QUESTOES
             
         if not banco_filtrado:
-            st.error("Nenhuma questão encontrada para os módulos selecionados.")
+            st.error("Nenhuma questão encontrada.")
         else:
-            # Sorteia 20 ou o máximo disponível se for menor que 20
             qtd = min(20, len(banco_filtrado))
             st.session_state.questoes_sorteadas = random.sample(banco_filtrado, k=qtd)
             st.session_state.respostas_usuario = {}
@@ -66,18 +65,13 @@ if not st.session_state.simulado_iniciado:
             st.rerun()
 
 # 3. INTERFACE DO SIMULADO
-elif st.session_state.simulado_iniciado:
-    # Mostra cronômetro na sidebar apenas se não finalizou
-    if not st.session_state.finalizado:
-        espaco_vazio_sidebar = st.sidebar.empty()
-        renderizar_cronometro(espaco_vazio_sidebar)
-    else:
-        st.sidebar.error("🚨 Simulado Encerrado")
+else:
+    # Chamada do cronômetro (ele agora roda de forma independente)
+    renderizar_cronometro()
 
     st.title("✍️ Simulado em Andamento")
     
-    # IMPORTANTE: Se as questões sumirem, o loop abaixo não terá o que mostrar.
-    # Usamos o 'questoes_sorteadas' que foi salvo no clique do botão.
+    # O formulário agora consegue ler st.session_state.questoes_sorteadas livremente
     with st.form("form_simulado"):
         for i, q in enumerate(st.session_state.questoes_sorteadas):
             st.markdown(f"**Questão {i+1}** | `{q.get('modulo', 'ANCORD')}`")
@@ -86,10 +80,9 @@ elif st.session_state.simulado_iniciado:
             key = f"q_{i}"
             opcoes = q['opcoes']
             
-            # Recupera resposta anterior se houver para não perder no reload do cronômetro
-            idx_anterior = None
-            if key in st.session_state.respostas_usuario:
-                idx_anterior = list(opcoes.keys()).index(st.session_state.respostas_usuario[key])
+            # Buscamos a resposta se ela já existir para não resetar o rádio
+            res_atual = st.session_state.respostas_usuario.get(key)
+            idx_anterior = list(opcoes.keys()).index(res_atual) if res_atual in opcoes else None
 
             st.session_state.respostas_usuario[key] = st.radio(
                 "Alternativas:", 
@@ -101,8 +94,7 @@ elif st.session_state.simulado_iniciado:
             )
             st.divider()
 
-        submeteu = st.form_submit_button("🏁 Finalizar e Ver Resultado")
-        if submeteu:
+        if st.form_submit_button("🏁 Finalizar e Ver Resultado"):
             st.session_state.finalizado = True
             st.rerun()
 
@@ -129,7 +121,6 @@ elif st.session_state.simulado_iniciado:
                 st.info(f"**Explicação:** {q['explicacao']}")
 
         if st.button("🔄 Novo Simulado"):
-            st.session_state.simulado_iniciado = False
-            st.session_state.finalizado = False
-            st.session_state.questoes_sorteadas = []
+            for key in ['simulado_iniciado', 'finalizado', 'questoes_sorteadas', 'respostas_usuario']:
+                if key in st.session_state: del st.session_state[key]
             st.rerun()
