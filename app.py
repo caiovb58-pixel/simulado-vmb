@@ -7,8 +7,7 @@ st.set_page_config(page_title="Simulado ANCORD - VMB Invest", page_icon="⚖️"
 
 # --- FUNÇÃO DO CRONÔMETRO EM TEMPO REAL ---
 @st.fragment
-def renderizar_cronometro():
-    sidebar_placeholder = st.sidebar.empty()
+def renderizar_cronometro(sidebar_placeholder):
     
     while not st.session_state.finalizado:
         tempo_limite = 30 * 60
