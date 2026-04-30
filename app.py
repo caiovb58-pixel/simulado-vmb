@@ -4,15 +4,15 @@ import time
 from questoes import BANCO_QUESTOES
 from streamlit_theme import st_theme
 
-st.image("vmb_logo-removebg-preview (1).png", use_container_width=True)
+
 st.set_page_config(page_title="Simulado ANCORD - VMB Invest", page_icon="⚖️")
 
 theme = st_theme()
 
 if theme and theme['base'] == 'dark':
-   st.image("vmb_logo-removebg-preview (1).png", use_container_width=True) 
+   st.image("vmb_logo_fundo_branco.png", use_container_width=True) 
 else:
-    st.image("vmb_logo_fundo_branco.png", use_container_width=True) 
+    st.image("vmb_logo_fundo_preto.png", use_container_width=True) 
     
 # --- FUNÇÃO DO CRONÔMETRO CORRIGIDA ---
 @st.fragment(run_every=1)
