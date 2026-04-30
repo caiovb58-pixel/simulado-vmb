@@ -2,7 +2,7 @@ import streamlit as st
 import random
 import time
 from questoes import BANCO_QUESTOES
-st.image("vmb_logo.png")
+st.image("vmb_logo.jpg")
 st.set_page_config(page_title="Simulado ANCORD - VMB Invest", page_icon="⚖️")
 
 # --- FUNÇÃO DO CRONÔMETRO CORRIGIDA ---
