@@ -1,5 +1,5 @@
 # questoes.py
-simulado_ancord = [
+BANCO_QUESTOES = [
     {
         "id": 1,
         "tema": "Prevenção à Lavagem de Dinheiro",
