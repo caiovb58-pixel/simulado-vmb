@@ -74,6 +74,6 @@ if st.session_state.finalizado:
     else:
         st.error(f"Reprovado. Acertos: {acertos}. O mínimo é 70%.")
         
-    if st.button("Tentar Novamente (Novo Sorteio)"):
+    if st.button("Tentar Novamente (Novo Simulado)"):
         del st.session_state.questoes_sorteadas
         st.rerun()
