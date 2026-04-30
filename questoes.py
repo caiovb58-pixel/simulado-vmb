@@ -1,51 +1,72 @@
 BANCO_QUESTOES = [
+    # MÓDULO: ATIVIDADE DO ASSESSOR (CVM 497)
     {
-        "pergunta": "De acordo com a CVM 497/11, o Assessor de Investimento (AI) pode atuar como preposto de quantos intermediários simultaneamente?",
-        "opcoes": ["A) Apenas um", "B) Até dois", "C) Até cinco", "D) Não há limite"],
-        "correta": "A",
-        "modulo": "Atividade do Assessor (CVM 497/11)",
-        "feedback": "O Assessor de Investimento pessoa física só pode prestar serviços a um único intermediário (instituição financeira)."
+        "pergunta": "O Assessor de Investimento (AI) pode receber diretamente do cliente numerário, títulos ou valores mobiliários?",
+        "opcoes": ["A) Sim, desde que emita recibo.", "B) Não, é vedado receber qualquer valor diretamente do cliente.", "C) Sim, apenas se for para custódia.", "D) Sim, apenas cheques nominais à instituição."],
+        "correta": "B",
+        "modulo": "Atividade do Assessor (CVM 497)",
+        "feedback": "É expressamente vedado ao AI receber do cliente, ou em nome deste entregar ao cliente, por qualquer motivo, numerário, títulos ou valores mobiliários."
     },
     {
-        "pergunta": "Qual é a penalidade máxima prevista na Lei nº 9.613/98 para crimes de Lavagem de Dinheiro?",
-        "opcoes": ["A) Reclusão de 1 a 5 anos e multa", "B) Reclusão de 3 a 10 anos e multa", "C) Apenas multa pecuniária", "D) Suspensão do registro na CVM por 1 ano"],
+        "pergunta": "O contrato entre o Assessor de Investimento (Pessoa Jurídica) e a Instituição Financeira deve ser mantido à disposição de qual órgão?",
+        "opcoes": ["A) COAF", "B) B3", "C) CVM", "D) Banco Central"],
+        "correta": "C",
+        "modulo": "Atividade do Assessor (CVM 497)",
+        "feedback": "A CVM é o órgão regulador que exige a manutenção e transparência desses contratos."
+    },
+    # MÓDULO: LAVAGEM DE DINHEIRO
+    {
+        "pergunta": "Qual das fases abaixo NÃO pertence ao processo de lavagem de dinheiro?",
+        "opcoes": ["A) Colocação", "B) Ocultação", "C) Integração", "D) Capitalização"],
+        "correta": "D",
+        "modulo": "Lavagem de Dinheiro",
+        "feedback": "As três fases clássicas são: Colocação (Placement), Ocultação (Layering) e Integração (Integration)."
+    },
+    {
+        "pergunta": "As instituições financeiras devem conservar os cadastros dos clientes por um período mínimo de quanto tempo após o encerramento da conta?",
+        "opcoes": ["A) 2 anos", "B) 5 anos", "C) 10 anos", "D) Permanente"],
         "correta": "B",
         "modulo": "Lavagem de Dinheiro",
-        "feedback": "A lei prevê reclusão de 3 a 10 anos, além de multa que pode chegar a R$ 20 milhões ou o dobro do valor da operação."
+        "feedback": "De acordo com a norma vigente, o prazo mínimo para conservação de cadastros e registros de operações é de 5 anos."
     },
+    # MÓDULO: ESTRUTURA DO SFN
     {
-        "pergunta": "O Conselho Monetário Nacional (CMN) é classificado como um órgão:",
-        "opcoes": ["A) Executor", "B) Normativo", "C) Supervisor", "D) Operador"],
+        "pergunta": "Quem é o responsável por formular a política da moeda e do crédito no Brasil?",
+        "opcoes": ["A) Banco Central (BCB)", "B) Conselho Monetário Nacional (CMN)", "C) CVM", "D) Ministério da Fazenda"],
         "correta": "B",
         "modulo": "Estrutura do SFN",
-        "feedback": "O CMN é o órgão máximo do SFN, possuindo caráter normativo (ele dita as regras, não fiscaliza diretamente)."
+        "feedback": "O CMN é o órgão deliberativo máximo do SFN responsável por formular as diretrizes de moeda e crédito."
     },
+    # MÓDULO: FUNDAMENTOS DE ECONOMIA
     {
-        "pergunta": "Qual título de renda fixa possui a menor probabilidade de risco de crédito no mercado brasileiro?",
-        "opcoes": ["A) CDB de Banco Médio", "B) Debênture Incentivada", "C) Título Público Federal (LFT/LTN)", "D) Letra Financeira"],
-        "correta": "C",
-        "modulo": "Produtos de Renda Fixa",
-        "feedback": "Títulos públicos são considerados o 'risco soberano', ou seja, o menor risco de crédito de um país."
-    },
-    {
-        "pergunta": "Em um mercado de opções, o investidor que vende uma opção de compra (LANÇADOR de CALL) assume a obrigação de:",
-        "opcoes": ["A) Comprar as ações pelo preço de exercício", "B) Vender as ações pelo preço de exercício", "C) Comprar as ações pelo preço de mercado", "D) Pagar o prêmio ao titular"],
+        "pergunta": "Se o COPOM decide elevar a meta da Taxa Selic, o objetivo principal costuma ser:",
+        "opcoes": ["A) Aumentar o consumo", "B) Combater a inflação", "C) Desvalorizar o Real", "D) Estimular o crédito"],
         "correta": "B",
-        "modulo": "Renda Variável (Derivativos)",
-        "feedback": "O lançador de uma CALL recebe o prêmio e assume o compromisso de vender o ativo se o titular decidir exercer o direito."
+        "modulo": "Fundamentos de Economia",
+        "feedback": "A alta da Selic encarece o crédito e desestimula o consumo, sendo a principal ferramenta de política monetária para conter a inflação."
     },
+    # MÓDULO: RENDA FIXA
     {
-        "pergunta": "A alíquota de Imposto de Renda para ganhos de capital em operações comuns com ações na Bolsa (não sendo Day Trade) é de:",
-        "opcoes": ["A) 15%", "B) 20%", "C) 10%", "D) Isento para qualquer valor"],
-        "correta": "A",
-        "modulo": "Renda Variável (Tributação)",
-        "feedback": "Operações comuns têm alíquota de 15%. Operações de Day Trade têm alíquota de 20%."
+        "pergunta": "Qual a principal diferença entre uma LFT (Tesouro Selic) e uma LTN (Tesouro Prefixado)?",
+        "opcoes": ["A) LFT é prefixada e LTN é pós-fixada.", "B) LFT é pós-fixada pela Selic e LTN é prefixada.", "C) LFT é corrigida pelo IPCA.", "D) Não há diferença técnica."],
+        "correta": "B",
+        "modulo": "Renda Fixa",
+        "feedback": "LFT (Letra Financeira do Tesouro) segue a taxa Selic (pós), enquanto a LTN (Letra do Tesouro Nacional) tem taxa definida no momento da compra (pre)."
     },
+    # MÓDULO: RENDA VARIÁVEL E DERIVATIVOS
     {
-        "pergunta": "Um fundo de investimento que possui a cobrança de come-cotas nos meses de maio e novembro é classificado como:",
-        "opcoes": ["A) Fundo de Ações", "B) Fundo de Curto ou Longo Prazo", "C) Fundo Fechado", "D) ETF"],
+        "pergunta": "O titular de uma opção de venda (PUT) possui o:",
+        "opcoes": ["A) Direito de comprar o ativo.", "B) Direito de vender o ativo.", "C) Obrigação de comprar o ativo.", "D) Obrigação de vender o ativo."],
+        "correta": "B",
+        "modulo": "Renda Variável",
+        "feedback": "O titular (comprador) de uma PUT adquire o DIREITO de vender o ativo objeto pelo preço de exercício."
+    },
+    # MÓDULO: FUNDOS DE INVESTIMENTO
+    {
+        "pergunta": "Em um fundo de investimento aberto, o 'come-cotas' ocorre nos meses de:",
+        "opcoes": ["A) Janeiro e Julho", "B) Maio e Novembro", "C) Dezembro apenas", "D) Todos os meses"],
         "correta": "B",
         "modulo": "Fundos de Investimento",
-        "feedback": "O 'come-cotas' incide sobre fundos abertos de Renda Fixa e Multimercado. Fundos de Ações não possuem come-cotas."
+        "feedback": "A antecipação de IR (come-cotas) ocorre no último dia útil dos meses de maio e novembro."
     }
 ]
