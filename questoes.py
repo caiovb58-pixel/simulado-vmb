@@ -1,23 +1,51 @@
 BANCO_QUESTOES = [
-    {"pergunta": "Qual o principal índice de inflação utilizado pelo Banco Central para a meta de inflação?", "opcoes": ["A) IGP-M", "B) IPCA", "C) INCC", "D) Selic"], "correta": "B", "modulo": "Mercado"},
-    {"pergunta": "O investidor que busca liquidez imediata e segurança deve priorizar ativos de:", "opcoes": ["A) Renda Variável", "B) Pós-fixados (Selic/CDI)", "C) Criptoativos", "D) Imóveis"], "correta": "B", "modulo": "Mercado"},
-    {"pergunta": "No SPIN Selling, uma pergunta de 'Implicação' serve para:", "opcoes": ["A) Saber o nome do gerente do banco", "B) Descobrir o patrimônio total", "C) Aumentar o senso de urgência sobre um problema", "D) Agendar a reunião"], "correta": "C", "modulo": "Vendas"},
-    {"pergunta": "Qual a conduta correta ao ouvir 'Já tenho assessor na XP'?", "opcoes": ["A) Desligar o telefone", "B) Oferecer uma segunda opinião técnica sobre a carteira", "C) Falar mal do outro escritório", "D) Tentar convencer a trocar de CPF na hora"], "correta": "B", "modulo": "Vendas"},
-    {"pergunta": "O que é o FGC?", "opcoes": ["A) Fundo de Garantia de Crédito", "B) Fundo de Gestão de Carteira", "C) Fundo de Garantia do Consumidor", "D) Fundo de Governo Federal"], "correta": "A", "modulo": "Mercado"},
-    {"pergunta": "Um SDR deve focar seus esforços em leads que possuem:", "opcoes": ["A) Apenas curiosidade", "B) Perfil de Cliente Ideal (ICP) e dor identificada", "C) Pouco dinheiro mas muito tempo", "D) Nenhuma das anteriores"], "correta": "B", "modulo": "Vendas"},
-    {"pergunta": "Se a taxa Selic sobe, o que geralmente acontece com a atratividade da Bolsa (Ações)?", "opcoes": ["A) Sobe consideravelmente", "B) Tende a cair, pois a Renda Fixa fica mais atrativa", "C) Não há nenhuma relação", "D) Aumenta o volume de dividendos"], "correta": "B", "modulo": "Mercado"},
-    {"pergunta": "Qual o objetivo principal da etapa de 'Rapport'?", "opcoes": ["A) Vender o produto", "B) Gerar conexão e confiança inicial", "C) Pegar o extrato do banco", "D) Falar sobre futebol"], "correta": "B", "modulo": "Vendas"},
-    {"pergunta": "O termo 'Bull Market' refere-se a um mercado em:", "opcoes": ["A) Queda livre", "B) Estagnação", "C) Tendência de alta", "D) Crise sistêmica"], "correta": "C", "modulo": "Mercado"},
-    {"pergunta": "Ao contornar a objeção 'Me manda por e-mail', o SDR deve:", "opcoes": ["A) Mandar o e-mail e nunca mais ligar", "B) Tentar validar um ponto de interesse antes de enviar", "C) Recusar-se a mandar", "D) Pedir o WhatsApp"], "correta": "B", "modulo": "Vendas"},
-    {"pergunta": "O que caracteriza um investimento Isento de IR para Pessoa Física?", "opcoes": ["A) CDB", "B) Tesouro Direto", "C) LCI e LCA", "D) Debêntures Comuns"], "correta": "C", "modulo": "Mercado"},
-    {"pergunta": "A sigla 'LTV' em vendas significa:", "opcoes": ["A) Lead Total Value", "B) Lifetime Value", "C) Low Time View", "D) Lucro Total de Vendas"], "correta": "B", "modulo": "Vendas"},
-    {"pergunta": "Qual a função básica do CDI no mercado?", "opcoes": ["A) Taxa de empréstimo entre bancos", "B) Taxa de juros do cheque especial", "C) Índice da Bolsa de Nova York", "D) Imposto sobre dividendos"], "correta": "A", "modulo": "Mercado"},
-    {"pergunta": "Qual o gatilho mental mais usado ao falar: 'Tenho apenas dois horários na agenda do especialista'?", "opcoes": ["A) Autoridade", "B) Prova Social", "C) Escassez", "D) Reciprocidade"], "correta": "C", "modulo": "Vendas"},
-    {"pergunta": "O que é 'Diversificação'?", "opcoes": ["A) Colocar todo o dinheiro no mesmo ativo", "B) Estratégia de diluir riscos em diferentes classes de ativos", "C) Comprar apenas ações de tecnologia", "D) Manter tudo na poupança"], "correta": "B", "modulo": "Mercado"},
-    {"pergunta": "No framework Hook-Caption-CTA, o 'CTA' serve para:", "opcoes": ["A) Contar uma história", "B) Chamar para a ação (agendar a reunião)", "C) Prender a atenção", "D) Fazer o diagnóstico"], "correta": "B", "modulo": "Vendas"},
-    {"pergunta": "Investimentos de Renda Variável são indicados para qual horizonte?", "opcoes": ["A) Reserva de emergência", "B) Médio e Longo Prazo", "C) Gastar no próximo mês", "D) Apenas para day trade"], "correta": "B", "modulo": "Mercado"},
-    {"pergunta": "O 'Lead Scoring' ajuda o SDR a:", "opcoes": ["A) Dar notas de 0 a 10 para o cliente", "B) Priorizar os contatos com maior potencial de conversão", "C) Bater a meta de ligações", "D) Organizar a agenda do almoço"], "correta": "B", "modulo": "Vendas"},
-    {"pergunta": "O Ibovespa representa:", "opcoes": ["A) A média de todas as empresas do Brasil", "B) O desempenho das ações mais negociadas na B3", "C) A taxa de câmbio do dólar", "D) O lucro total dos bancos brasileiros"], "correta": "B", "modulo": "Mercado"},
-    {"pergunta": "A principal função de um SDR na VMB é:", "opcoes": ["A) Fechar o contrato de investimento", "B) Prospectar e qualificar oportunidades para o Assessor", "C) Dar suporte técnico de TI", "D) Fazer a gestão da carteira do cliente"], "correta": "B", "modulo": "Vendas"}
-]
+    {
+        "pergunta": "De acordo com a CVM 497/11, o Assessor de Investimento (AI) pode atuar como preposto de quantos intermediários simultaneamente?",
+        "opcoes": ["A) Apenas um", "B) Até dois", "C) Até cinco", "D) Não há limite"],
+        "correta": "A",
+        "modulo": "Atividade do Assessor (CVM 497/11)",
+        "feedback": "O Assessor de Investimento pessoa física só pode prestar serviços a um único intermediário (instituição financeira)."
+    },
+    {
+        "pergunta": "Qual é a penalidade máxima prevista na Lei nº 9.613/98 para crimes de Lavagem de Dinheiro?",
+        "opcoes": ["A) Reclusão de 1 a 5 anos e multa", "B) Reclusão de 3 a 10 anos e multa", "C) Apenas multa pecuniária", "D) Suspensão do registro na CVM por 1 ano"],
+        "correta": "B",
+        "modulo": "Lavagem de Dinheiro",
+        "feedback": "A lei prevê reclusão de 3 a 10 anos, além de multa que pode chegar a R$ 20 milhões ou o dobro do valor da operação."
+    },
+    {
+        "pergunta": "O Conselho Monetário Nacional (CMN) é classificado como um órgão:",
+        "opcoes": ["A) Executor", "B) Normativo", "C) Supervisor", "D) Operador"],
+        "correta": "B",
+        "modulo": "Estrutura do SFN",
+        "feedback": "O CMN é o órgão máximo do SFN, possuindo caráter normativo (ele dita as regras, não fiscaliza diretamente)."
+    },
+    {
+        "pergunta": "Qual título de renda fixa possui a menor probabilidade de risco de crédito no mercado brasileiro?",
+        "opcoes": ["A) CDB de Banco Médio", "B) Debênture Incentivada", "C) Título Público Federal (LFT/LTN)", "D) Letra Financeira"],
+        "correta": "C",
+        "modulo": "Produtos de Renda Fixa",
+        "feedback": "Títulos públicos são considerados o 'risco soberano', ou seja, o menor risco de crédito de um país."
+    },
+    {
+        "pergunta": "Em um mercado de opções, o investidor que vende uma opção de compra (LANÇADOR de CALL) assume a obrigação de:",
+        "opcoes": ["A) Comprar as ações pelo preço de exercício", "B) Vender as ações pelo preço de exercício", "C) Comprar as ações pelo preço de mercado", "D) Pagar o prêmio ao titular"],
+        "correta": "B",
+        "modulo": "Renda Variável (Derivativos)",
+        "feedback": "O lançador de uma CALL recebe o prêmio e assume o compromisso de vender o ativo se o titular decidir exercer o direito."
+    },
+    {
+        "pergunta": "A alíquota de Imposto de Renda para ganhos de capital em operações comuns com ações na Bolsa (não sendo Day Trade) é de:",
+        "opcoes": ["A) 15%", "B) 20%", "C) 10%", "D) Isento para qualquer valor"],
+        "correta": "A",
+        "modulo": "Renda Variável (Tributação)",
+        "feedback": "Operações comuns têm alíquota de 15%. Operações de Day Trade têm alíquota de 20%."
+    },
+    {
+        "pergunta": "Um fundo de investimento que possui a cobrança de come-cotas nos meses de maio e novembro é classificado como:",
+        "opcoes": ["A) Fundo de Ações", "B) Fundo de Curto ou Longo Prazo", "C) Fundo Fechado", "D) ETF"],
+        "correta": "B",
+        "modulo": "Fundos de Investimento",
+        "feedback": "O 'come-cotas' incide sobre fundos abertos de Renda Fixa e Multimercado. Fundos de Ações não possuem come-cotas."
+    }
 ]
