@@ -12,24 +12,15 @@ st.set_page_config(page_title="Simulado ANCORD - VMB Invest", page_icon="⚖️"
 # --- FUNÇÃO DE AUTENTICAÇÃO ROBUSTA ---
 def verificar_login(nome, senha):
     try:
-        # Resolve o erro "Unable to load PEM file" tratando a chave privada
-        p_key = st.secrets["connections"]["gsheets"]["private_key"].replace("\\n", "\n")
+        # A conexão agora deve ser chamada assim, sem 'private_key=' dentro
+        # O Streamlit lerá tudo do [connections.gsheets] sozinho
+        conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
         
-        conn = st.connection(
-            "gsheets", 
-            type=GSheetsConnection, 
-            ttl=0,
-    
-        )
-        
-        # Lê a aba onde estão os cadastros
         df_usuarios = conn.read(worksheet="Usuarios")
         
-        # Limpa espaços em branco e garante que a comparação seja entre strings
         nome = str(nome).strip()
         senha = str(senha).strip()
         
-        # Validação
         usuario_valido = df_usuarios[
             (df_usuarios['Nome'].astype(str).str.strip() == nome) & 
             (df_usuarios['Senha'].astype(str).str.strip() == senha)
@@ -37,6 +28,7 @@ def verificar_login(nome, senha):
         
         return not usuario_valido.empty
     except Exception as e:
+        # Se o erro de 'private_key' sumir, o código está corrigido!
         st.error(f"Erro técnico na conexão: {e}")
         return False
 
