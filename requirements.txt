@@ -1,5 +1,4 @@
 streamlit
-streamlit-theme
-streamlit
 pandas
 st-gsheets-connection
+cryptography
