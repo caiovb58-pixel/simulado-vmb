@@ -18,25 +18,17 @@ except:
 # --- FUNÇÃO PARA SALVAR NO GOOGLE SHEETS ---
 def salvar_resultado(nome, materias, acertos, total):
     try:
-        # ESTRATÉGIA DEFINITIVA: Extraímos apenas a private_key para limpeza.
-        # Deixamos o Streamlit buscar spreadsheet_id e client_email sozinho nas secrets.
-        if "connections" in st.secrets and "gsheets" in st.secrets["connections"]:
-            p_key = st.secrets["connections"]["gsheets"]["private_key"].replace("\\n", "\n")
-            
-            conn = st.connection(
-                "gsheets", 
-                type=GSheetsConnection, 
-                ttl=0, 
-                private_key=p_key
-            )
-        else:
-            conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
+        # Chamada simplificada: O Streamlit injeta as Secrets automaticamente.
+        # Isso evita erros de "unexpected keyword argument" (project_id, etc).
+        conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
         
+        # Tenta ler os dados atuais
         try:
             dados_existentes = conn.read(worksheet="Resultados")
         except Exception:
             dados_existentes = pd.DataFrame(columns=["Data", "Nome", "Materias", "Acertos", "Total", "Aproveitamento"])
         
+        # Cria a nova linha
         nova_linha = pd.DataFrame([{
             "Data": datetime.now().strftime("%d/%m/%Y %H:%M"),
             "Nome": nome,
@@ -46,12 +38,14 @@ def salvar_resultado(nome, materias, acertos, total):
             "Aproveitamento": f"{(acertos/total)*100:.1f}%"
         }])
         
+        # Concatenação robusta
         if dados_existentes is None or dados_existentes.empty:
             dados_atualizados = nova_linha
         else:
             dados_existentes = dados_existentes.dropna(how='all', axis=0).dropna(how='all', axis=1)
             dados_atualizados = pd.concat([dados_existentes, nova_linha], ignore_index=True)
         
+        # Envio para o Google Sheets
         conn.update(worksheet="Resultados", data=dados_atualizados)
         st.success("✅ Desempenho registrado na planilha com sucesso!")
         
