@@ -3,8 +3,14 @@ import random
 import time
 import pandas as pd
 from datetime import datetime
-from questoes import BANCO_QUESTOES
 from streamlit_gsheets import GSheetsConnection
+
+# TENTA IMPORTAR O BANCO DE QUESTÕES
+try:
+    from questoes import BANCO_QUESTOES
+except ImportError:
+    st.error("Erro: O arquivo 'questoes.py' não foi encontrado ou está com erro de importação circular.")
+    st.stop()
 
 # 1. Configuração da página
 st.set_page_config(page_title="Simulado ANCORD - VMB Invest", page_icon="⚖️", layout="wide")
@@ -38,13 +44,11 @@ if 'simulado_iniciado' not in st.session_state:
 if not st.session_state.logado:
     col_l, col_c, col_r = st.columns([1, 2, 1])
     with col_c:
-        try:
-            st.image("vmb_logo_fundo_preto.png", use_container_width=True)
-        except:
-            st.title("VMB Invest")
+        # Tenta carregar a logo, se não houver, usa texto
+        st.title("VMB Invest")
+        st.subheader("Simulado ANCORD")
             
         with st.form("login_form"):
-            st.subheader("Login - Sistema de Treinamento")
             nome_input = st.text_input("Usuário (Nome Completo)")
             senha_input = st.text_input("Senha", type="password")
             botao_entrar = st.form_submit_button("Entrar")
@@ -68,100 +72,88 @@ conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
 # --- PÁGINA: INÍCIO ---
 if menu == "Início":
     st.title(f"Bem-vindo, {st.session_state.usuario_nome}!")
-    st.markdown("""
-    ### Painel de Especialista ANCORD
-    Prepare-se para a certificação com foco nas matérias que você mais precisa revisar.
-    """)
-    st.image("vmb_logo_fundo_preto.png", width=200)
+    st.markdown("### Treinamento de Elite - SDR & Trainees")
+    st.write("Acesse o menu 'Simulado ANCORD' para começar.")
 
 # --- PÁGINA: SIMULADO ---
 elif menu == "Simulado ANCORD":
     st.title("Simulado Personalizado ANCORD")
 
-    # Passo 1: Escolha das matérias (Só aparece se o simulado não começou)
     if not st.session_state.simulado_iniciado:
-        materias_disponiveis = sorted(list(set([q['materia'] for q in BANCO_QUESTOES])))
+        modulos_disponiveis = sorted(list(set([q['modulo'] for q in BANCO_QUESTOES])))
         
-        st.subheader("Configuração do Simulado")
-        materias_selecionadas = st.multiselect("Selecione as matérias que deseja praticar:", materias_disponiveis)
-        num_questoes = st.slider("Quantidade de questões:", 5, 20, 10)
+        st.subheader("Configuração")
+        modulos_selecionados = st.multiselect("Escolha os módulos:", modulos_disponiveis)
+        qtd = st.slider("Quantidade de questões:", 1, len(BANCO_QUESTOES), 5)
 
-        if st.button("Iniciar Simulado"):
-            if materias_selecionadas:
-                # Filtra o banco de questões
-                pool = [q for q in BANCO_QUESTOES if q['materia'] in materias_selecionadas]
+        if st.button("Gerar Simulado"):
+            if modulos_selecionados:
+                pool = [q for q in BANCO_QUESTOES if q['modulo'] in modulos_selecionados]
+                if len(pool) < qtd: qtd = len(pool)
                 
-                if len(pool) < num_questoes:
-                    num_questoes = len(pool)
-                
-                st.session_state.questoes_sorteadas = random.sample(pool, num_questoes)
-                st.session_state.respostas = {}
+                st.session_state.questoes_sorteadas = random.sample(pool, qtd)
+                st.session_state.respostas_usuario = {}
                 st.session_state.simulado_iniciado = True
                 st.rerun()
             else:
-                st.warning("Por favor, selecione ao menos uma matéria.")
+                st.warning("Selecione ao menos um módulo.")
 
-    # Passo 2: Execução do Simulado
     else:
-        if st.button("⬅️ Voltar e Trocar Matérias"):
+        if st.button("⬅️ Trocar Configuração"):
             st.session_state.simulado_iniciado = False
             st.rerun()
 
-        with st.form("simulado_form"):
+        with st.form("form_simulado"):
             for idx, q in enumerate(st.session_state.questoes_sorteadas):
-                st.markdown(f"**Questão {idx+1}** | *{q['materia']}*")
+                st.markdown(f"**Questão {idx+1}** | *{q['modulo']}*")
                 st.write(q['pergunta'])
                 
-                # Exibe as alternativas completas
-                st.session_state.respostas[idx] = st.radio(
-                    f"Selecione a alternativa correta:",
-                    q['opcoes'], # Agora passa a lista de textos, não A, B, C...
-                    key=f"q_{idx}",
-                    index=None # Começa sem nada marcado
+                # Monta as opções dinamicamente do dicionário
+                opcoes_display = [f"{k}) {v}" for k, v in q['opcoes'].items()]
+                
+                st.session_state.respostas_usuario[idx] = st.radio(
+                    "Selecione:",
+                    options=opcoes_display,
+                    key=f"r_{idx}",
+                    index=None
                 )
                 st.markdown("---")
             
-            finalizar = st.form_submit_button("Finalizar e Gravar Resultados")
+            if st.form_submit_button("Finalizar"):
+                acertos = 0
+                total = len(st.session_state.questoes_sorteadas)
+                
+                for idx, q in enumerate(st.session_state.questoes_sorteadas):
+                    resp = st.session_state.respostas_usuario[idx]
+                    if resp and resp[0] == q['resposta_correta']:
+                        acertos += 1
+                
+                nota = (acertos / total) * 100
+                st.subheader(f"Resultado: {acertos}/{total} ({nota:.1f}%)")
 
-        if finalizar:
-            acertos = 0
-            # IMPORTANTE: A comparação deve ser o texto exato da opção correta
-            for idx, q in enumerate(st.session_state.questoes_sorteadas):
-                if st.session_state.respostas[idx] == q['correta']:
-                    acertos += 1
-            
-            nota = (acertos / len(st.session_state.questoes_sorteadas)) * 100
-            st.subheader(f"Resultado Final: {nota:.1f}%")
-            
-            # Gravação no GSheets
-            novo_resultado = pd.DataFrame([{
-                "Data": datetime.now().strftime("%d/%m/%Y %H:%M"),
-                "Usuario": st.session_state.usuario_nome,
-                "Acertos": acertos,
-                "Total": len(st.session_state.questoes_sorteadas),
-                "Nota": nota
-            }])
-
-            try:
-                df_hist = conn.read(worksheet="Resultados")
-                df_final = pd.concat([df_hist, novo_resultado], ignore_index=True)
-                conn.update(worksheet="Resultados", data=df_final)
-                st.success("Desempenho salvo com sucesso!")
-                st.session_state.simulado_iniciado = False # Reseta para o próximo
-            except Exception as e:
-                st.error(f"Erro ao salvar: {e}")
+                try:
+                    df_res = conn.read(worksheet="Resultados")
+                    novo = pd.DataFrame([{
+                        "Data": datetime.now().strftime("%d/%m/%Y %H:%M"),
+                        "Usuario": st.session_state.usuario_nome,
+                        "Acertos": acertos,
+                        "Total": total,
+                        "Nota": nota
+                    }])
+                    conn.update(worksheet="Resultados", data=pd.concat([df_res, novo], ignore_index=True))
+                    st.success("Salvo com sucesso!")
+                    st.session_state.simulado_iniciado = False
+                except:
+                    st.error("Erro ao salvar na planilha.")
 
 # --- PÁGINA: EVOLUÇÃO ---
 elif menu == "Evolução":
-    st.title("Sua Evolução na VMB Invest")
+    st.title("Evolução")
     try:
-        df_evolucao = conn.read(worksheet="Resultados")
-        meus_dados = df_evolucao[df_evolucao['Usuario'] == st.session_state.usuario_nome]
-        
-        if not meus_dados.empty:
-            st.line_chart(meus_dados.set_index('Data')['Nota'])
-            st.dataframe(meus_dados)
-        else:
-            st.warning("Realize seu primeiro simulado para ver o gráfico.")
+        df = conn.read(worksheet="Resultados")
+        meus = df[df['Usuario'] == st.session_state.usuario_nome]
+        if not meus.empty:
+            st.line_chart(meus.set_index('Data')['Nota'])
+            st.table(meus)
     except:
-        st.error("Erro ao carregar aba 'Resultados'. Verifique se ela existe na planilha.")
+        st.error("Erro ao carregar.")
