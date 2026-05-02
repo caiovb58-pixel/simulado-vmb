@@ -18,18 +18,17 @@ except:
 # --- FUNÇÃO PARA SALVAR NO GOOGLE SHEETS ---
 def salvar_resultado(nome, materias, acertos, total):
     try:
+        # ESTRATÉGIA DEFINITIVA: Extraímos apenas a private_key para limpeza.
+        # Deixamos o Streamlit buscar spreadsheet_id e client_email sozinho nas secrets.
         if "connections" in st.secrets and "gsheets" in st.secrets["connections"]:
-            creds = dict(st.secrets["connections"]["gsheets"])
+            p_key = st.secrets["connections"]["gsheets"]["private_key"].replace("\\n", "\n")
             
-            if "private_key" in creds:
-                creds["private_key"] = creds["private_key"].replace("\\n", "\n")
-            
-            # REMOÇÃO DE ARGUMENTOS CONFLITANTES:
-            # 'type' e 'spreadsheet' não podem ser passados via **kwargs no .connection()
-            creds.pop("type", None)
-            creds.pop("spreadsheet", None)
-            
-            conn = st.connection("gsheets", type=GSheetsConnection, ttl=0, **creds)
+            conn = st.connection(
+                "gsheets", 
+                type=GSheetsConnection, 
+                ttl=0, 
+                private_key=p_key
+            )
         else:
             conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
         
@@ -104,7 +103,7 @@ if not st.session_state.simulado_iniciado:
         else:
             banco_filtrado = [q for q in BANCO_QUESTOES if q.get('modulo') in materias_selecionadas] if materias_selecionadas else BANCO_QUESTOES
             if banco_filtrado:
-                # RESET DAS RESPOSTAS: Garante que as questões venham em branco
+                # RESET TOTAL: Limpa tudo para garantir um início do zero
                 st.session_state.respostas_usuario = {}
                 st.session_state.nome_usuario = nome_usuario
                 st.session_state.materias_selecionadas = materias_selecionadas
@@ -121,8 +120,6 @@ elif not st.session_state.finalizado:
             
     st.title("✍️ Simulado em Andamento")
     
-    # IMPORTANTE: No Streamlit, se usarmos o widget 'radio' dentro de um loop com chaves dinâmicas,
-    # resetar st.session_state.respostas_usuario já é suficiente para limpar os valores.
     with st.form("form_simulado"):
         for i, q in enumerate(st.session_state.questoes_sorteadas):
             st.markdown(f"**Questão {i+1}** | `{q.get('modulo', 'ANCORD')}`")
@@ -131,7 +128,7 @@ elif not st.session_state.finalizado:
             key = f"q_{i}"
             opcoes = q['opcoes']
             
-            # index=None garante que nenhuma opção esteja pré-selecionada
+            # index=None garante que o rádio comece desmarcado
             st.session_state.respostas_usuario[key] = st.radio(
                 "Alternativas:", 
                 options=list(opcoes.keys()), 
@@ -160,7 +157,6 @@ else:
     col2.metric("Aproveitamento", f"{(acertos/total)*100:.1f}%")
 
     if st.button("🔄 Novo Simulado"):
-        # Limpeza completa para o próximo SDR
         for k in ['simulado_iniciado', 'finalizado', 'questoes_sorteadas', 'respostas_usuario', 'dados_enviados', 'inicio_tempo']:
             if k in st.session_state:
                 del st.session_state[k]
