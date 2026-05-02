@@ -28,7 +28,7 @@ def salvar_resultado(nome, materias, acertos, total):
         }])
         
         # Lê dados existentes e anexa o novo
-        dados_existentes = conn.read(worksheet="Resultados")
+        dados_existentes = conn.read(worksheet="")
         dados_atualizados = pd.concat([dados_existentes, nova_linha], ignore_index=True)
         
         conn.update(worksheet="Resultados", data=dados_atualizados)
