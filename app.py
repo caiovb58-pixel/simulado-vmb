@@ -9,24 +9,31 @@ from streamlit_gsheets import GSheetsConnection
 # 1. Configuração da página
 st.set_page_config(page_title="Simulado ANCORD - VMB Invest", page_icon="⚖️", layout="wide")
 
-# --- FUNÇÃO DE AUTENTICAÇÃO ROBUSTA ---
+# --- FUNÇÃO DE AUTENTICAÇÃO ---
 def verificar_login(nome, senha):
     try:
-        # Apenas isso. O Streamlit gerencia o resto via Secrets.
+        # Criamos a conexão sem passar parâmetros manuais
         conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
+        
+        # Lemos a aba de usuários
         df_usuarios = conn.read(worksheet="Usuarios")
         
-        nome = str(nome).strip()
-        senha = str(senha).strip()
+        # Limpeza de dados para comparação
+        nome_busca = str(nome).strip()
+        senha_busca = str(senha).strip()
         
+        # Validação robusta
         usuario_valido = df_usuarios[
-            (df_usuarios['Nome'].astype(str).str.strip() == nome) & 
-            (df_usuarios['Senha'].astype(str).str.strip() == senha)
+            (df_usuarios['Nome'].astype(str).str.strip() == nome_busca) & 
+            (df_usuarios['Senha'].astype(str).str.strip() == senha_busca)
         ]
+        
         return not usuario_valido.empty
     except Exception as e:
-        st.error(f"Erro na conexão: {e}")
+        # Isso nos mostrará o erro real se a conexão falhar
+        st.error(f"Erro na conexão com a base de dados: {e}")
         return False
+
 # --- ESTADO DE LOGIN ---
 if 'logado' not in st.session_state:
     st.session_state.logado = False
@@ -35,8 +42,6 @@ if 'usuario_nome' not in st.session_state:
 
 # --- TELA DE LOGIN ---
 if not st.session_state.logado:
-    st.container()
-    # Centralização do formulário na tela
     col_l, col_c, col_r = st.columns([1, 2, 1])
     with col_c:
         try:
@@ -55,11 +60,11 @@ if not st.session_state.logado:
                     st.session_state.logado = True
                     st.session_state.usuario_nome = nome_input.strip()
                     st.success("Acesso autorizado!")
-                    time.sleep(1) # Pequena pausa para o usuário ver o sucesso
+                    time.sleep(1)
                     st.rerun()
                 else:
                     st.error("Usuário ou senha incorretos.")
-    st.stop() 
+    st.stop()
 
-# --- SE CHEGOU AQUI, O CONTEÚDO DO APP É EXIBIDO ABAIXO ---
-# (O restante do seu código de Menu, Simulado e Evolução permanece igual)
+# --- CONTEÚDO DO APP ABAIXO ---
+st.write(f"Bem-vindo, {st.session_state.usuario_nome}!")
