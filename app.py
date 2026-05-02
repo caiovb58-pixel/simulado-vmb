@@ -18,28 +18,24 @@ except:
 # --- FUNÇÃO PARA SALVAR NO GOOGLE SHEETS ---
 def salvar_resultado(nome, materias, acertos, total):
     try:
-        # CORREÇÃO: Criamos um dicionário a partir das secrets para poder manipular a chave
         if "connections" in st.secrets and "gsheets" in st.secrets["connections"]:
-            # Convertemos para dicionário comum para permitir alteração
             creds = dict(st.secrets["connections"]["gsheets"])
             
-            # Se a chave tiver o problema dos \n literais, limpamos aqui
             if "private_key" in creds:
                 creds["private_key"] = creds["private_key"].replace("\\n", "\n")
             
-            # Inicializa a conexão usando o dicionário de credenciais limpo
+            # Removendo 'type' do dicionário para evitar conflito com o argumento fixo
+            creds.pop("type", None)
+            
             conn = st.connection("gsheets", type=GSheetsConnection, ttl=0, **creds)
         else:
-            # Caso as secrets já estejam perfeitas no painel do Streamlit
             conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
         
-        # Tenta ler os dados atuais
         try:
             dados_existentes = conn.read(worksheet="Resultados")
         except Exception:
             dados_existentes = pd.DataFrame(columns=["Data", "Nome", "Materias", "Acertos", "Total", "Aproveitamento"])
         
-        # Cria a nova linha
         nova_linha = pd.DataFrame([{
             "Data": datetime.now().strftime("%d/%m/%Y %H:%M"),
             "Nome": nome,
@@ -49,14 +45,12 @@ def salvar_resultado(nome, materias, acertos, total):
             "Aproveitamento": f"{(acertos/total)*100:.1f}%"
         }])
         
-        # Concatenação robusta
         if dados_existentes is None or dados_existentes.empty:
             dados_atualizados = nova_linha
         else:
             dados_existentes = dados_existentes.dropna(how='all', axis=0).dropna(how='all', axis=1)
             dados_atualizados = pd.concat([dados_existentes, nova_linha], ignore_index=True)
         
-        # Envio para o Google Sheets
         conn.update(worksheet="Resultados", data=dados_atualizados)
         st.success("✅ Desempenho registrado na planilha com sucesso!")
         
@@ -81,20 +75,20 @@ def renderizar_cronometro():
         cor = "red" if tempo_restante < 300 else "white"
         st.markdown(f"<h1 style='text-align: center; color: {cor};'>{mins:02d}:{secs:02d}</h1>", unsafe_allow_html=True)
 
-# --- CONTROLE DE ESTADO ---
-for key, val in {
-    'simulado_iniciado': False, 
-    'finalizado': False, 
-    'questoes_sorteadas': [], 
-    'respostas_usuario': {}, 
-    'dados_enviados': False
-}.items():
-    if key not in st.session_state:
-        st.session_state[key] = val
+# --- CONTROLE DE ESTADO INICIAL ---
+if 'simulado_iniciado' not in st.session_state:
+    st.session_state.simulado_iniciado = False
+if 'finalizado' not in st.session_state:
+    st.session_state.finalizado = False
+if 'questoes_sorteadas' not in st.session_state:
+    st.session_state.questoes_sorteadas = []
+if 'respostas_usuario' not in st.session_state:
+    st.session_state.respostas_usuario = {}
+if 'dados_enviados' not in st.session_state:
+    st.session_state.dados_enviados = False
 
 # --- LÓGICA DE NAVEGAÇÃO ---
 
-# 1. Menu de Início
 if not st.session_state.simulado_iniciado:
     st.title("🚀 Central de Simulados ANCORD")
     nome_usuario = st.text_input("Seu Nome Completo:", placeholder="Ex: Caio Vitor")
@@ -108,14 +102,16 @@ if not st.session_state.simulado_iniciado:
         else:
             banco_filtrado = [q for q in BANCO_QUESTOES if q.get('modulo') in materias_selecionadas] if materias_selecionadas else BANCO_QUESTOES
             if banco_filtrado:
+                # RESET CRÍTICO: Limpa respostas anteriores antes de começar
+                st.session_state.respostas_usuario = {}
                 st.session_state.nome_usuario = nome_usuario
                 st.session_state.materias_selecionadas = materias_selecionadas
                 st.session_state.questoes_sorteadas = random.sample(banco_filtrado, k=min(20, len(banco_filtrado)))
                 st.session_state.inicio_tempo = time.time()
                 st.session_state.simulado_iniciado = True
+                st.session_state.dados_enviados = False
                 st.rerun()
 
-# 2. O Simulado
 elif not st.session_state.finalizado:
     with st.sidebar:
         st.write(f"SDR: **{st.session_state.get('nome_usuario', '')}**")
@@ -129,11 +125,14 @@ elif not st.session_state.finalizado:
             
             key = f"q_{i}"
             opcoes = q['opcoes']
+            
+            # Usamos index=None para que nenhuma opção venha marcada por padrão
             st.session_state.respostas_usuario[key] = st.radio(
                 "Alternativas:", 
                 options=list(opcoes.keys()), 
                 format_func=lambda x: f"{x}) {opcoes[x]}",
-                key=key
+                key=key,
+                index=None
             )
             st.divider()
 
@@ -141,7 +140,6 @@ elif not st.session_state.finalizado:
             st.session_state.finalizado = True
             st.rerun()
 
-# 3. Resultado
 else:
     total = len(st.session_state.questoes_sorteadas)
     acertos = sum(1 for i, q in enumerate(st.session_state.questoes_sorteadas) 
@@ -157,6 +155,8 @@ else:
     col2.metric("Aproveitamento", f"{(acertos/total)*100:.1f}%")
 
     if st.button("🔄 Novo Simulado"):
+        # Limpa o estado para recomeçar do zero
         for k in ['simulado_iniciado', 'finalizado', 'questoes_sorteadas', 'respostas_usuario', 'dados_enviados', 'inicio_tempo']:
-            if k in st.session_state: del st.session_state[k]
+            if k in st.session_state:
+                del st.session_state[k]
         st.rerun()
