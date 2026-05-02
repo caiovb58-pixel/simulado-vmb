@@ -19,7 +19,7 @@ def verificar_login(nome, senha):
             "gsheets", 
             type=GSheetsConnection, 
             ttl=0,
-            private_key=p_key
+    
         )
         
         # Lê a aba onde estão os cadastros
