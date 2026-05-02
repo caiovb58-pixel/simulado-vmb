@@ -9,7 +9,7 @@ from streamlit_gsheets import GSheetsConnection
 # 1. Configuração da página e Identidade Visual
 st.set_page_config(page_title="Simulado ANCORD - VMB Invest", page_icon="⚖️")
 
-# Logo (Certifique-se de que o arquivo existe no repositório)
+# Logo
 try:
     st.image("vmb_logo_fundo_branco.png", use_container_width=True)
 except:
@@ -18,14 +18,25 @@ except:
 # --- FUNÇÃO PARA SALVAR NO GOOGLE SHEETS ---
 def salvar_resultado(nome, materias, acertos, total):
     try:
+        # CORREÇÃO CRÍTICA: Tratamento da chave privada para evitar erro de PEM/Padding
+        if "connections" in st.secrets and "gsheets" in st.secrets["connections"]:
+            secret_data = st.secrets["connections"]["gsheets"]
+            # Se a chave foi colada com \n literais, transformamos em quebras de linha reais
+            if "private_key" in secret_data:
+                cleaned_key = secret_data["private_key"].replace("\\n", "\n")
+                # Forçamos a atualização na memória para a conexão atual
+                st.secrets.connections.gsheets.private_key = cleaned_key
+
+        # Inicializa conexão
         conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
         
-        # Tenta ler os dados atuais para anexar a nova linha
+        # Tenta ler os dados atuais
         try:
             dados_existentes = conn.read(worksheet="Resultados")
-        except:
+        except Exception:
             dados_existentes = pd.DataFrame(columns=["Data", "Nome", "Materias", "Acertos", "Total", "Aproveitamento"])
         
+        # Cria a nova linha
         nova_linha = pd.DataFrame([{
             "Data": datetime.now().strftime("%d/%m/%Y %H:%M"),
             "Nome": nome,
@@ -35,23 +46,26 @@ def salvar_resultado(nome, materias, acertos, total):
             "Aproveitamento": f"{(acertos/total)*100:.1f}%"
         }])
         
+        # Concatenação robusta
         if dados_existentes is None or dados_existentes.empty:
             dados_atualizados = nova_linha
         else:
             dados_existentes = dados_existentes.dropna(how='all', axis=0).dropna(how='all', axis=1)
             dados_atualizados = pd.concat([dados_existentes, nova_linha], ignore_index=True)
         
+        # Envio para o Google Sheets
         conn.update(worksheet="Resultados", data=dados_atualizados)
         st.success("✅ Desempenho registrado na planilha com sucesso!")
         
     except Exception as e:
         st.error(f"Erro ao salvar dados: {e}")
+        st.info("Dica: Verifique se a 'private_key' nas Secrets está entre aspas triplas e sem espaços extras.")
 
-# --- FUNÇÃO DO CRONÔMETRO (Fragment para não recarregar a página toda) ---
+# --- FUNÇÃO DO CRONÔMETRO ---
 @st.fragment(run_every=1)
 def renderizar_cronometro():
     if 'inicio_tempo' in st.session_state:
-        tempo_limite = 30 * 60 # 30 minutos
+        tempo_limite = 30 * 60 
         tempo_passado = time.time() - st.session_state.inicio_tempo
         tempo_restante = max(0, tempo_limite - tempo_passado)
 
@@ -65,21 +79,20 @@ def renderizar_cronometro():
         cor = "red" if tempo_restante < 300 else "white"
         st.markdown(f"<h1 style='text-align: center; color: {cor};'>{mins:02d}:{secs:02d}</h1>", unsafe_allow_html=True)
 
-# --- CONTROLE DE ESTADO (Session State) ---
-if 'simulado_iniciado' not in st.session_state:
-    st.session_state.simulado_iniciado = False
-if 'finalizado' not in st.session_state:
-    st.session_state.finalizado = False
-if 'questoes_sorteadas' not in st.session_state:
-    st.session_state.questoes_sorteadas = []
-if 'respostas_usuario' not in st.session_state:
-    st.session_state.respostas_usuario = {}
-if 'dados_enviados' not in st.session_state:
-    st.session_state.dados_enviados = False
+# --- CONTROLE DE ESTADO ---
+for key, val in {
+    'simulado_iniciado': False, 
+    'finalizado': False, 
+    'questoes_sorteadas': [], 
+    'respostas_usuario': {}, 
+    'dados_enviados': False
+}.items():
+    if key not in st.session_state:
+        st.session_state[key] = val
 
 # --- LÓGICA DE NAVEGAÇÃO ---
 
-# Interface 1: Menu de Início
+# 1. Menu de Início
 if not st.session_state.simulado_iniciado:
     st.title("🚀 Central de Simulados ANCORD")
     nome_usuario = st.text_input("Seu Nome Completo:", placeholder="Ex: Caio Vitor")
@@ -100,10 +113,10 @@ if not st.session_state.simulado_iniciado:
                 st.session_state.simulado_iniciado = True
                 st.rerun()
 
-# Interface 2: O Simulado
+# 2. O Simulado
 elif not st.session_state.finalizado:
     with st.sidebar:
-        st.write(f"SDR: **{st.session_state.nome_usuario}**")
+        st.write(f"SDR: **{st.session_state.get('nome_usuario', '')}**")
         renderizar_cronometro()
             
     st.title("✍️ Simulado em Andamento")
@@ -126,7 +139,7 @@ elif not st.session_state.finalizado:
             st.session_state.finalizado = True
             st.rerun()
 
-# Interface 3: Resultado e Gabarito
+# 3. Resultado
 else:
     total = len(st.session_state.questoes_sorteadas)
     acertos = sum(1 for i, q in enumerate(st.session_state.questoes_sorteadas) 
@@ -142,6 +155,6 @@ else:
     col2.metric("Aproveitamento", f"{(acertos/total)*100:.1f}%")
 
     if st.button("🔄 Novo Simulado"):
-        for k in ['simulado_iniciado', 'finalizado', 'questoes_sorteadas', 'respostas_usuario', 'dados_enviados']:
-            del st.session_state[k]
+        for k in ['simulado_iniciado', 'finalizado', 'questoes_sorteadas', 'respostas_usuario', 'dados_enviados', 'inicio_tempo']:
+            if k in st.session_state: del st.session_state[k]
         st.rerun()
