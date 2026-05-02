@@ -15,9 +15,15 @@ st.image("vmb_logo_fundo_branco.png", use_container_width=True)
 # --- FUNÇÃO PARA SALVAR NO GOOGLE SHEETS ---
 def salvar_resultado(nome, materias, acertos, total):
     try:
-        # Correção aqui: a conexão deve estar indentada e abaixo do try
         conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
         
+        # 1. Tenta ler os dados atuais. Se a aba estiver vazia ou der erro, cria um DataFrame vazio.
+        try:
+            dados_existentes = conn.read(worksheet="Resultados")
+        except:
+            dados_existentes = pd.DataFrame(columns=["Data", "Nome", "Materias", "Acertos", "Total", "Aproveitamento"])
+        
+        # 2. Cria a nova linha com os dados atuais
         nova_linha = pd.DataFrame([{
             "Data": datetime.now().strftime("%d/%m/%Y %H:%M"),
             "Nome": nome,
@@ -27,11 +33,18 @@ def salvar_resultado(nome, materias, acertos, total):
             "Aproveitamento": f"{(acertos/total)*100:.1f}%"
         }])
         
-        # Lê dados existentes e anexa o novo
-        dados_existentes = conn.read(worksheet="Resultados")
-        dados_atualizados = pd.concat([dados_existentes, nova_linha], ignore_index=True)
+        # 3. Une os dados garantindo que não haja falha por tipos de dados diferentes
+        if dados_existentes is None or dados_existentes.empty:
+            dados_atualizados = nova_linha
+        else:
+            # Remove colunas vazias ou nulas que o GSheets às vezes traz
+            dados_existentes = dados_existentes.dropna(how='all', axis=0).dropna(how='all', axis=1)
+            dados_atualizados = pd.concat([dados_existentes, nova_linha], ignore_index=True)
         
+        # 4. Envia de volta para a planilha
         conn.update(worksheet="Resultados", data=dados_atualizados)
+        st.success("✅ Desempenho registrado na planilha com sucesso!")
+        
     except Exception as e:
         st.error(f"Erro ao salvar dados: {e}")
 
@@ -137,7 +150,7 @@ else:
                       if st.session_state.respostas_usuario.get(f"q_{i}") == q['resposta_correta'])
         percentual = (acertos / total) * 100
 
-        # Lógica de envio único
+        # Lógica de envio único para a planilha
         if not st.session_state.dados_enviados:
             salvar_resultado(st.session_state.nome_usuario, st.session_state.materias_selecionadas, acertos, total)
             st.session_state.dados_enviados = True
