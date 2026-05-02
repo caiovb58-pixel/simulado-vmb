@@ -2,6 +2,7 @@ import streamlit as st
 import random
 import time
 import pandas as pd
+import os  # Adicionado para verificar se o arquivo existe
 from datetime import datetime, timedelta
 from streamlit_gsheets import GSheetsConnection
 
@@ -24,6 +25,13 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
+# --- FUNÇÃO PARA CARREGAR IMAGEM COM SEGURANÇA ---
+def exibir_logo(largura=200):
+    if os.path.exists("logo_vmb.png"):
+        st.image("logo_vmb.png", width=largura)
+    else:
+        st.title("VMB Invest")
+
 # --- CONTROLE DE ESTADO ---
 if 'logado' not in st.session_state:
     st.session_state.logado = False
@@ -36,9 +44,8 @@ if 'tempo_fim' not in st.session_state:
 
 # --- FUNÇÕES ---
 def logout():
-    st.session_state.logado = False
-    st.session_state.usuario_nome = ""
-    st.session_state.simulado_iniciado = False
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
     st.rerun()
 
 def verificar_login(nome, senha):
@@ -59,11 +66,7 @@ def verificar_login(nome, senha):
 if not st.session_state.logado:
     col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
-        try:
-            st.image("logo_vmb.png", width=200) # Certifique-se de ter esse arquivo
-        except:
-            st.title("VMB Invest")
-        
+        exibir_logo(200)
         st.subheader("Acesso ao Simulado")
         with st.form("login"):
             u = st.text_input("Usuário")
@@ -79,7 +82,7 @@ if not st.session_state.logado:
 
 # --- MENU LATERAL ---
 with st.sidebar:
-    st.image("logo_vmb.png", width=150) if 'logo_vmb.png' else st.title("VMB Invest")
+    exibir_logo(150)
     st.write(f"👤 **{st.session_state.usuario_nome}**")
     menu = st.radio("Navegação", ["Início", "Simulado ANCORD", "Evolução"])
     st.markdown("---")
@@ -99,15 +102,18 @@ elif menu == "Simulado ANCORD":
         st.title("Configurar Novo Simulado")
         modulos = sorted(list(set([q['modulo'] for q in BANCO_QUESTOES])))
         sel = st.multiselect("Selecione os módulos:", modulos, default=modulos)
-        qtd = st.number_input("Quantidade de questões:", min_value=5, max_value=20, value=20)
+        qtd = st.number_input("Quantidade de questões:", min_value=1, max_value=20, value=20)
 
         if st.button("🚀 INICIAR SIMULADO"):
             pool = [q for q in BANCO_QUESTOES if q['modulo'] in sel]
-            st.session_state.questoes_sorteadas = random.sample(pool, min(len(pool), qtd))
-            st.session_state.respostas_usuario = {}
-            st.session_state.tempo_fim = datetime.now() + timedelta(minutes=30)
-            st.session_state.simulado_iniciado = True
-            st.rerun()
+            if not pool:
+                st.warning("Selecione pelo menos um módulo.")
+            else:
+                st.session_state.questoes_sorteadas = random.sample(pool, min(len(pool), qtd))
+                st.session_state.respostas_usuario = {}
+                st.session_state.tempo_fim = datetime.now() + timedelta(minutes=30)
+                st.session_state.simulado_iniciado = True
+                st.rerun()
 
     else:
         # CRONÔMETRO
@@ -115,10 +121,9 @@ elif menu == "Simulado ANCORD":
         tempo_restante = st.session_state.tempo_fim - datetime.now()
         
         if tempo_restante.total_seconds() <= 0:
-            st.error("Tempo esgotado! Enviando respostas automaticamente...")
-            # Aqui você pode chamar a lógica de salvar automaticamente
+            st.error("Tempo esgotado!")
             st.session_state.simulado_iniciado = False
-            st.stop()
+            st.rerun()
 
         mins, secs = divmod(int(tempo_restante.total_seconds()), 60)
         placeholder_tempo.markdown(f"<div class='timer-text'>⏱️ Tempo Restante: {mins:02d}:{secs:02d}</div>", unsafe_allow_html=True)
@@ -132,7 +137,6 @@ elif menu == "Simulado ANCORD":
                 st.markdown("---")
             
             if st.form_submit_button("FINALIZAR E SALVAR"):
-                # Cálculo de Resultados
                 resultados_por_modulo = {}
                 acertos_totais = 0
                 
@@ -147,10 +151,8 @@ elif menu == "Simulado ANCORD":
                         acertos_totais += 1
                         resultados_por_modulo[mod]["acertos"] += 1
 
-                # Salvar no GSheets
                 try:
                     df_res = conn.read(worksheet="Resultados")
-                    # Salva uma linha por módulo para a evolução detalhada
                     novos_dados = []
                     for mod, dados in resultados_por_modulo.items():
                         perc = (dados['acertos'] / dados['total']) * 100
@@ -165,10 +167,10 @@ elif menu == "Simulado ANCORD":
                     
                     df_novo = pd.concat([df_res, pd.DataFrame(novos_dados)], ignore_index=True)
                     conn.update(worksheet="Resultados", data=df_novo)
-                    st.success("Simulado finalizado com sucesso!")
+                    st.success("Simulado finalizado!")
                     st.session_state.simulado_iniciado = False
                     st.balloons()
-                    time.sleep(2)
+                    time.sleep(1)
                     st.rerun()
                 except:
                     st.error("Erro ao salvar resultados.")
@@ -182,19 +184,15 @@ elif menu == "Evolução":
         
         if not meus.empty:
             tab1, tab2 = st.tabs(["Geral", "Por Matéria"])
-            
             with tab1:
-                # Evolução temporal média
-                meus['Data'] = pd.to_datetime(meus['Data'], format="%d/%m/%Y")
-                evolucao_diaria = meus.groupby('Data')['Nota'].mean()
+                meus['Data_dt'] = pd.to_datetime(meus['Data'], format="%d/%m/%Y")
+                evolucao_diaria = meus.groupby('Data_dt')['Nota'].mean()
                 st.line_chart(evolucao_diaria)
-            
             with tab2:
-                # Desempenho por módulo
                 progresso_modulo = meus.groupby('Modulo')['Nota'].mean().reset_index()
                 st.bar_chart(data=progresso_modulo, x='Modulo', y='Nota')
-                st.dataframe(progresso_modulo, use_container_width=True)
+                st.table(progresso_modulo)
         else:
-            st.warning("Você ainda não completou nenhum simulado.")
+            st.warning("Nenhum dado encontrado.")
     except:
-        st.error("Erro ao carregar dados de evolução.")
+        st.error("Erro ao carregar evolução.")
