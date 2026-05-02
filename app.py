@@ -32,7 +32,7 @@ def verificar_login(nome, senha):
             (df_usuarios['Nome'].astype(str).str.strip() == nome_busca) & 
             (df_usuarios['Senha'].astype(str).str.strip() == senha_busca)
         ]
-        
+        st.write("Dados encontrados na planilha para teste:", df_usuarios)
         return not usuario_valido.empty
     except Exception as e:
         # Isso nos mostrará o erro técnico real (ex: permissão, aba não encontrada, etc)
