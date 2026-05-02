@@ -50,7 +50,7 @@ if not st.session_state.logado:
             st.title("VMB Invest")
             
         with st.form("login_form"):
-            st.subheader("Login do SDR")
+            st.subheader("Login")
             nome_input = st.text_input("Usuário (Nome Completo)")
             senha_input = st.text_input("Senha", type="password")
             botao_entrar = st.form_submit_button("Entrar")
