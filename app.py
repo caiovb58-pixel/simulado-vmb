@@ -14,8 +14,7 @@ st.image("vmb_logo_fundo_branco.png", use_container_width=True)
 
 # --- FUNÇÃO PARA SALVAR NO GOOGLE SHEETS ---
 def salvar_resultado(nome, materias, acertos, total):
-    try:
-        conn = st.connection("gsheets", type=GSheetsConnection)
+    try:conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
         
         nova_linha = pd.DataFrame([{
             "Data": datetime.now().strftime("%d/%m/%Y %H:%M"),
