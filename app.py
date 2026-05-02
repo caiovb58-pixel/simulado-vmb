@@ -9,28 +9,18 @@ from streamlit_gsheets import GSheetsConnection
 # 1. Configuração da página e Identidade Visual
 st.set_page_config(page_title="Simulado ANCORD - VMB Invest", page_icon="⚖️")
 
-# Logo
+# Logo ajustada para fundo escuro
 try:
-    st.image("vmb_logo_fundo_branco.png", use_container_width=True)
+    st.image("vmb_logo_fundo_preto.png", use_container_width=True)
 except:
     st.title("VMB Invest - Simulados")
 
-# --- FUNÇÃO PARA SALVAR NO GOOGLE SHEETS (VERSÃO ATUALIZADA) ---
+# --- FUNÇÃO PARA SALVAR NO GOOGLE SHEETS ---
 def salvar_resultado(nome, materias, acertos, total):
     try:
-        # Puxamos a chave e removemos espaços extras que causam o erro de Padding
-        p_key = st.secrets["connections"]["gsheets"]["private_key"].strip()
-        
-        # Se você colou com \n literais, isso resolve. 
-        # Se colou com quebras de linha reais, não afeta.
-        p_key = p_key.replace("\\n", "\n")
-
-        conn = st.connection(
-            "gsheets", 
-            type=GSheetsConnection, 
-            ttl=0, 
-            private_key=p_key
-        )
+        # Chamada simplificada para evitar o erro de 'unexpected keyword argument'
+        # O Streamlit buscará as credenciais automaticamente no painel de Secrets
+        conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
         
         try:
             # Tenta ler os dados atuais
@@ -48,7 +38,7 @@ def salvar_resultado(nome, materias, acertos, total):
             "Aproveitamento": f"{(acertos/total)*100:.1f}%"
         }])
         
-        # Concatenação robusta
+        # Concatenação robusta para manter o histórico
         if dados_existentes is None or dados_existentes.empty:
             dados_atualizados = nova_linha
         else:
