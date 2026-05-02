@@ -24,8 +24,10 @@ def salvar_resultado(nome, materias, acertos, total):
             if "private_key" in creds:
                 creds["private_key"] = creds["private_key"].replace("\\n", "\n")
             
-            # Removendo 'type' do dicionário para evitar conflito com o argumento fixo
+            # REMOÇÃO DE ARGUMENTOS CONFLITANTES:
+            # 'type' e 'spreadsheet' não podem ser passados via **kwargs no .connection()
             creds.pop("type", None)
+            creds.pop("spreadsheet", None)
             
             conn = st.connection("gsheets", type=GSheetsConnection, ttl=0, **creds)
         else:
@@ -102,7 +104,7 @@ if not st.session_state.simulado_iniciado:
         else:
             banco_filtrado = [q for q in BANCO_QUESTOES if q.get('modulo') in materias_selecionadas] if materias_selecionadas else BANCO_QUESTOES
             if banco_filtrado:
-                # RESET CRÍTICO: Limpa respostas anteriores antes de começar
+                # RESET DAS RESPOSTAS: Garante que as questões venham em branco
                 st.session_state.respostas_usuario = {}
                 st.session_state.nome_usuario = nome_usuario
                 st.session_state.materias_selecionadas = materias_selecionadas
@@ -118,6 +120,9 @@ elif not st.session_state.finalizado:
         renderizar_cronometro()
             
     st.title("✍️ Simulado em Andamento")
+    
+    # IMPORTANTE: No Streamlit, se usarmos o widget 'radio' dentro de um loop com chaves dinâmicas,
+    # resetar st.session_state.respostas_usuario já é suficiente para limpar os valores.
     with st.form("form_simulado"):
         for i, q in enumerate(st.session_state.questoes_sorteadas):
             st.markdown(f"**Questão {i+1}** | `{q.get('modulo', 'ANCORD')}`")
@@ -126,7 +131,7 @@ elif not st.session_state.finalizado:
             key = f"q_{i}"
             opcoes = q['opcoes']
             
-            # Usamos index=None para que nenhuma opção venha marcada por padrão
+            # index=None garante que nenhuma opção esteja pré-selecionada
             st.session_state.respostas_usuario[key] = st.radio(
                 "Alternativas:", 
                 options=list(opcoes.keys()), 
@@ -155,7 +160,7 @@ else:
     col2.metric("Aproveitamento", f"{(acertos/total)*100:.1f}%")
 
     if st.button("🔄 Novo Simulado"):
-        # Limpa o estado para recomeçar do zero
+        # Limpeza completa para o próximo SDR
         for k in ['simulado_iniciado', 'finalizado', 'questoes_sorteadas', 'respostas_usuario', 'dados_enviados', 'inicio_tempo']:
             if k in st.session_state:
                 del st.session_state[k]
