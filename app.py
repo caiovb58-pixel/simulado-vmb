@@ -6,15 +6,17 @@ from datetime import datetime
 from questoes import BANCO_QUESTOES
 from streamlit_gsheets import GSheetsConnection
 
-# Configuração da página e Tema Fixo (Configurar .streamlit/config.toml para dark)
+# Configuração da página e Tema Fixo
 st.set_page_config(page_title="Simulado ANCORD - VMB Invest", page_icon="⚖️")
 
-# Como o tema é fixo escuro, usamos o logo de fundo branco para contraste
+# Logo
 st.image("vmb_logo_fundo_branco.png", use_container_width=True)
 
 # --- FUNÇÃO PARA SALVAR NO GOOGLE SHEETS ---
 def salvar_resultado(nome, materias, acertos, total):
-    try:conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
+    try:
+        # Correção aqui: a conexão deve estar indentada e abaixo do try
+        conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
         
         nova_linha = pd.DataFrame([{
             "Data": datetime.now().strftime("%d/%m/%Y %H:%M"),
@@ -36,21 +38,22 @@ def salvar_resultado(nome, materias, acertos, total):
 # --- FUNÇÃO DO CRONÔMETRO ---
 @st.fragment(run_every=1)
 def renderizar_cronometro():
-    tempo_limite = 30 * 60
-    tempo_passado = time.time() - st.session_state.inicio_tempo
-    tempo_restante = max(0, tempo_limite - tempo_passado)
+    if 'inicio_tempo' in st.session_state:
+        tempo_limite = 30 * 60
+        tempo_passado = time.time() - st.session_state.inicio_tempo
+        tempo_restante = max(0, tempo_limite - tempo_passado)
 
-    if tempo_restante <= 0:
-        st.session_state.finalizado = True
-        st.rerun()
+        if tempo_restante <= 0:
+            st.session_state.finalizado = True
+            st.rerun()
 
-    mins, secs = divmod(int(tempo_restante), 60)
-    
-    st.title("⏳ Tempo")
-    cor = "red" if tempo_restante < 300 else "white"
-    st.markdown(f"<h1 style='text-align: center; color: {cor};'>{mins:02d}:{secs:02d}</h1>", unsafe_allow_html=True)
-    if tempo_restante < 300:
-        st.warning("⚠️ Menos de 5 min!")
+        mins, secs = divmod(int(tempo_restante), 60)
+        
+        st.title("⏳ Tempo")
+        cor = "red" if tempo_restante < 300 else "white"
+        st.markdown(f"<h1 style='text-align: center; color: {cor};'>{mins:02d}:{secs:02d}</h1>", unsafe_allow_html=True)
+        if tempo_restante < 300:
+            st.warning("⚠️ Menos de 5 min!")
 
 # 1. ESTADO INICIAL
 if 'simulado_iniciado' not in st.session_state:
@@ -68,7 +71,6 @@ if 'dados_enviados' not in st.session_state:
 if not st.session_state.simulado_iniciado:
     st.title("🚀 Central de Simulados ANCORD")
     
-    # Identificação do SDR
     nome_usuario = st.text_input("Seu Nome Completo:", placeholder="Ex: Caio Vitor")
     
     st.subheader("Configuração do Teste")
@@ -103,12 +105,8 @@ else:
         with st.sidebar:
             st.write(f"SDR: **{st.session_state.nome_usuario}**")
             renderizar_cronometro()
-    else:
-        st.sidebar.error("🚨 Simulado Encerrado")
-
-    st.title("✍️ Simulado em Andamento")
-    
-    if not st.session_state.finalizado:
+            
+        st.title("✍️ Simulado em Andamento")
         with st.form("form_simulado"):
             for i, q in enumerate(st.session_state.questoes_sorteadas):
                 st.markdown(f"**Questão {i+1}** | `{q.get('modulo', 'ANCORD')}`")
@@ -139,7 +137,7 @@ else:
                       if st.session_state.respostas_usuario.get(f"q_{i}") == q['resposta_correta'])
         percentual = (acertos / total) * 100
 
-        # Lógica de envio único para a planilha
+        # Lógica de envio único
         if not st.session_state.dados_enviados:
             salvar_resultado(st.session_state.nome_usuario, st.session_state.materias_selecionadas, acertos, total)
             st.session_state.dados_enviados = True
