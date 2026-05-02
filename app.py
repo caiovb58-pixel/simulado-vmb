@@ -12,19 +12,24 @@ st.set_page_config(page_title="Simulado ANCORD - VMB Invest", page_icon="⚖️"
 # --- FUNÇÃO DE AUTENTICAÇÃO ROBUSTA ---
 def verificar_login(nome, senha):
     try:
-        # Apenas isso. O Streamlit gerencia o resto via Secrets.
+        # Chamada ultra-simples. O Streamlit busca TUDO no [connections.gsheets]
         conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
+        
+        # Tenta ler a aba
         df_usuarios = conn.read(worksheet="Usuarios")
         
-        nome = str(nome).strip()
-        senha = str(senha).strip()
+        nome_limpo = str(nome).strip()
+        senha_limpa = str(senha).strip()
         
+        # Validação comparando strings puras
         usuario_valido = df_usuarios[
-            (df_usuarios['Nome'].astype(str).str.strip() == nome) & 
-            (df_usuarios['Senha'].astype(str).str.strip() == senha)
+            (df_usuarios['Nome'].astype(str).str.strip() == nome_limpo) & 
+            (df_usuarios['Senha'].astype(str).str.strip() == senha_limpa)
         ]
+        
         return not usuario_valido.empty
     except Exception as e:
+        # Se o erro de 'private_key' persistir aqui, o problema é a VERSÃO da biblioteca
         st.error(f"Erro na conexão: {e}")
         return False
 # --- ESTADO DE LOGIN ---
