@@ -18,17 +18,20 @@ except:
 # --- FUNÇÃO PARA SALVAR NO GOOGLE SHEETS ---
 def salvar_resultado(nome, materias, acertos, total):
     try:
-        # CORREÇÃO CRÍTICA: Tratamento da chave privada para evitar erro de PEM/Padding
+        # CORREÇÃO: Criamos um dicionário a partir das secrets para poder manipular a chave
         if "connections" in st.secrets and "gsheets" in st.secrets["connections"]:
-            secret_data = st.secrets["connections"]["gsheets"]
-            # Se a chave foi colada com \n literais, transformamos em quebras de linha reais
-            if "private_key" in secret_data:
-                cleaned_key = secret_data["private_key"].replace("\\n", "\n")
-                # Forçamos a atualização na memória para a conexão atual
-                st.secrets.connections.gsheets.private_key = cleaned_key
-
-        # Inicializa conexão
-        conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
+            # Convertemos para dicionário comum para permitir alteração
+            creds = dict(st.secrets["connections"]["gsheets"])
+            
+            # Se a chave tiver o problema dos \n literais, limpamos aqui
+            if "private_key" in creds:
+                creds["private_key"] = creds["private_key"].replace("\\n", "\n")
+            
+            # Inicializa a conexão usando o dicionário de credenciais limpo
+            conn = st.connection("gsheets", type=GSheetsConnection, ttl=0, **creds)
+        else:
+            # Caso as secrets já estejam perfeitas no painel do Streamlit
+            conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
         
         # Tenta ler os dados atuais
         try:
@@ -59,7 +62,6 @@ def salvar_resultado(nome, materias, acertos, total):
         
     except Exception as e:
         st.error(f"Erro ao salvar dados: {e}")
-        st.info("Dica: Verifique se a 'private_key' nas Secrets está entre aspas triplas e sem espaços extras.")
 
 # --- FUNÇÃO DO CRONÔMETRO ---
 @st.fragment(run_every=1)
