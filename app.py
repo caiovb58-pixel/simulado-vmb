@@ -12,30 +12,27 @@ st.set_page_config(page_title="Simulado ANCORD - VMB Invest", page_icon="⚖️"
 # --- FUNÇÃO DE AUTENTICAÇÃO COM DIAGNÓSTICO ---
 def verificar_login(nome, senha):
     try:
-        # DIAGNÓSTICO 1: Início da tentativa
-        st.info("Tentando estabelecer conexão com o Google Sheets...")
+        # DIAGNÓSTICO: Rastreadores de conexão
+        st.info("Tentando estabelecer conexão com o Planilhas Google...")
         conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
         
-        # DIAGNÓSTICO 2: Tentativa de leitura
         st.info("Conexão inicializada. Tentando ler a aba 'Usuarios'...")
         df_usuarios = conn.read(worksheet="Usuarios")
         
-        # DIAGNÓSTICO 3: Sucesso na leitura
         st.success("Dados da planilha lidos com sucesso!")
         
         # Limpeza de dados para comparação
         nome_busca = str(nome).strip()
         senha_busca = str(senha).strip()
         
-        # Validação robusta
+        # --- ALTERAÇÃO APLICADA AQUI: Validação ignorando maiúsculas/minúsculas ---
         usuario_valido = df_usuarios[
-            (df_usuarios['Nome'].astype(str).str.strip() == nome_busca) & 
+            (df_usuarios['Nome'].astype(str).str.strip().str.upper() == nome_busca.upper()) & 
             (df_usuarios['Senha'].astype(str).str.strip() == senha_busca)
         ]
-        st.write("Dados encontrados na planilha para teste:", df_usuarios)
+        
         return not usuario_valido.empty
     except Exception as e:
-        # Isso nos mostrará o erro técnico real (ex: permissão, aba não encontrada, etc)
         st.error(f"Erro detalhado na conexão: {e}")
         return False
 
@@ -68,9 +65,7 @@ if not st.session_state.logado:
                     time.sleep(1)
                     st.rerun()
                 else:
-                    # Se os diagnósticos acima deram certo e caiu aqui, 
-                    # significa que o nome/senha apenas não batem com a planilha.
-                    st.error("Usuário ou senha incorretos na base de dados.")
+                    st.error("Usuário ou senha incorreta na base de dados.")
     st.stop()
 
 # --- CONTEÚDO DO APP ABAIXO ---
