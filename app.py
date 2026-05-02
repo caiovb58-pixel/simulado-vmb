@@ -9,14 +9,19 @@ from streamlit_gsheets import GSheetsConnection
 # 1. Configuração da página
 st.set_page_config(page_title="Simulado ANCORD - VMB Invest", page_icon="⚖️", layout="wide")
 
-# --- FUNÇÃO DE AUTENTICAÇÃO ---
+# --- FUNÇÃO DE AUTENTICAÇÃO COM DIAGNÓSTICO ---
 def verificar_login(nome, senha):
     try:
-        # Criamos a conexão sem passar parâmetros manuais
+        # DIAGNÓSTICO 1: Início da tentativa
+        st.info("Tentando estabelecer conexão com o Google Sheets...")
         conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
         
-        # Lemos a aba de usuários
+        # DIAGNÓSTICO 2: Tentativa de leitura
+        st.info("Conexão inicializada. Tentando ler a aba 'Usuarios'...")
         df_usuarios = conn.read(worksheet="Usuarios")
+        
+        # DIAGNÓSTICO 3: Sucesso na leitura
+        st.success("Dados da planilha lidos com sucesso!")
         
         # Limpeza de dados para comparação
         nome_busca = str(nome).strip()
@@ -30,8 +35,8 @@ def verificar_login(nome, senha):
         
         return not usuario_valido.empty
     except Exception as e:
-        # Isso nos mostrará o erro real se a conexão falhar
-        st.error(f"Erro na conexão com a base de dados: {e}")
+        # Isso nos mostrará o erro técnico real (ex: permissão, aba não encontrada, etc)
+        st.error(f"Erro detalhado na conexão: {e}")
         return False
 
 # --- ESTADO DE LOGIN ---
@@ -63,7 +68,9 @@ if not st.session_state.logado:
                     time.sleep(1)
                     st.rerun()
                 else:
-                    st.error("Usuário ou senha incorretos.")
+                    # Se os diagnósticos acima deram certo e caiu aqui, 
+                    # significa que o nome/senha apenas não batem com a planilha.
+                    st.error("Usuário ou senha incorretos na base de dados.")
     st.stop()
 
 # --- CONTEÚDO DO APP ABAIXO ---
