@@ -41,6 +41,36 @@ for k, v in defaults.items():
     if k not in st.session_state:
         st.session_state[k] = v
 
+# --- CONEXÃO ---
+conn = st.connection("gsheets", type=GSheetsConnection)
+
+# --- PROGRESSO (NOVO) ---
+def carregar_progresso(usuario):
+    try:
+        df = conn.read(worksheet="Progresso")
+        user = df[df["Usuario"] == usuario]
+
+        if not user.empty:
+            return int(user.iloc[-1]["Simulado_Atual"])
+        return 0
+    except:
+        return 0
+
+def salvar_progresso(usuario, indice, status):
+    try:
+        df = conn.read(worksheet="Progresso")
+
+        novo = pd.DataFrame([{
+            "Usuario": usuario,
+            "Simulado_Atual": indice,
+            "Ultimo_Status": status,
+            "Atualizado_em": datetime.now().strftime("%d/%m/%Y %H:%M")
+        }])
+
+        conn.update(worksheet="Progresso", data=pd.concat([df, novo]))
+    except:
+        pass
+
 # --- LOGOUT ---
 def logout():
     for k in list(st.session_state.keys()):
@@ -50,7 +80,6 @@ def logout():
 # --- LOGIN ---
 def login(u, p):
     try:
-        conn = st.connection("gsheets", type=GSheetsConnection)
         df = conn.read(worksheet="Usuarios")
         return not df[(df["Nome"] == u) & (df["Senha"] == p)].empty
     except:
@@ -61,10 +90,15 @@ if not st.session_state.logado:
         st.title("🔐 Acesso ao Simulado")
         u = st.text_input("Usuário")
         p = st.text_input("Senha", type="password")
+
         if st.form_submit_button("Entrar"):
             if login(u, p):
                 st.session_state.logado = True
                 st.session_state.usuario = u
+
+                # 🔥 CARREGA PROGRESSO SALVO
+                st.session_state.simulado_atual_indice = carregar_progresso(u)
+
                 st.rerun()
             else:
                 st.error("Credenciais inválidas")
@@ -73,41 +107,38 @@ if not st.session_state.logado:
 # --- SIDEBAR ---
 with st.sidebar:
     st.write(f"👤 {st.session_state.usuario}")
-    menu = st.radio("Menu", ["Simulado", "Evolução"])
+    menu = st.radio("Menu", ["Simulado", "Evolução", "Admin"])
     if st.button("🚪 Sair"):
         logout()
 
-conn = st.connection("gsheets", type=GSheetsConnection)
-
-# --- TELA DE BOAS-VINDAS ---
+# --- BOAS-VINDAS ---
 if "primeiro" not in st.session_state:
     st.title("🚀 Simulado ANCORD - Preparação Profissional")
 
     st.markdown("""
     ### 🎯 Objetivo
-    Este simulado replica o nível real da prova ANCORD, preparando você para performance máxima.
+    Simular a prova real ANCORD com alto nível de exigência.
 
     ### 📋 Estrutura
-    - 20 questões por simulado (ou menos, dependendo do banco)
-    - Tempo: **30 minutos**
-    - Baseado no cronograma de 12 semanas
+    - Até 20 questões
+    - Tempo: 30 minutos
+    - Baseado no plano de 12 semanas
 
     ### ⚠️ Regras
-    - Não consultar materiais externos
-    - Não atualizar a página
-    - Manter foco total durante o simulado
+    - Sem consulta externa
+    - Não atualizar página
+    - Foco total
 
     ### 🏆 Aprovação
-    - Mínimo de **70% de acerto**
+    - 70% ou mais
 
     ---
     ### 💬 Mentalidade
-    > "Disciplina supera motivação. Quem executa, vence."
+    > "Disciplina supera motivação."
 
-    Entre como candidato. Saia aprovado.
     """)
 
-    if st.button("🔥 Começar Simulado"):
+    if st.button("🔥 Começar"):
         st.session_state.primeiro = False
         st.rerun()
 
@@ -126,7 +157,7 @@ if menu == "Simulado":
             materias = DIC_SIMULADOS[sim_atual]
             pool = [q for q in BANCO_QUESTOES if q["modulo"] in materias]
 
-            qtd = min(20, len(pool))  # 🔥 VOLTOU FLEXÍVEL
+            qtd = min(20, len(pool))
 
             st.session_state.questoes = random.sample(pool, qtd)
             st.session_state.respostas = {}
@@ -182,12 +213,10 @@ if menu == "Simulado":
 
             enviar = st.form_submit_button("Finalizar Simulado")
 
-        # 🔥 AUTO REFRESH (SEM QUEBRAR BOTÃO)
         if not st.session_state.mostrar_resultado and not enviar:
             time.sleep(1)
             st.rerun()
 
-        # 🔥 FINALIZAÇÃO GARANTIDA
         if enviar or restante == 0:
 
             acertos = 0
@@ -200,6 +229,7 @@ if menu == "Simulado":
             nota = (acertos / total) * 100 if total > 0 else 0
             status = "Aprovado" if nota >= 70 else "Reprovado"
 
+            # salvar resultado
             try:
                 df = conn.read(worksheet="Resultados")
 
@@ -212,9 +242,18 @@ if menu == "Simulado":
                 }])
 
                 conn.update(worksheet="Resultados", data=pd.concat([df, novo]))
-
             except:
                 pass
+
+            # 🔥 SALVAR PROGRESSO
+            if status == "Aprovado" and st.session_state.simulado_atual_indice < 5:
+                st.session_state.simulado_atual_indice += 1
+
+            salvar_progresso(
+                st.session_state.usuario,
+                st.session_state.simulado_atual_indice,
+                status
+            )
 
             st.session_state.mostrar_resultado = True
 
@@ -222,16 +261,14 @@ if menu == "Simulado":
             st.markdown(f"### Status: {status}")
 
             if status == "Aprovado":
-                st.success("Você avançou para o próximo simulado.")
-                if st.session_state.simulado_atual_indice < 5:
-                    st.session_state.simulado_atual_indice += 1
+                st.success("Você avançou.")
             else:
-                st.warning("Refaça este simulado para avançar.")
+                st.warning("Refaça para avançar.")
 
             st.session_state.simulado_iniciado = False
 
 # --- EVOLUÇÃO ---
-else:
+elif menu == "Evolução":
     st.title("Meu Desempenho")
 
     try:
@@ -240,6 +277,25 @@ else:
 
         st.dataframe(user.sort_values(by="Data", ascending=False))
         st.line_chart(user["Nota"])
+    except:
+        st.error("Erro ao carregar dados")
+
+# --- ADMIN ---
+else:
+    st.title("📊 Dashboard Admin")
+
+    try:
+        df = conn.read(worksheet="Resultados")
+
+        st.subheader("Todos resultados")
+        st.dataframe(df)
+
+        st.subheader("Média por usuário")
+        media = df.groupby("Usuario")["Nota"].mean().sort_values(ascending=False)
+        st.dataframe(media)
+
+        st.subheader("Status geral")
+        st.bar_chart(df["Status"].value_counts())
 
     except:
         st.error("Erro ao carregar dados")
