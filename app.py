@@ -3,8 +3,7 @@ import random
 import pandas as pd
 from datetime import datetime, timedelta
 from streamlit_gsheets import GSheetsConnection
-import matplotlib.pyplot as plt
-import numpy as np
+import plotly.graph_objects as go
 
 # --- CONFIG ---
 st.set_page_config(page_title="Simulado ANCORD", layout="wide")
@@ -159,9 +158,6 @@ if menu == "Simulado":
 
             if enviar or restante <= 0:
 
-                tempo_total = (datetime.now() - st.session_state.inicio_prova).total_seconds()
-                tempo_medio = tempo_total / len(st.session_state.questoes)
-
                 acertos = 0
                 por_modulo = {}
 
@@ -175,50 +171,24 @@ if menu == "Simulado":
                         por_modulo[mod][0] += 1
 
                 nota = (acertos / len(st.session_state.questoes)) * 100
-                status = "Aprovado" if nota >= 70 else "Reprovado"
 
                 st.success(f"Nota: {nota:.1f}%")
 
-                # --- RADAR REAL ---
+                # --- RADAR COM PLOTLY ---
                 categorias = list(por_modulo.keys())
                 valores = [(v[0]/v[1])*100 for v in por_modulo.values()]
 
-                valores += valores[:1]
-                angles = np.linspace(0, 2*np.pi, len(categorias), endpoint=False).tolist()
-                angles += angles[:1]
+                fig = go.Figure()
 
-                fig, ax = plt.subplots(subplot_kw=dict(polar=True))
-                ax.plot(angles, valores)
-                ax.fill(angles, valores, alpha=0.3)
-                ax.set_xticks(angles[:-1])
-                ax.set_xticklabels(categorias)
+                fig.add_trace(go.Scatterpolar(
+                    r=valores,
+                    theta=categorias,
+                    fill='toself'
+                ))
 
-                st.pyplot(fig)
+                fig.update_layout(
+                    polar=dict(radialaxis=dict(visible=True, range=[0,100])),
+                    showlegend=False
+                )
 
-                # --- SALVAR ---
-                df_res = conn.read(worksheet="Resultados")
-                novo = pd.DataFrame([{
-                    "Usuario": st.session_state.usuario,
-                    "Simulado": sim_atual,
-                    "Nota": nota,
-                    "Tempo_medio": tempo_medio,
-                    "Data": datetime.now().strftime("%d/%m/%Y %H:%M")
-                }])
-
-                conn.update(worksheet="Resultados", data=pd.concat([df_res, novo]))
-
-                salvar_progresso(st.session_state.usuario, progresso+1, status)
-
-                st.session_state.simulado_iniciado = False
-                st.rerun()
-
-# --- EVOLUÇÃO ---
-elif menu == "Evolução":
-
-    df = conn.read(worksheet="Resultados")
-    user = df[df["Usuario"] == st.session_state.usuario]
-
-    if not user.empty:
-        st.line_chart(user["Nota"])
-    else:
-        st.info("Sem dados ainda")
+                st.plotly_chart(fig, use_container_width=True)
