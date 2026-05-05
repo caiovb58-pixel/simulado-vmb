@@ -933,8 +933,6 @@ BANCO_QUESTOES = [
         "opcoes": ["A) Produção aumenta proporcionalmente ao fator", "B) Produção total é reduzida", "C) Mantendo fatores, produção total aumenta", "D) Aumentando um fator, a produção proporcional deste fator é reduzida"],
         "resposta": "D"
     },
-
-    # --- MÓDULO: INSTITUIÇÕES E INTERMEDIADORES ---
     {
         "id": "20234001",
         "tema": "Instituições Financeiras",
@@ -1089,5 +1087,4 @@ BANCO_QUESTOES = [
         "CDB pré-fixado com juros mensais"
     ],
     "resposta": "NTN-B Principal 2028"
-    ]
     ]
