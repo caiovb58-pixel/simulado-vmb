@@ -437,8 +437,6 @@ BANCO_QUESTOES = [
         "resposta_correta": "B",
         "explicacao": "Depósitos, saques ou pagamentos em espécie de valor igual ou superior a R$ 50 mil devem ser comunicados independentemente de suspeita."
     },
-
-    # --- NOVAS QUESTÕES (PDF 1 & 2) ---
     {
         "id": 50,
         "modulo": "Fundos de Investimentos",
@@ -1006,5 +1004,98 @@ BANCO_QUESTOES = [
         "pergunta": "Qual das opções abaixo configura um banco múltiplo?",
         "opcoes": ["A) Banco de Desenv. com carteira imobiliária", "B) Banco Comercial (apenas)", "C) Banco com carteira de financiamento e arrendamento", "D) Banco de investimento com carteira de arrendamento mercantil"],
         "resposta": "D"
-    }
-]
+    },# questao_id: 20234022
+{
+    "modulo": "Matemática Financeira",
+    "pergunta": "Germano resolveu trocar sua geladeira. Promoção à vista com 10% de desconto ou 10 vezes de R$ 280,00 sem desconto. Qual a taxa de juros embutida na operação?",
+    "opcoes": [
+        "26,27% a.a.",
+        "1,86% a.m.",
+        "Taxa zero, pois parcelamento foi sem juros.",
+        "1,94% a.m."
+    ],
+    "resposta": "26,27% a.a."
+},
+# questao_id: 4202029 / 4247 (Duplicata removida)
+{
+    "modulo": "Matemática Financeira",
+    "pergunta": "No conceito de taxa over, a equivalente diária é descapitalizada segundo o regime:",
+    "opcoes": [
+        "Composto, por 360 dias corridos.",
+        "Composto, por 252 dias úteis.",
+        "Simples, por 360 dias corridos.",
+        "Simples, por 252 dias úteis."
+    ],
+    "resposta": "Composto, por 252 dias úteis."
+},
+# questao_id: 4202030
+{
+    "modulo": "Matemática Financeira",
+    "pergunta": "Investidor comprou LFT com prazo de 846 dias úteis, com ágio de 0.20% a.a., pagando PU de R$ 4.446. O preço par desse papel é:",
+    "opcoes": ["4.256", "4.446", "4.416", "4.387"],
+    "resposta": "4.416"
+},
+# questao_id: 20234030
+{
+    "modulo": "Matemática Financeira",
+    "pergunta": "Carro financiado em 24 parcelas de R$ 3.106,85, com a primeira no ato. Valor financiado: R$ 60 mil. Qual a taxa?",
+    "opcoes": ["1,82% mês", "26,68% ano", "1,76% mês", "24,86% ano"],
+    "resposta": "26,68% ano"
+},
+# questao_id: 4254
+{
+    "modulo": "Matemática Financeira",
+    "pergunta": "Se o VPL de um projeto de investimento for positivo, isso indica que:",
+    "opcoes": [
+        "Não devemos investir, resultado indiferente.",
+        "Podemos investir, o projeto é lucrativo para essa taxa.",
+        "Podemos investir, resultado indiferente.",
+        "Não devemos investir, o projeto não é lucrativo."
+    ],
+    "resposta": "Podemos investir, o projeto é lucrativo para essa taxa."
+},
+# questao_id: 4239
+{
+    "modulo": "Clubes de Investimentos",
+    "pergunta": "Número máximo de participantes de um Clube de Ações:",
+    "opcoes": ["50", "150", "3", "30"],
+    "resposta": "50"
+},
+# questao_id: 422039
+{
+    "modulo": "Clubes de Investimentos",
+    "pergunta": "Qual o percentual máximo do patrimônio que um Clube pode ter em Títulos Públicos Federais?",
+    "opcoes": ["67%", "33%", "80%", "100%"],
+    "resposta": "33%"
+},
+# questao_id: 4103
+{
+    "modulo": "Administração de Risco",
+    "pergunta": "Sobre o conceito de Value At Risk (VaR), assinale a correta:",
+    "opcoes": [
+        "Pode ser reduzido com hedge cambial.",
+        "Risco de crédito é a oscilação de valores na carteira.",
+        "Risco sistemático é reduzido com diversificação.",
+        "O VaR define a perda máxima potencial com um nível de confiança."
+    ],
+    "resposta": "O VaR define a perda máxima potencial com um nível de confiança."
+},
+# questao_id: 4123
+{
+    "modulo": "Administração de Risco",
+    "pergunta": "Uma carteira 100% composta por ações possui os seguintes riscos, EXCETO:",
+    "opcoes": ["Liquidez", "Mercado", "Crédito", "Sistemático"],
+    "resposta": "Crédito"
+},
+# questao_id: 20234024
+{
+    "modulo": "Administração de Risco",
+    "pergunta": "Para menor risco de crédito e menor risco de reinvestimento, qual a melhor escolha?",
+    "opcoes": [
+        "Tesouro IPCA 2028 com juros semestrais",
+        "Debêntures incentivadas 2031",
+        "NTN-B Principal 2028",
+        "CDB pré-fixado com juros mensais"
+    ],
+    "resposta": "NTN-B Principal 2028"
+}
