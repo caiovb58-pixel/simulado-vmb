@@ -3,7 +3,6 @@ import random
 import pandas as pd
 from datetime import datetime, timedelta
 from streamlit_gsheets import GSheetsConnection
-import time
 
 # --- CONFIG ---
 st.set_page_config(page_title="Simulado ANCORD", layout="wide")
@@ -12,6 +11,7 @@ ADMINS = ["Caio", "Admin"]
 
 from questoes import BANCO_QUESTOES
 
+# --- SIMULADOS ---
 DIC_SIMULADOS = {
     "Simulado 1 (Semanas 1 e 2)": ["Atividade do AAI", "Lavagem de Dinheiro"],
     "Simulado 2 (Semanas 3 e 4)": ["Mercado de Capitais", "Securitização e Recebíveis", "Derivativos"],
@@ -201,17 +201,10 @@ if menu == "Simulado":
                 tempo_total = (datetime.now() - st.session_state.inicio_prova).total_seconds()
                 tempo_medio = tempo_total / len(st.session_state.questoes)
 
-                acertos = 0
-                por_modulo = {}
-
-                for i, q in enumerate(st.session_state.questoes):
-                    mod = q["modulo"]
-                    por_modulo.setdefault(mod, [0,0])
-                    por_modulo[mod][1] += 1
-
-                    if st.session_state.respostas.get(i) == q["resposta_correta"]:
-                        acertos += 1
-                        por_modulo[mod][0] += 1
+                acertos = sum(
+                    1 for i, q in enumerate(st.session_state.questoes)
+                    if st.session_state.respostas.get(i) == q["resposta_correta"]
+                )
 
                 nota = (acertos / len(st.session_state.questoes)) * 100
                 status = "Aprovado" if nota >= 70 else "Reprovado"
@@ -219,7 +212,7 @@ if menu == "Simulado":
                 st.success(f"Nota: {nota:.1f}%")
                 st.write(f"⏱️ Tempo médio por questão: {tempo_medio:.1f}s")
 
-                # salvar resultado com proteção de coluna
+                # --- SALVAR RESULTADO ---
                 try:
                     df_res = conn.read(worksheet="Resultados")
                 except:
@@ -233,7 +226,12 @@ if menu == "Simulado":
                     "Data": datetime.now().strftime("%d/%m/%Y %H:%M")
                 }])
 
-                conn.update("Resultados", pd.concat([df_res, novo]))
+                df_final = pd.concat([df_res, novo], ignore_index=True)
+
+                conn.update(
+                    worksheet="Resultados",
+                    data=df_final
+                )
 
                 # progresso
                 novo_idx = progresso
@@ -243,6 +241,7 @@ if menu == "Simulado":
                 salvar_progresso(st.session_state.usuario, novo_idx, status)
                 st.session_state.simulado_atual_indice = novo_idx
                 st.session_state.simulado_iniciado = False
+                st.rerun()
 
 # --- EVOLUÇÃO ---
 elif menu == "Evolução":
@@ -266,4 +265,4 @@ elif menu == "Admin":
         st.error("Acesso restrito")
         st.stop()
 
-    st.dataframe(conn.read("Resultados"))
+    st.dataframe(conn.read(worksheet="Resultados"))
