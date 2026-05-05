@@ -380,5 +380,135 @@ BANCO_QUESTOES = [
         },
         "resposta_correta": "B",
         "explicacao": "O regulamento é o contrato principal entre o fundo e os cotistas."
+    },
+    {
+        "id": 40,
+        "modulo": "Lavagem de Dinheiro",
+        "pergunta": "Um indivíduo praticou o crime de lavagem de dinheiro através de organização criminosa. Nesse caso, esse indivíduo terá a sua pena:",
+        "opcoes": {
+            "A": "Aumentada em até 2/3",
+            "B": "Reduzida em até 2/3",
+            "C": "Aumentada em até 1/3",
+            "D": "Aumentada em até 3 anos"
+        },
+        "resposta_correta": "A",
+        "explicacao": "A Lei 9.613/98 prevê aumento de pena de um a dois terços se os crimes forem praticados de forma reiterada ou por intermédio de organização criminosa."
+    },
+    {
+        "id": 41,
+        "modulo": "Lavagem de Dinheiro",
+        "pergunta": "Sobre as etapas de lavagem de dinheiro, assinale a alternativa correta:\nI) Aquisição de obras de arte com recursos ilícitos é integração.\nII) Múltiplas transferências e vendas de ativos representa a ocultação.\nIII) Compra de empresas com o saldo das operações é colocação.\nIV) O primeiro depósito em conta é a colocação.",
+        "opcoes": {
+            "A": "V, F, F, V",
+            "B": "F, F, V, F",
+            "C": "F, V, F, V",
+            "D": "V, F, V, F"
+        },
+        "resposta_correta": "C",
+        "explicacao": "A fase de ocultação (layering) visa dificultar o rastreamento através de múltiplas operações, enquanto o primeiro depósito é a colocação."
+    },
+    {
+        "id": 42,
+        "modulo": "Lavagem de Dinheiro",
+        "pergunta": "Segundo a regulamentação, são consideradas Pessoas Expostas Politicamente (PPE), EXCETO:",
+        "opcoes": {
+            "A": "Presidente de Partido Político",
+            "B": "Chefe do Executivo que teve seu mandato finalizado há 7 anos",
+            "C": "Chefe do Executivo que teve seu mandato finalizado há 4 anos",
+            "D": "Enteada de senador"
+        },
+        "resposta_correta": "B",
+        "explicacao": "A condição de PPE perdura por 5 anos após a data em que a pessoa deixou de exercer o cargo ou função."
+    },
+    {
+        "id": 43,
+        "modulo": "Lavagem de Dinheiro",
+        "pergunta": "As instituições financeiras devem manter os registros das operações dos clientes identificados pelo prazo mínimo de:",
+        "opcoes": {
+            "A": "5 anos",
+            "B": "2 anos",
+            "C": "10 anos",
+            "D": "20 anos"
+        },
+        "resposta_correta": "C",
+        "explicacao": "Conforme a circular do BACEN e normas da CVM, o prazo de guarda de registros e documentos é de no mínimo 10 anos."
+    },
+    {
+        "id": 44,
+        "modulo": "Atividade do Assessor de Investimentos",
+        "pergunta": "É requisito mínimo para ser cadastrado como Assessor de Investimentos (AI):",
+        "opcoes": {
+            "A": "Efetuar o recolhimento de taxa mensal de Assessor",
+            "B": "Ter curso superior completo",
+            "C": "Ter sido aprovado em exame de qualificação técnica (Ancord)",
+            "D": "Possuir certificação CFP"
+        },
+        "resposta_correta": "C",
+        "explicacao": "A aprovação no exame da Ancord é o requisito técnico fundamental para o credenciamento e posterior registro na CVM."
+    },
+    {
+        "id": 45,
+        "modulo": "Atividade do Assessor de Investimentos",
+        "pergunta": "O Assessor de Investimentos que decide começar a trabalhar com 'Carteira Administrada' ou 'Consultoria' deve:",
+        "opcoes": {
+            "A": "Manter os dois registros ativos",
+            "B": "Solicitar a suspensão temporária",
+            "C": "Solicitar o cancelamento do seu registro de AI",
+            "D": "Apenas informar à corretora contratante"
+        },
+        "resposta_correta": "C",
+        "explicacao": "As atividades de AI e consultor/gestor são inconfundíveis e a regulação veda o exercício simultâneo, exigindo o cancelamento do registro anterior."
+    },
+    {
+        "id": 46,
+        "modulo": "Atividade do Assessor de Investimentos",
+        "pergunta": "Sobre a remuneração do Assessor de Investimentos (AI), é correto afirmar:",
+        "opcoes": {
+            "A": "Recebe salário fixo da corretora",
+            "B": "Pode cobrar consultoria diretamente do cliente",
+            "C": "A remuneração provém das operações realizadas pelos clientes de sua carteira (comissionamento)",
+            "D": "É proibido de receber qualquer tipo de rebate"
+        },
+        "resposta_correta": "C",
+        "explicacao": "O AI é remunerado pela instituição contratante com base na distribuição de produtos e corretagem gerada."
+    },
+    {
+        "id": 47,
+        "modulo": "Lavagem de Dinheiro",
+        "pergunta": "Qual o valor máximo da multa pecuniária que pode ser aplicada pelo descumprimento das normas de prevenção à lavagem de dinheiro?",
+        "opcoes": {
+            "A": "R$ 2.000.000,00",
+            "B": "R$ 500.000,00",
+            "C": "R$ 20.000.000,00",
+            "D": "R$ 1.000.000,00"
+        },
+        "resposta_correta": "C",
+        "explicacao": "A Lei 12.683/12 aumentou o teto da multa para 20 milhões de reais."
+    },
+    {
+        "id": 48,
+        "modulo": "Atividade do Assessor de Investimentos",
+        "pergunta": "O AI pode utilizar senha e assinatura eletrônica do cliente para realizar investimentos em seu nome, desde que tenha autorização por escrito?",
+        "opcoes": {
+            "A": "Sim, se for familiar próximo",
+            "B": "Sim, com procuração pública",
+            "C": "Não, é uma prática vedada em todos os casos",
+            "D": "Sim, se o cliente residir no exterior"
+        },
+        "resposta_correta": "C",
+        "explicacao": "É expressamente vedado ao AI a custódia ou o uso de senhas e assinaturas eletrônicas de uso pessoal do cliente."
+    },
+    {
+        "id": 49,
+        "modulo": "Lavagem de Dinheiro",
+        "pergunta": "Operações em espécie (dinheiro vivo) devem ser obrigatoriamente comunicadas ao COAF a partir de qual valor?",
+        "opcoes": {
+            "A": "R$ 10.000,00",
+            "B": "R$ 50.000,00",
+            "C": "R$ 100.000,00",
+            "D": "Qualquer valor"
+        },
+        "resposta_correta": "B",
+        "explicacao": "Depósitos, saques ou pagamentos em espécie de valor igual ou superior a R$ 50 mil devem ser comunicados independentemente de suspeita."
     }
 ]
