@@ -1505,7 +1505,7 @@ BANCO_QUESTOES = [
         "resposta_correta": "D",
         "explicacao": "Alterações que beneficiem o cotista (como redução de taxas) podem ser feitas sem a necessidade de convocação de Assembleia Geral[cite: 18]."
     },
-    {
+  {
         "id": 151,
         "modulo": "Clubes de Investimentos",
         "pergunta": "O percentual máximo do patrimônio que um Clube de Investimento pode ter aplicado em Títulos Públicos Federais é de:",
@@ -1516,7 +1516,7 @@ BANCO_QUESTOES = [
             "D": "100%"
         },
         "resposta_correta": "B",
-        "explicacao": Como no mínimo 67% deve estar em ações e outros ativos variáveis, o máximo permitido para outros ativos (como Títulos Públicos) é de 33%[cite: 18]."
+        "explicacao": "Como no mínimo 67% deve estar em ações e outros ativos variáveis, o máximo permitido para outros ativos (como Títulos Públicos) é de 33%."
     },
     {
         "id": 152,
