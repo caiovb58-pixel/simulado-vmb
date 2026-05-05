@@ -3,9 +3,7 @@ import random
 import pandas as pd
 from datetime import datetime, timedelta
 from streamlit_gsheets import GSheetsConnection
-
-# 🔁 AUTO REFRESH
-from streamlit_autorefresh import st_autorefresh
+import time
 
 # --- QUESTÕES ---
 try:
@@ -35,6 +33,7 @@ defaults = {
     "tempo": None,
     "usuario": ""
 }
+
 for k,v in defaults.items():
     if k not in st.session_state:
         st.session_state[k] = v
@@ -78,12 +77,13 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 
 # --- PRIMEIRO ACESSO ---
 if "primeiro" not in st.session_state:
-    st.title("Simulado ANCORD - Preparação Profissional")
+    st.title("Simulado ANCORD")
+
     st.markdown("""
     • 20 questões  
     • 30 minutos  
     • Aprovação: 70%  
-    • Não trocar de aba  
+    • Não atualizar a página  
     """)
 
     if st.button("Iniciar"):
@@ -112,9 +112,7 @@ if menu == "Simulado":
             st.rerun()
 
     else:
-        # 🔁 AUTO REFRESH A CADA 1s
-        st_autorefresh(interval=1000, key="timer")
-
+        # --- TIMER ---
         restante = int((st.session_state.tempo - datetime.now()).total_seconds())
 
         if restante <= 0:
@@ -124,16 +122,10 @@ if menu == "Simulado":
         minutos, segundos = divmod(restante, 60)
         st.info(f"⏱️ Tempo restante: {minutos:02d}:{segundos:02d}")
 
-        # 🚨 DETECÇÃO DE TROCA DE ABA
-        st.markdown("""
-        <script>
-        document.addEventListener("visibilitychange", function() {
-            if (document.hidden) {
-                alert("⚠️ Atenção: troca de aba detectada.");
-            }
-        });
-        </script>
-        """, unsafe_allow_html=True)
+        # 🔁 ATUALIZA AUTOMÁTICO
+        if not st.session_state.mostrar_resultado:
+            time.sleep(1)
+            st.rerun()
 
         with st.form("form"):
             for i, q in enumerate(st.session_state.questoes):
@@ -171,7 +163,6 @@ if menu == "Simulado":
 
             enviar = st.form_submit_button("Finalizar")
 
-        # FINALIZA AUTOMATICAMENTE
         if enviar or restante == 0:
             acertos = 0
             por_materia = {}
@@ -190,7 +181,6 @@ if menu == "Simulado":
 
             total=len(st.session_state.questoes)
             nota=(acertos/total)*100
-
             status = "Aprovado" if nota >= 70 else "Reprovado"
 
             try:
@@ -211,15 +201,8 @@ if menu == "Simulado":
 
             st.session_state.mostrar_resultado = True
 
-            st.markdown(f"## 🎯 Nota: {nota:.1f}%")
+            st.success(f"Nota: {nota:.1f}%")
             st.markdown(f"### Status: {status}")
-
-            st.subheader("Desempenho por matéria")
-            df_mat = pd.DataFrame([
-                {"Matéria": k, "Aproveitamento (%)": v[0]/v[1]*100}
-                for k,v in por_materia.items()
-            ])
-            st.bar_chart(df_mat.set_index("Matéria"))
 
 # --- EVOLUÇÃO ---
 else:
@@ -233,4 +216,4 @@ else:
         st.line_chart(user["Nota"])
 
     except:
-        st.error("Erro ao carregar")
+        st.error("Erro ao carregar dados")
