@@ -15,6 +15,9 @@ except ImportError:
 # --- CONFIG ---
 st.set_page_config(page_title="Simulado ANCORD", layout="wide")
 
+# --- ADMINS ---
+ADMINS = ["Caio", "Admin"]  # nomes exatamente iguais ao sheet
+
 # --- SIMULADOS ---
 DIC_SIMULADOS = {
     "Simulado 1 (Semanas 1 e 2)": ["Atividade do AAI", "Lavagem de Dinheiro"],
@@ -44,14 +47,14 @@ for k, v in defaults.items():
 # --- CONEXÃO ---
 conn = st.connection("gsheets", type=GSheetsConnection)
 
-# --- PROGRESSO (NOVO) ---
+# --- PROGRESSO (CORRIGIDO) ---
 def carregar_progresso(usuario):
     try:
         df = conn.read(worksheet="Progresso")
         user = df[df["Usuario"] == usuario]
 
         if not user.empty:
-            return int(user.iloc[-1]["Simulado_Atual"])
+            return int(user.iloc[0]["Simulado_Atual"])
         return 0
     except:
         return 0
@@ -60,16 +63,26 @@ def salvar_progresso(usuario, indice, status):
     try:
         df = conn.read(worksheet="Progresso")
 
-        novo = pd.DataFrame([{
-            "Usuario": usuario,
-            "Simulado_Atual": indice,
-            "Ultimo_Status": status,
-            "Atualizado_em": datetime.now().strftime("%d/%m/%Y %H:%M")
-        }])
+        if "Usuario" not in df.columns:
+            df = pd.DataFrame(columns=["Usuario","Simulado_Atual","Ultimo_Status","Atualizado_em"])
 
-        conn.update(worksheet="Progresso", data=pd.concat([df, novo]))
-    except:
-        pass
+        if usuario in df["Usuario"].values:
+            df.loc[df["Usuario"] == usuario, "Simulado_Atual"] = indice
+            df.loc[df["Usuario"] == usuario, "Ultimo_Status"] = status
+            df.loc[df["Usuario"] == usuario, "Atualizado_em"] = datetime.now().strftime("%d/%m/%Y %H:%M")
+        else:
+            novo = pd.DataFrame([{
+                "Usuario": usuario,
+                "Simulado_Atual": indice,
+                "Ultimo_Status": status,
+                "Atualizado_em": datetime.now().strftime("%d/%m/%Y %H:%M")
+            }])
+            df = pd.concat([df, novo], ignore_index=True)
+
+        conn.update(worksheet="Progresso", data=df)
+
+    except Exception as e:
+        st.error(f"Erro ao salvar progresso: {e}")
 
 # --- LOGOUT ---
 def logout():
@@ -95,19 +108,28 @@ if not st.session_state.logado:
             if login(u, p):
                 st.session_state.logado = True
                 st.session_state.usuario = u
-
-                # 🔥 CARREGA PROGRESSO SALVO
                 st.session_state.simulado_atual_indice = carregar_progresso(u)
-
+                st.session_state.progresso_carregado = True
                 st.rerun()
             else:
                 st.error("Credenciais inválidas")
     st.stop()
 
+# --- GARANTE PROGRESSO SEMPRE ---
+if "progresso_carregado" not in st.session_state:
+    st.session_state.simulado_atual_indice = carregar_progresso(st.session_state.usuario)
+    st.session_state.progresso_carregado = True
+
 # --- SIDEBAR ---
 with st.sidebar:
     st.write(f"👤 {st.session_state.usuario}")
-    menu = st.radio("Menu", ["Simulado", "Evolução", "Admin"])
+
+    menu_opcoes = ["Simulado", "Evolução"]
+    if st.session_state.usuario in ADMINS:
+        menu_opcoes.append("Admin")
+
+    menu = st.radio("Menu", menu_opcoes)
+
     if st.button("🚪 Sair"):
         logout()
 
@@ -135,7 +157,6 @@ if "primeiro" not in st.session_state:
     ---
     ### 💬 Mentalidade
     > "Disciplina supera motivação."
-
     """)
 
     if st.button("🔥 Começar"):
@@ -245,15 +266,13 @@ if menu == "Simulado":
             except:
                 pass
 
-            # 🔥 SALVAR PROGRESSO
-            if status == "Aprovado" and st.session_state.simulado_atual_indice < 5:
-                st.session_state.simulado_atual_indice += 1
+            # progresso correto
+            novo_indice = st.session_state.simulado_atual_indice
+            if status == "Aprovado" and novo_indice < 5:
+                novo_indice += 1
 
-            salvar_progresso(
-                st.session_state.usuario,
-                st.session_state.simulado_atual_indice,
-                status
-            )
+            salvar_progresso(st.session_state.usuario, novo_indice, status)
+            st.session_state.simulado_atual_indice = novo_indice
 
             st.session_state.mostrar_resultado = True
 
@@ -281,7 +300,11 @@ elif menu == "Evolução":
         st.error("Erro ao carregar dados")
 
 # --- ADMIN ---
-else:
+elif menu == "Admin":
+    if st.session_state.usuario not in ADMINS:
+        st.error("Acesso restrito.")
+        st.stop()
+
     st.title("📊 Dashboard Admin")
 
     try:
