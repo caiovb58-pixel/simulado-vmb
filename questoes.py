@@ -4,6 +4,7 @@
 # para evitar o erro de importação circular (ImportError).
 
 BANCO_QUESTOES = [
+    # --- QUESTÕES EXISTENTES NO SEU CÓDIGO ---
     {
         "id": 11,
         "modulo": "Mercado de Capitais",
@@ -20,7 +21,7 @@ BANCO_QUESTOES = [
     {
         "id": 12,
         "modulo": "Administração de Risco",
-        "pergunta": "O conceito de 'VaR' (Value at Risk) é utilizado para medir:",
+        "pergunta": "O concept de 'VaR' (Value at Risk) é utilizado para medir:",
         "opcoes": {
             "A": "A perda máxima esperada em um determinado horizonte de tempo e nível de confiança",
             "B": "O lucro médio de uma carteira no longo prazo",
@@ -510,5 +511,150 @@ BANCO_QUESTOES = [
         },
         "resposta_correta": "B",
         "explicacao": "Depósitos, saques ou pagamentos em espécie de valor igual ou superior a R$ 50 mil devem ser comunicados independentemente de suspeita."
+    },
+
+    # --- NOVAS QUESTÕES ADICIONADAS (LUCAS SILVA) ---
+    {
+        "id": 50,
+        "modulo": "Securitização de Recebíveis",
+        "pergunta": "Em um processo de securitização de recebíveis o pagamento do fluxo financeiro originário é pago para o (a):",
+        "opcoes": {
+            "A": "Investidor",
+            "B": "Securitizadora",
+            "C": "Emissor da Dívida",
+            "D": "Devedor"
+        },
+        "resposta_correta": "B",
+        "explicacao": "O devedor paga à securitizadora, que então repassa os fluxos aos investidores dos títulos emitidos."
+    },
+    {
+        "id": 51,
+        "modulo": "Securitização de Recebíveis",
+        "pergunta": "Em uma operação de securitização de recebíveis, uma Sociedade de Propósito Específico (SPE):",
+        "opcoes": {
+            "A": "Capta recursos por meio da emissão de cotas-parte, com o objetivo de adquirir direitos creditórios",
+            "B": "Segrega o risco de crédito dos originadores",
+            "C": "Vende recebíveis para comprar debêntures",
+            "D": "Capta recurso, por meio da emissão de títulos de crédito, visando adquirir direitos creditórios"
+        },
+        "resposta_correta": "D",
+        "explicacao": "A SPE é o veículo que emite os títulos para o mercado para financiar a compra dos créditos do originador."
+    },
+    {
+        "id": 52,
+        "modulo": "Mercado de Capitais",
+        "pergunta": "Quanto ao prazo máximo de emissão das Notas Promissórias (Commercial Papers) para S.A. Fechadas e Abertas, respectivamente:",
+        "opcoes": {
+            "A": "180 dias e 360 dias",
+            "B": "360 dias para ambas",
+            "C": "180 dias para ambas",
+            "D": "360 dias e 180 dias"
+        },
+        "resposta_correta": "B",
+        "explicacao": "Atualmente, o prazo máximo para Notas Promissórias de oferta pública é de 360 dias, independente se a S.A é aberta ou fechada."
+    },
+    {
+        "id": 53,
+        "modulo": "Mercado de Capitais",
+        "pergunta": "Ordem discricionária é aquela que:",
+        "opcoes": {
+            "A": "Estabelece um limite ao preço de negociação",
+            "B": "Envolve obrigatoriamente compra e venda",
+            "C": "Não possui qualquer limitação quanto a preço",
+            "D": "É gerada por administradores de carteira ou representantes de mais de um investidor"
+        },
+        "resposta_correta": "D",
+        "explicacao": "A ordem discricionária permite que o profissional decida o momento e preço da execução em nome do cliente."
+    },
+    {
+        "id": 54,
+        "modulo": "Mercado de Capitais",
+        "pergunta": "Uma empresa deseja emitir títulos na bolsa da Alemanha (Europa). Essa empresa deveria optar por:",
+        "opcoes": {
+            "A": "ADR",
+            "B": "BDR",
+            "C": "GDR",
+            "D": "Debêntures"
+        },
+        "resposta_correta": "C",
+        "explicacao": "GDR (Global Depositary Receipts) são recibos de ações emitidos em mercados fora do país de origem e dos EUA."
+    },
+    {
+        "id": 55,
+        "modulo": "Mercado de Capitais",
+        "pergunta": "O período de uma oferta pública em que se coleta as intenções de aquisição e o preço que os interessados estão dispostos a pagar é o:",
+        "opcoes": {
+            "A": "Front Runner",
+            "B": "Chinese Wall",
+            "C": "Bookbuilding",
+            "D": "Churning"
+        },
+        "resposta_correta": "C",
+        "explicacao": "O Bookbuilding serve para 'sentir' o mercado e definir o preço final de uma emissão."
+    },
+    {
+        "id": 56,
+        "modulo": "Mercado de Capitais",
+        "pergunta": "Sobre o Juros Sobre Capital Próprio (JSCP), assinale a alternativa correta:",
+        "opcoes": {
+            "A": "São isentos de IR para pessoa física",
+            "B": "Possuem IR conforme tabela regressiva",
+            "C": "São os lucros da companhia isentos de IR",
+            "D": "Originam-se de lucros retidos e possuem IR com alíquota única de 15%"
+        },
+        "resposta_correta": "D",
+        "explicacao": "Diferente dos dividendos, o JSCP é tributado na fonte em 15% para o investidor pessoa física."
+    },
+    {
+        "id": 57,
+        "modulo": "Mercado de Capitais",
+        "pergunta": "Uma ordem de venda que será executada somente se o ativo atingir um determinado preço (para limitar perdas) é chamada de:",
+        "opcoes": {
+            "A": "Stop",
+            "B": "A Mercado",
+            "C": "Tudo Ou Nada",
+            "D": "Europeia"
+        },
+        "resposta_correta": "A",
+        "explicacao": "Ordens Stop são gatilhos de segurança usados para proteção de capital ou garantia de lucro."
+    },
+    {
+        "id": 58,
+        "modulo": "Mercado de Capitais",
+        "pergunta": "Em uma Bonificação de Ações:",
+        "opcoes": {
+            "A": "O acionista tem o direito de comprar novas ações",
+            "B": "O acionista recebe gratuitamente um número de novas ações",
+            "C": "A empresa capta novos recursos financeiros",
+            "D": "O valor nominal das ações é reduzido"
+        },
+        "resposta_correta": "B",
+        "explicacao": "Bonificação é a distribuição gratuita de ações resultante da capitalização de reservas de lucros."
+    },
+    {
+        "id": 59,
+        "modulo": "Mercado de Capitais",
+        "pergunta": "Qual a diferença básica entre um bônus de subscrição e o direito de subscrição?",
+        "opcoes": {
+            "A": "O bônus tem validade e o direito não",
+            "B": "O direito é dado a qualquer investidor e o bônus não",
+            "C": "O direito é exclusivo do acionista, o bônus pode ser emitido para terceiros",
+            "D": "Ambos não possuem prazo de validade"
+        },
+        "resposta_correta": "C",
+        "explicacao": "Direitos de subscrição nascem do aumento de capital para acionistas atuais. Bônus são títulos negociáveis emitidos pela companhia."
+    },
+    {
+        "id": 60,
+        "modulo": "Mercado de Capitais",
+        "pergunta": "Nas operações de Day Trade com ações, as alíquotas de IR total e retido na fonte (dedo-duro) são, respectivamente:",
+        "opcoes": {
+            "A": "20% e 0,005%",
+            "B": "15% e 0,005%",
+            "C": "15% e 1%",
+            "D": "20% e 1%"
+        },
+        "resposta_correta": "D",
+        "explicacao": "No Day Trade, o IR total é 20% e a retenção na fonte (dedo-duro) é de 1% sobre o lucro."
     }
 ]
