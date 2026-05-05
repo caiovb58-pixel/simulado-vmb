@@ -1452,5 +1452,161 @@ BANCO_QUESTOES = [
         },
         "resposta_correta": "C",
         "explicacao": "Títulos públicos têm o menor risco de crédito do país. Títulos 'Principal' eliminam o risco de reinvestimento dos cupons antes do vencimento[cite: 17]."
+    },
+    {
+        "id": 147,
+        "modulo": "Clubes de Investimentos",
+        "pergunta": "O montante que exceder 67% do patrimônio líquido do Clube de Investimento pode ser aplicado em outros valores mobiliários de emissão de companhias abertas, sendo vedado o lançamento de:",
+        "opcoes": {
+            "A": "Cotas de Fundos de Investimento Referenciado.",
+            "B": "Compra de opções.",
+            "C": "Opções a descoberto.",
+            "D": "Títulos de responsabilidade de instituição financeira."
+        },
+        "resposta_correta": "C",
+        "explicacao": "É expressamente vedado aos Clubes de Investimento realizar operações com opções a descoberto[cite: 18]."
+    },
+    {
+        "id": 148,
+        "modulo": "Clubes de Investimentos",
+        "pergunta": "Número máximo de participantes de um Clube de Investimento:",
+        "opcoes": {
+            "A": "50",
+            "B": "150",
+            "C": "3",
+            "D": "30"
+        },
+        "resposta_correta": "A",
+        "explicacao": "Conforme a regulamentação da CVM, um Clube de Investimento deve ter no máximo 50 cotistas[cite: 18]."
+    },
+    {
+        "id": 149,
+        "modulo": "Clubes de Investimentos",
+        "pergunta": "O 'Clube Shark de Ações' poderá ser administrado, conforme instrução CVM, por: I- Corretora ou Distribuidora; II - Banco de Investimento ou Múltiplo com essa carteira; III - Pelos próprios participantes. Está correto o que se afirma em:",
+        "opcoes": {
+            "A": "Apenas I",
+            "B": "Apenas I e II",
+            "C": "Apenas II e III",
+            "D": "I, II e III"
+        },
+        "resposta_correta": "B",
+        "explicacao": "A administração deve ser feita por instituição autorizada (Corretoras, Distribuidoras ou Bancos com carteira de investimento); os participantes não podem administrar o próprio clube[cite: 18]."
+    },
+    {
+        "id": 150,
+        "modulo": "Clubes de Investimentos",
+        "pergunta": "Com relação ao estatuto de um clube, o mesmo pode ser alterado para exclusão ou redução de Taxa de Administração ou Performance, mesmo sem a convocação de:",
+        "opcoes": {
+            "A": "Estatuto",
+            "B": "Cotistas Seniores",
+            "C": "Assembleia Extraordinária",
+            "D": "Assembleia Geral"
+        },
+        "resposta_correta": "D",
+        "explicacao": "Alterações que beneficiem o cotista (como redução de taxas) podem ser feitas sem a necessidade de convocação de Assembleia Geral[cite: 18]."
+    },
+    {
+        "id": 151,
+        "modulo": "Clubes de Investimentos",
+        "pergunta": "O percentual máximo do patrimônio que um Clube de Investimento pode ter aplicado em Títulos Públicos Federais é de:",
+        "opcoes": {
+            "A": "67%",
+            "B": "33%",
+            "C": "80%",
+            "D": "100%"
+        },
+        "resposta_correta": "B",
+        "explicacao": Como no mínimo 67% deve estar em ações e outros ativos variáveis, o máximo permitido para outros ativos (como Títulos Públicos) é de 33%[cite: 18]."
+    },
+    {
+        "id": 152,
+        "modulo": "Clubes de Investimentos",
+        "pergunta": "A qualidade de cotista de um Clube de Investimento caracteriza-se pela:",
+        "opcoes": {
+            "A": "Pelo cadastramento do cotista no Clube",
+            "B": "Inscrição do nome do titular no registro de cotistas do clube",
+            "C": "Pelo envio da documentação do cotista para o clube",
+            "D": "Pelo aporte financeiro no clube"
+        },
+        "resposta_correta": "B",
+        "explicacao": "O investidor torna-se formalmente cotista com a devida inscrição de seu nome no registro oficial de cotistas mantido pelo clube[cite: 18]."
+    },
+    {
+        "id": 153,
+        "modulo": "Clubes de Investimentos",
+        "pergunta": "Percentual mínimo da carteira de um Clube que deve ser direcionado para a compra de ações:",
+        "opcoes": {
+            "A": "67%",
+            "B": "95%",
+            "C": "80%",
+            "D": "50%"
+        },
+        "resposta_correta": "A",
+        "explicacao": "A regulamentação exige que pelo menos 67% do patrimônio líquido seja aplicado em ações e ativos correlatos[cite: 18]."
+    },
+    {
+        "id": 154,
+        "modulo": "Clubes de Investimentos",
+        "pergunta": "Em situação de atraso no pagamento do resgate das cotas de um Clube de Investimento, é devida multa por dia de atraso igual a:",
+        "opcoes": {
+            "A": "0,1% do valor da carteira, a ser paga pelo administrador do Clube.",
+            "B": "0,1% do valor da carteira, a ser paga por cada cotista.",
+            "C": "0,5% do valor de resgate, a ser paga por cada cotista.",
+            "D": "0,5% do valor de resgate, a ser paga pelo administrador do Clube."
+        },
+        "resposta_correta": "D",
+        "explicacao": "O administrador é o responsável pelo pagamento da multa de 0,5% sobre o valor do resgate por dia de atraso[cite: 18]."
+    },
+    {
+        "id": 155,
+        "modulo": "Clubes de Investimentos",
+        "pergunta": "Sobre o lote padrão de ativos em aplicações de ETF (Exchange Traded Funds):",
+        "opcoes": {
+            "A": "O lote padrão é de 10 unidades",
+            "B": "Não existe lote padrão",
+            "C": "O lote padrão é de 100 unidades",
+            "D": "O lote padrão é de 15 unidades"
+        },
+        "resposta_correta": "B",
+        "explicacao": "Atualmente, para negociação de cotas de ETFs, não existe a exigência de um lote padrão mínimo[cite: 18]."
+    },
+    {
+        "id": 156,
+        "modulo": "Clubes de Investimentos",
+        "pergunta": "As demonstrações contábeis dos Clubes de Investimentos devem obedecer às normas contábeis da(o):",
+        "opcoes": {
+            "A": "Conselho Regional de Contabilidade",
+            "B": "BACEN",
+            "C": "CVM",
+            "D": "CMN"
+        },
+        "resposta_correta": "C",
+        "explicacao": "A Comissão de Valores Mobiliários (CVM) é o órgão responsável por ditar as normas contábeis para esses veículos de investimento[cite: 18]."
+    },
+    {
+        "id": 157,
+        "modulo": "Clubes de Investimentos",
+        "pergunta": "Conforme a instrução CVM 494/2011 (atualizada), um Clube de Investimento deve ter no mínimo _____ e no máximo _____ cotistas:",
+        "opcoes": {
+            "A": "3 e 150",
+            "B": "3 e 50",
+            "C": "10 e 50",
+            "D": "10 e 150"
+        },
+        "resposta_correta": "B",
+        "explicacao": "A regra de constituição estabelece o intervalo entre 3 (mínimo) e 50 (máximo) participantes[cite: 18]."
+    },
+    {
+        "id": 158,
+        "modulo": "Clubes de Investimentos",
+        "pergunta": "Percentual máximo do total do Clube de Investimento que um único cotista pode deter:",
+        "opcoes": {
+            "A": "30%",
+            "B": "67%",
+            "C": "25%",
+            "D": "40%"
+        },
+        "resposta_correta": "D",
+        "explicacao": "Nenhum cotista pode ser detentor de mais de 40% das cotas emitidas pelo clube[cite: 18]."
     }
 ]
