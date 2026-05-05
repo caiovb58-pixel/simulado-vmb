@@ -25,51 +25,14 @@ DIC_SIMULADOS = {
 SIMULADOS_ORDEM = list(DIC_SIMULADOS.keys())
 
 # --- SESSION ---
-defaults = {
-    "logado": False,
-    "simulado_iniciado": False,
-    "tempo": None,
-    "usuario": "",
-    "simulado_atual_indice": 0,
-    "inicio_prova": None
-}
-
-for k, v in defaults.items():
-    if k not in st.session_state:
-        st.session_state[k] = v
+if "logado" not in st.session_state:
+    st.session_state.logado = False
+    st.session_state.usuario = ""
+    st.session_state.simulado_iniciado = False
+    st.session_state.resultado_final = False
 
 # --- CONEXÃO ---
 conn = st.connection("gsheets", type=GSheetsConnection)
-
-# --- PROGRESSO ---
-def carregar_progresso(usuario):
-    try:
-        df = conn.read(worksheet="Progresso")
-        user = df[df["Usuario"] == usuario]
-        if not user.empty:
-            return int(user.iloc[0]["Simulado_Atual"])
-    except:
-        pass
-    return 0
-
-def salvar_progresso(usuario, indice, status):
-    try:
-        df = conn.read(worksheet="Progresso")
-
-        if usuario in df["Usuario"].values:
-            df.loc[df["Usuario"] == usuario, "Simulado_Atual"] = indice
-            df.loc[df["Usuario"] == usuario, "Ultimo_Status"] = status
-        else:
-            novo = pd.DataFrame([{
-                "Usuario": usuario,
-                "Simulado_Atual": indice,
-                "Ultimo_Status": status
-            }])
-            df = pd.concat([df, novo], ignore_index=True)
-
-        conn.update(worksheet="Progresso", data=df)
-    except:
-        pass
 
 # --- LOGIN ---
 def login(u, p):
@@ -77,7 +40,7 @@ def login(u, p):
     return not df[(df["Nome"] == u) & (df["Senha"] == p)].empty
 
 if not st.session_state.logado:
-    with st.form("login"):
+    with st.form("login_form"):
         st.title("🔐 Acesso ao Simulado")
         u = st.text_input("Usuário")
         p = st.text_input("Senha", type="password")
@@ -86,48 +49,24 @@ if not st.session_state.logado:
             if login(u, p):
                 st.session_state.logado = True
                 st.session_state.usuario = u
-                st.session_state.simulado_atual_indice = carregar_progresso(u)
                 st.rerun()
             else:
                 st.error("Credenciais inválidas")
     st.stop()
 
-# --- SIDEBAR ---
-with st.sidebar:
-    st.write(f"👤 {st.session_state.usuario}")
+# --- MENU ---
+menu = st.sidebar.radio("Menu", ["Simulado", "Evolução"])
 
-    menu = st.radio("Menu", ["Simulado", "Evolução"] + (["Admin"] if st.session_state.usuario in ADMINS else []))
-
-    if st.button("🚪 Sair"):
-        st.session_state.clear()
-        st.rerun()
-
-# --- SIMULADO ---
+# =========================
+# 🚀 SIMULADO
+# =========================
 if menu == "Simulado":
 
-    progresso = st.session_state.simulado_atual_indice
-    total = len(SIMULADOS_ORDEM)
+    if not st.session_state.simulado_iniciado:
 
-    st.progress(progresso / total)
-
-    for i, nome in enumerate(SIMULADOS_ORDEM):
-        if i <= progresso:
-            if st.button(f"✅ {nome}", key=f"sim_{i}"):
-                st.session_state.simulado_escolhido = i
-                st.session_state.simulado_iniciado = False
-                st.rerun()
-        else:
-            st.button(f"🔒 {nome}", disabled=True)
-
-    if "simulado_escolhido" in st.session_state:
-
-        indice = st.session_state.simulado_escolhido
-        sim_atual = SIMULADOS_ORDEM[indice]
-
-        if not st.session_state.simulado_iniciado:
-
-            if st.button("Iniciar Simulado"):
-                materias = DIC_SIMULADOS[sim_atual]
+        for i, nome in enumerate(SIMULADOS_ORDEM):
+            if st.button(nome, key=f"sim_{i}"):
+                materias = DIC_SIMULADOS[nome]
                 pool = [q for q in BANCO_QUESTOES if q["modulo"] in materias]
 
                 st.session_state.questoes = random.sample(pool, min(20, len(pool)))
@@ -135,60 +74,89 @@ if menu == "Simulado":
                 st.session_state.tempo = datetime.now() + timedelta(minutes=30)
                 st.session_state.inicio_prova = datetime.now()
                 st.session_state.simulado_iniciado = True
+                st.session_state.simulado_nome = nome
+                st.session_state.resultado_final = False
                 st.rerun()
 
-        else:
-            restante = int((st.session_state.tempo - datetime.now()).total_seconds())
-            minutos, segundos = divmod(max(restante, 0), 60)
+    elif not st.session_state.resultado_final:
 
-            st.info(f"⏱️ {minutos:02d}:{segundos:02d}")
+        restante = int((st.session_state.tempo - datetime.now()).total_seconds())
+        minutos, segundos = divmod(max(restante, 0), 60)
 
-            with st.form("form"):
-                for i, q in enumerate(st.session_state.questoes):
-                    st.markdown(f"**{i+1}. {q['pergunta']}**")
+        st.info(f"⏱️ {minutos:02d}:{segundos:02d}")
 
-                    opcoes_map = {f"{k}) {v}": k for k,v in q["opcoes"].items()}
+        with st.form("prova_form"):
+            for i, q in enumerate(st.session_state.questoes):
 
-                    resp = st.radio("Resposta:", list(opcoes_map.keys()), key=f"q{i}", index=None)
+                st.markdown(f"**{i+1}. {q['pergunta']}**")
 
-                    if resp:
-                        st.session_state.respostas[i] = opcoes_map[resp]
+                opcoes = list(q["opcoes"].keys())
 
-                enviar = st.form_submit_button("Finalizar")
-
-            if enviar or restante <= 0:
-
-                acertos = 0
-                por_modulo = {}
-
-                for i, q in enumerate(st.session_state.questoes):
-                    mod = q["modulo"]
-                    por_modulo.setdefault(mod, [0,0])
-                    por_modulo[mod][1] += 1
-
-                    if st.session_state.respostas.get(i) == q["resposta_correta"]:
-                        acertos += 1
-                        por_modulo[mod][0] += 1
-
-                nota = (acertos / len(st.session_state.questoes)) * 100
-
-                st.success(f"Nota: {nota:.1f}%")
-
-                # --- RADAR COM PLOTLY ---
-                categorias = list(por_modulo.keys())
-                valores = [(v[0]/v[1])*100 for v in por_modulo.values()]
-
-                fig = go.Figure()
-
-                fig.add_trace(go.Scatterpolar(
-                    r=valores,
-                    theta=categorias,
-                    fill='toself'
-                ))
-
-                fig.update_layout(
-                    polar=dict(radialaxis=dict(visible=True, range=[0,100])),
-                    showlegend=False
+                resp = st.radio(
+                    "Resposta:",
+                    opcoes,
+                    key=f"questao_{i}"
                 )
 
-                st.plotly_chart(fig, use_container_width=True)
+                st.session_state.respostas[i] = resp
+
+            enviar = st.form_submit_button("Finalizar")
+
+        if enviar or restante <= 0:
+            st.session_state.resultado_final = True
+            st.rerun()
+
+    else:
+        # --- RESULTADO ---
+        acertos = 0
+        por_modulo = {}
+
+        for i, q in enumerate(st.session_state.questoes):
+            mod = q["modulo"]
+            por_modulo.setdefault(mod, [0,0])
+            por_modulo[mod][1] += 1
+
+            if st.session_state.respostas.get(i) == q["resposta_correta"]:
+                acertos += 1
+                por_modulo[mod][0] += 1
+
+        nota = (acertos / len(st.session_state.questoes)) * 100
+
+        st.success(f"Nota: {nota:.1f}%")
+
+        # --- RADAR ---
+        categorias = list(por_modulo.keys())
+        valores = [(v[0]/v[1])*100 for v in por_modulo.values()]
+
+        fig = go.Figure()
+
+        fig.add_trace(go.Scatterpolar(
+            r=valores,
+            theta=categorias,
+            fill='toself'
+        ))
+
+        fig.update_layout(
+            polar=dict(radialaxis=dict(visible=True, range=[0,100])),
+            showlegend=False
+        )
+
+        st.plotly_chart(fig, use_container_width=True, key="radar_chart")
+
+        if st.button("Voltar"):
+            st.session_state.simulado_iniciado = False
+            st.session_state.resultado_final = False
+            st.rerun()
+
+# =========================
+# 📊 EVOLUÇÃO
+# =========================
+elif menu == "Evolução":
+
+    df = conn.read(worksheet="Resultados")
+    user = df[df["Usuario"] == st.session_state.usuario]
+
+    if not user.empty:
+        st.line_chart(user["Nota"])
+    else:
+        st.info("Sem dados ainda")
