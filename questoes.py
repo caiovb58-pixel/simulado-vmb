@@ -659,442 +659,474 @@ BANCO_QUESTOES = [
         "resposta_correta": "C",
         "explicacao": "Fundos de Investimento em Direitos Creditórios devem aplicar no mínimo 50% de seu PL em direitos creditórios."
     },
+   BANCO_QUESTOES = [
     {
         "id": 69,
-        "modulo": "Outros Fundos",
-        "pergunta": "Um FIP (Participações) deve investir em ativos que:",
-        "opcoes": {
-            "A": "Sejam apenas títulos públicos",
-            "B": "Sejam empresas de capital aberto apenas",
-            "C": "Permitam influenciar nas decisões da empresa",
-            "D": "Garantam renda fixa mensal"
-        },
-        "resposta_correta": "D",
-        "explicacao": "O FIP caracteriza-se pela participação no processo decisório da companhia investida."
-    },
-    {
-        "id": "422025",
         "modulo": "Sistema Financeiro Nacional",
         "pergunta": "A B3, empresa resultante da fusão entre BM&FBovespa e Cetip é uma empresa ____ que atua na infraestrutura do mercado financeiro, com atuação nos mercados de ____ e ____.",
-        "opcoes": ["A) Pública; Bolsa; Balcão", "B) Privada; Bolsa; Balcão", "C) Sociedade Mista; Bolsa; Balcão", "D) Sociedade Mista; Primário; Secundário"],
-        "resposta": "B"
+        "opcoes": {"A": "Pública; Bolsa; Balcão", "B": "Privada; Bolsa; Balcão", "C": "Sociedade Mista; Bolsa; Balcão", "D": "Sociedade Mista; Primário; Secundário"},
+        "resposta_correta": "B",
+        "explicacao": "A B3 é uma entidade privada de capital aberto que administra mercados organizados de bolsa e balcão."
     },
     {
-        "id": "70",
-        "tema": "Sistema Financeiro Nacional",
+        "id": 70,
+        "modulo": "Sistema Financeiro Nacional",
         "pergunta": "É o órgão responsável pela administração da dívida pública mobiliária e contratual, interna e externa, da União:",
-        "opcoes": ["A) Tesouro Nacional", "B) Bacen", "C) CMN", "D) CVM"],
-        "resposta": "A"
+        "opcoes": {"A": "Tesouro Nacional", "B": "Bacen", "C": "CMN", "D": "CVM"},
+        "resposta_correta": "A",
+        "explicacao": "O Tesouro Nacional é o órgão responsável pela gestão da dívida pública e do caixa da União."
     },
     {
-        "id": "71",
+        "id": 71,
         "modulo": "Sistema Financeiro Nacional",
         "pergunta": "É uma definição correta sobre o Sistema de Pagamentos Brasileiro - SPB:",
-        "opcoes": [
-            "A) Sistema criado para transferir fundos entre bancos de um mesmo conglomerado",
-            "B) Sistema criado para realização de DOC's para valores superiores a R$ 5 mil",
-            "C) É a transferência de fundos próprio e de terceiros realizados entre bancos em tempo real, com o objetivo de reduzir o risco sistêmico",
-            "D) Sistema criado para gerenciar o risco de crédito das instituições ao custodiar todos os CDB's emitidos por essas instituições"
-        ],
-        "resposta": "C"
+        "opcoes": {
+            "A": "Sistema criado para transferir fundos entre bancos de um mesmo conglomerado",
+            "B": "Sistema criado para realização de DOC's para valores superiores a R$ 5 mil",
+            "C": "É a transferência de fundos próprio e de terceiros realizados entre bancos em tempo real, com o objetivo de reduzir o risco sistêmico",
+            "D": "Sistema criado para gerenciar o risco de crédito das instituições ao custodiar todos os CDB's emitidos por essas instituições"
+        },
+        "resposta_correta": "C",
+        "explicacao": "O SPB permite a liquidação em tempo real (STR), mitigando o risco de quebra em cadeia (risco sistêmico)."
     },
     {
-        "id": "72",
+        "id": 72,
         "modulo": "Sistema Financeiro Nacional",
         "pergunta": "Tipo de Sociedade que a Comissão de Valores Mobiliários (CVM) fiscaliza:",
-        "opcoes": [
-            "A) Sociedades de Economia Mista que sejam de propriedade privada",
-            "B) Sociedades Anônimas que possuem ações negociadas em Bolsa de Valores e Mercado de Balcão",
-            "C) Sociedades Anônimas que possuem ações negociadas em Bolsa de Valores e Mercado Primário",
-            "D) Sociedades Limitadas que possuem ações negociadas em Bolsa de Valores"
-        ],
-        "resposta": "B"
+        "opcoes": {
+            "A": "Sociedades de Economia Mista que sejam de propriedade privada",
+            "B": "Sociedades Anônimas que possuem ações negociadas em Bolsa de Valores e Mercado de Balcão",
+            "C": "Sociedades Anônimas que possuem ações negociadas em Bolsa de Valores e Mercado Primário",
+            "D": "Sociedades Limitadas que possuem ações negociadas em Bolsa de Valores"
+        },
+        "resposta_correta": "B",
+        "explicacao": "A CVM fiscaliza as companhias abertas (S.A.) que captam recursos junto ao público no mercado de capitais."
     },
     {
-        "id": "73",
+        "id": 73,
         "modulo": "Sistema Financeiro Nacional",
         "pergunta": "O Sistema de Pagamentos Brasileiro (SPB) é o conjunto de:",
-        "opcoes": [
-            "A) Entidades, sistemas e mecanismos relacionados com o processamento e a liquidação de operações de transferência de fundos, de operações com moeda estrangeira ou com ativo financeiros e valores mobiliários.",
-            "B) Instituições financeiras, cooperativas de crédito e centrais depositárias de ações e de títulos de dívida corporativa.",
-            "C) Sistemas eletrônicos disponibilizados pelo governo brasileiro para transferência de fundos e pagamentos de tributos",
-            "D) Sistemas e mecanismos que possuem relação com a liquidação de câmbio entre as instituições financeiras"
-        ],
-        "resposta": "A"
+        "opcoes": {
+            "A": "Entidades, sistemas e mecanismos relacionados com o processamento e a liquidação de operações de transferência de fundos, de operações com moeda estrangeira ou com ativo financeiros e valores mobiliários.",
+            "B": "Instituições financeiras, cooperativas de crédito e centrais depositárias de ações e de títulos de dívida corporativa.",
+            "C": "Sistemas eletrônicos disponibilizados pelo governo brasileiro para transferência de fundos e pagamentos de tributos",
+            "D": "Sistemas e mecanismos que possuem relação com a liquidação de câmbio entre as instituições financeiras"
+        },
+        "resposta_correta": "A",
+        "explicacao": "Definição formal do SPB, abrangendo toda a infraestrutura de liquidação financeira do país."
     },
     {
-        "id": "74",
+        "id": 74,
         "modulo": "Sistema Financeiro Nacional",
         "pergunta": "São funções da CVM: I-Estimular a formação de poupança e sua aplicação em valores mobiliários; II-Proteger os investidores do mercado de capitais; III-Fiscalizar as S.A abertas, principalmente aquelas que apresentam falta de lucro contábil. Está correto:",
-        "opcoes": ["A) I e II", "B) II e III", "C) Apenas I", "D) I, II e III"],
-        "resposta": "A"
+        "opcoes": {"A": "I e II", "B": "II e III", "C": "Apenas I", "D": "I, II e III"},
+        "resposta_correta": "A",
+        "explicacao": "A fiscalização da CVM não depende de lucro contábil, mas sim do cumprimento das normas do mercado de capitais."
     },
     {
-        "id": "75",
+        "id": 75,
         "modulo": "Sistema Financeiro Nacional",
         "pergunta": "É a entidade responsável pelas diretrizes das operações dos 'Fundos de Pensão':",
-        "opcoes": ["A) CNSP", "B) CNPC", "C) CMN", "D) PREVIC"],
-        "resposta": "B"
+        "opcoes": {"A": "CNSP", "B": "CNPC", "C": "CMN", "D": "PREVIC"},
+        "resposta_correta": "B",
+        "explicacao": "O CNPC dita as normas (órgão normativo) e a PREVIC fiscaliza (órgão executor) as Entidades Fechadas de Previdência Complementar."
     },
     {
-        "id": "76",
+        "id": 76,
         "modulo": "Sistema Financeiro Nacional",
         "pergunta": "O Conselho Monetário Nacional (CMN) tem como função:",
-        "opcoes": [
-            "A) Exercer a fiscalização das instituições financeiras",
-            "B) Conceder autorização para abertura de bancos estrangeiros no Brasil",
-            "C) Realizar operações de redesconto junto às instituições financeiras",
-            "D) Definir as diretrizes e normas referentes ao câmbio"
-        ],
-        "resposta": "D"
+        "opcoes": {
+            "A": "Exercer a fiscalização das instituições financeiras",
+            "B": "Conceder autorização para abertura de bancos estrangeiros no Brasil",
+            "C": "Realizar operações de redesconto junto às instituições financeiras",
+            "D": "Definir as diretrizes e normas referentes ao câmbio"
+        },
+        "resposta_correta": "D",
+        "explicacao": "O CMN é um órgão normativo; definir diretrizes de câmbio e moeda é sua competência principal."
     },
     {
-        "id": "77",
+        "id": 77,
         "modulo": "Sistema Financeiro Nacional",
-        "pergunta": "De quem é a responsabilidade de fiscalizar um título de capitalização (como o Shark Cap)?",
-        "opcoes": ["A) BACEN", "B) SUSEP", "C) CVM", "D) COAF"],
-        "resposta": "B"
+        "pergunta": "De quem é a responsabilidade de fiscalizar um título de capitalização?",
+        "opcoes": {"A": "BACEN", "B": "SUSEP", "C": "CVM", "D": "COAF"},
+        "resposta_correta": "B",
+        "explicacao": "Títulos de capitalização são produtos da área de seguros, logo, sob supervisão da SUSEP."
     },
     {
-        "id": "78",
+        "id": 78,
         "modulo": "Sistema Financeiro Nacional",
         "pergunta": "Assinale as funções que competem ao BACEN: I) Receber compulsórios; II) Fixar diretrizes cambiais; III) Emitir papel moeda; IV) Proteger titulares de valores mobiliários; V) Controle do crédito.",
-        "opcoes": ["A) Todas", "B) I, II, V", "C) II, III, IV", "D) I, III, V"],
-        "resposta": "D"
+        "opcoes": {"A": "Todas", "B": "I, II, V", "C": "II, III, IV", "D": "I, III, V"},
+        "resposta_correta": "D",
+        "explicacao": "Fixar diretrizes cambiais é função do CMN, e proteger titulares de valores mobiliários é função da CVM."
     },
     {
-        "id": "79",
+        "id": 79,
         "modulo": "Sistema Financeiro Nacional",
         "pergunta": "São funções do CNSP: I-Fixar diretrizes de seguros privados; II-Fiscalizar seguradoras; III-Fixar diretrizes cambiais. Está correto:",
-        "opcoes": ["A) I e II", "B) II e III", "C) Apenas I", "D) Apenas III"],
-        "resposta": "C"
+        "opcoes": {"A": "I e II", "B": "II e III", "C": "Apenas I", "D": "Apenas III"},
+        "resposta_correta": "C",
+        "explicacao": "O CNSP fixa diretrizes (normativo). A fiscalização (II) cabe à SUSEP e as diretrizes cambiais (III) ao CMN."
     },
     {
-        "id": "80",
+        "id": 80,
         "modulo": "Sistema Financeiro Nacional",
         "pergunta": "A BSM é responsável pela administração do ____ e possui personalidade jurídica e ____ para sua atuação.",
-        "opcoes": ["A) SFN | Orçamento Próprio", "B) Orçamento Próprio | Subordinação ao BACEN", "C) MRP | Subordinação ao BACEN", "D) MRP | Orçamento Próprio"],
-        "resposta": "D"
+        "opcoes": {"A": "SFN | Orçamento Próprio", "B": "Orçamento Próprio | Subordinação ao BACEN", "C": "MRP | Subordinação ao BACEN", "D": "MRP | Orçamento Próprio"},
+        "resposta_correta": "D",
+        "explicacao": "A BSM Supervisão de Mercados administra o Mecanismo de Ressarcimento de Prejuízos (MRP) com autonomia e orçamento próprio."
     },
     {
-        "id": "81",
+        "id": 81,
         "modulo": "Sistema Financeiro Nacional",
         "pergunta": "São considerados Índices Amplos da B3: I-IBRX-100 e IBRX-50; II-Ibovespa; III-ISE.",
-        "opcoes": ["A) I e II", "B) II e III", "C) I e III", "D) I, II e III"],
-        "resposta": "A"
+        "opcoes": {"A": "I e II", "B": "II e III", "C": "I e III", "D": "I, II e III"},
+        "resposta_correta": "A",
+        "explicacao": "IBRX e Ibovespa são índices amplos. O ISE (Índice de Sustentabilidade Empresarial) é um índice de segmento/sustentabilidade."
     },
     {
-        "id": "82",
+        "id": 82,
         "modulo": "Sistema Financeiro Nacional",
         "pergunta": "Os sistemas que integram o SPB NÃO incluem o sistema:",
-        "opcoes": ["A) Cetip", "B) SICAF", "C) STR", "D) Selic"],
-        "resposta": "B"
+        "opcoes": {"A": "Cetip", "B": "SICAF", "C": "STR", "D": "Selic"},
+        "resposta_correta": "B",
+        "explicacao": "O SICAF é um sistema de cadastro de fornecedores do governo, não integra a liquidação financeira do SPB."
     },
     {
-        "id": "83",
+        "id": 83,
         "modulo": "Sistema Financeiro Nacional",
         "pergunta": "Órgão máximo do Sistema Financeiro Nacional:",
-        "opcoes": ["A) CNSP", "B) Bacen", "C) CMN", "D) Tesouro Nacional"],
-        "resposta": "C"
+        "opcoes": {"A": "CNSP", "B": "Bacen", "C": "CMN", "D": "Tesouro Nacional"},
+        "resposta_correta": "C",
+        "explicacao": "O CMN é o órgão deliberativo máximo do SFN."
     },
     {
-        "id": "84",
+        "id": 84,
         "modulo": "Sistema Financeiro Nacional",
         "pergunta": "É uma função da CVM:",
-        "opcoes": [
-            "A) Fiscalizar instituições do ramo bancário",
-            "B) Determinar diretrizes do mercado de câmbio",
-            "C) Limitar comissões cobradas por instituições no mercado de distribuição de valores mobiliários",
-            "D) Estimular investimentos em poupança"
-        ],
-        "resposta": "C"
+        "opcoes": {
+            "A": "Fiscalizar instituições do ramo bancário",
+            "B": "Determinar diretrizes do mercado de câmbio",
+            "C": "Limitar comissões cobradas por instituições no mercado de distribuição de valores mobiliários",
+            "D": "Estimular investimentos em poupança"
+        },
+        "resposta_correta": "C",
+        "explicacao": "A CVM tem poder para regular e limitar custos de intermediação no mercado de capitais para proteger o investidor."
     },
     {
-        "id": "85",
+        "id": 85,
         "modulo": "Mercado de Capitais",
         "pergunta": "Quanto ao prazo máximo de emissão das Notas Promissórias – Commercial Papers, assinale a correta:",
-        "opcoes": ["A) 180 dias (Fechada) e 360 (Aberta)", "B) 360 dias (Fechada e Aberta)", "C) 180 dias (Fechada e Aberta)", "D) 180 dias (Aberta) e 360 (Fechada)"],
-        "resposta": "B"
+        "opcoes": {"A": "180 dias (Fechada) e 360 (Aberta)", "B": "360 dias (Fechada e Aberta)", "C": "180 dias (Fechada e Aberta)", "D": "180 dias (Aberta) e 360 (Fechada)"},
+        "resposta_correta": "B",
+        "explicacao": "Pela regra atual (Resolução CVM), o prazo máximo para Notas Promissórias é de 360 dias, independentemente de ser S.A. aberta ou fechada."
     },
     {
-        "id": "86",
+        "id": 86,
         "modulo": "Mercado de Capitais",
         "pergunta": "O que deve constar obrigatoriamente na escritura de uma debênture?",
-        "opcoes": ["A) Intervenção de um Agente Fiduciário", "B) Rating de crédito", "C) Direitos iguais independente da série", "D) Garantia de pagamento pelo Agente Fiduciário"],
-        "resposta": "A"
+        "opcoes": {"A": "Intervenção de um Agente Fiduciário", "B": "Rating de crédito", "C": "Direitos iguais independente da série", "D": "Garantia de pagamento pelo Agente Fiduciário"},
+        "resposta_correta": "A",
+        "explicacao": "A nomeação de um Agente Fiduciário é obrigatória para proteger os interesses dos debenturistas."
     },
     {
-        "id": "87",
+        "id": 87,
         "modulo": "Mercado de Capitais",
         "pergunta": "Sobre o Juros Sobre Capital Próprio – JSCP, assinale a correta:",
-        "opcoes": [
-            "A) Isentos de IR e originam-se em lucros retidos",
-            "B) Originam-se de lucros retidos e IR regressivo",
-            "C) Lucros distribuídos e isentos de IR",
-            "D) Originam-se de lucros retidos e IR com alíquota única de 15%"
-        ],
-        "resposta": "D"
+        "opcoes": {
+            "A": "Isentos de IR e originam-se em lucros retidos",
+            "B": "Originam-se de lucros retidos e IR regressivo",
+            "C": "Lucros distribuídos e isentos de IR",
+            "D": "Originam-se de lucros retidos e IR com alíquota única de 15%"
+        },
+        "resposta_correta": "D",
+        "explicacao": "Diferente dos dividendos (isentos), o JSCP é tributado em 15% na fonte para o investidor pessoa física."
     },
     {
-        "id": "88",
+        "id": 88,
         "modulo": "Economia",
         "pergunta": "Sob a ótica do consumo, o PIB será a soma de: I- Consumo das famílias; II- Investimentos; III- Gastos Governamentais; IV - Exportações, deduzidas as importações. Está correto o que se afirma em:",
-        "opcoes": ["A) Todas as alternativas", "B) I, II e III", "C) I, II e IV", "D) II e III"],
-        "resposta": "A"
+        "opcoes": {"A": "Todas as alternativas", "B": "I, II e III", "C": "I, II e IV", "D": "II e III"},
+        "resposta_correta": "A",
+        "explicacao": "A fórmula do PIB pela ótica da despesa é C + I + G + (X - M)."
     },
     {
-        "id": "89",
+        "id": 89,
         "modulo": "Economia",
         "pergunta": "Uma política monetária é dita ____ quando injeta maior volume de recursos nos mercados, e quando age em sentido contrário, retraindo a atividade econômica, é chamada de ____.",
-        "opcoes": ["A) Ativa / Passiva", "B) Agressiva / Expansionista", "C) Passiva / Ativa", "D) Expansionista / Restritiva"],
-        "resposta": "D"
+        "opcoes": {"A": "Ativa / Passiva", "B": "Agressiva / Expansionista", "C": "Passiva / Ativa", "D": "Expansionista / Restritiva"},
+        "resposta_correta": "D",
+        "explicacao": "Expansionista estimula a economia (mais moeda); Restritiva freia a inflação (menos moeda)."
     },
     {
-        "id": "90",
+        "id": 90,
         "modulo": "Economia",
         "pergunta": "Com intenção de reduzir a demanda agregada da economia, o BACEN deveria realizar qual tipo de alteração na política monetária:",
-        "opcoes": ["A) Diminuir o depósito compulsório", "B) Aumentar o depósito compulsório", "C) Reduzir a taxa do redesconto", "D) Realizar operações de 'open market' de compra de títulos"],
-        "resposta": "B"
+        "opcoes": {"A": "Diminuir o depósito compulsório", "B": "Aumentar o depósito compulsório", "C": "Reduzir a taxa do redesconto", "D": "Realizar operações de 'open market' de compra de títulos"},
+        "resposta_correta": "B",
+        "explicacao": "Aumentar o compulsório retira dinheiro dos bancos, reduzindo a oferta de crédito e a demanda."
     },
     {
-        "id": "91",
+        "id": 91,
         "modulo": "Economia",
         "pergunta": "Em um regime cambial de taxa flutuante, com a conta corrente e a conta de capitais sendo superavitárias e sem intervenção, espera-se que:",
-        "opcoes": ["A) Valorize a moeda local", "B) Desvalorize a moeda local", "C) O governo atue para reduzir a alta da moeda estrangeira", "D) O governo atue para aumentar a cotação da moeda estrangeira"],
-        "resposta": "A"
+        "opcoes": {"A": "Valorize a moeda local", "B": "Desvalorize a moeda local", "C": "O governo atue para reduzir a alta da moeda estrangeira", "D": "O governo atue para aumentar a cotação da moeda estrangeira"},
+        "resposta_correta": "A",
+        "explicacao": "Superávit significa entrada de dólares; excesso de oferta de dólar faz a moeda local valorizar."
     },
     {
-        "id": "92",
+        "id": 92,
         "modulo": "Economia",
         "pergunta": "Um investimento com rendimento nominal de 15% e inflação de 5% no mesmo período, teve uma taxa real de aproximadamente:",
-        "opcoes": ["A) 5%", "B) 20%", "C) 15%", "D) 10%"],
-        "resposta": "D"
+        "opcoes": {"A": "5%", "B": "20%", "C": "15%", "D": "10%"},
+        "resposta_correta": "D",
+        "explicacao": "A taxa real é a taxa nominal descontada a inflação. A conta exata usa divisão, mas a subtração é uma aproximação aceita em questões teóricas."
     },
     {
-        "id": "93",
+        "id": 93,
         "modulo": "Economia",
         "pergunta": "Um Superávit Consolidado contempla as contas do(s):",
-        "opcoes": ["A) Governo Federal, somente", "B) Governo Federal e Estados", "C) Governo Federal, Estados e Municípios", "D) Governo Federal, Estados, Municípios e Empresas Estatais"],
-        "resposta": "D"
+        "opcoes": {"A": "Governo Federal, somente", "B": "Governo Federal e Estados", "C": "Governo Federal, Estados e Municípios", "D": "Governo Federal, Estados, Municípios e Empresas Estatais"},
+        "resposta_correta": "D",
+        "explicacao": "O resultado consolidado do setor público abrange todas as esferas de governo e as empresas estatais."
     },
     {
-        "id": "94",
+        "id": 94,
         "modulo": "Economia",
         "pergunta": "Assinale o item que contém somente medidas contracionistas: I-Redução da Selic; II-Aumento do compulsório; III-Redução do IPI; IV-Redução dos gastos governamentais.",
-        "opcoes": ["A) I e III", "B) II e III", "C) II, III e IV", "D) II e IV"],
-        "resposta": "D"
+        "opcoes": {"A": "I e III", "B": "II e III", "C": "II, III e IV", "D": "II e IV"},
+        "resposta_correta": "D",
+        "explicacao": "Aumento do compulsório e redução de gastos (fiscal) são medidas para contrair a economia."
     },
     {
-        "id": "95",
+        "id": 95,
         "modulo": "Economia",
         "pergunta": "Assinale a alternativa correta sobre taxas e índices:",
-        "opcoes": ["A) A T.R é usada pelo BNDES", "B) Taxa DI é lastreada em títulos públicos", "C) O IGP-M é mais afetado por preços no atacado", "D) O spread de crédito é livre de risco"],
-        "resposta": "C"
+        "opcoes": {"A": "A T.R é usada pelo BNDES", "B": "Taxa DI é lastreada em títulos públicos", "C": "O IGP-M é mais afetado por preços no atacado", "D": "O spread de crédito é livre de risco"},
+        "resposta_correta": "C",
+        "explicacao": "O IGP-M é composto por 60% do IPA (Índice de Preços ao Produtor Amplo), que mede preços no atacado."
     },
     {
-        "id": "96",
+        "id": 96,
         "modulo": "Economia",
         "pergunta": "Inflação de 6 meses: Jan(+0,16%), Fev(+0,35%), Mar(-0,16%), Abr(-0,02%), Mai(+0,05%), Jun(-0,02%). Qual a acumulada?",
-        "opcoes": ["A) 0,3600%", "B) 0,3598%", "C) 0,3698%", "D) 0,3740%"],
-        "resposta": "B"
+        "opcoes": {"A": "0,3600%", "B": "0,3598%", "C": "0,3698%", "D": "0,3740%"},
+        "resposta_correta": "B",
+        "explicacao": "A inflação acumulada é o produto dos fatores (1+i) de cada mês."
     },
     {
-        "id": "97",
+        "id": 97,
         "modulo": "Economia",
         "pergunta": "Quando o BACEN reduz o compulsório, a liquidez ____, as taxas de juros ____ e o consumo ____.",
-        "opcoes": ["A) aumente, caiam, aumente", "B) aumente, caiam, caia", "C) caia, aumentem, caia", "D) caia, caiam, aumente"],
-        "resposta": "A"
+        "opcoes": {"A": "aumenta, caiam, aumente", "B": "aumenta, caiam, caia", "C": "caia, aumentem, caia", "D": "caia, caiam, aumente"},
+        "resposta_correta": "A",
+        "explicacao": "Menos compulsório = mais dinheiro nos bancos (liquidez) = juros menores = mais consumo."
     },
     {
-        "id": "98",
+        "id": 98,
         "modulo": "Economia",
         "pergunta": "A diferença entre Taxa Selic Meta e Selic Over é que:",
-        "opcoes": ["A) Meta é mercado, Over é Copom", "B) Meta é títulos privados, Over é públicos", "C) Meta é anual, Over é semestral", "D) Meta é Copom, Over é mercado"],
-        "resposta": "D"
+        "opcoes": {"A": "Meta é mercado, Over é Copom", "B": "Meta é títulos privados, Over é públicos", "C": "Meta é anual, Over é semestral", "D": "Meta é Copom, Over é mercado"},
+        "resposta_correta": "D",
+        "explicacao": "A Meta é definida pelo COPOM; a Over é a taxa efetiva praticada no mercado interbancário (Selic)."
     },
     {
-        "id": "99",
+        "id": 99,
         "modulo": "Economia",
         "pergunta": "O índice IPC-FIPE estima as variações do custo de vida das famílias de:",
-        "opcoes": ["A) São Paulo", "B) Região Sudeste", "C) Região Sul", "D) IBGE"],
-        "resposta": "A"
+        "opcoes": {"A": "São Paulo", "B": "Região Sudeste", "C": "Região Sul", "D": "IBGE"},
+        "resposta_correta": "A",
+        "explicacao": "O IPC-FIPE é um índice regionalizado que foca no custo de vida na cidade de São Paulo."
     },
     {
-        "id": "100",
+        "id": 100,
         "modulo": "Economia",
         "pergunta": "A taxa 'Selic Over' diária é obtida com juros ____ e métrica de ____ dias.",
-        "opcoes": ["A) Compostos; 252", "B) Compostos; 360", "C) Simples; 252", "D) Simples; 360"],
-        "resposta": "A"
+        "opcoes": {"A": "Compostos; 252", "B": "Compostos; 360", "C": "Simples; 252", "D": "Simples; 360"},
+        "resposta_correta": "A",
+        "explicacao": "No mercado brasileiro, as taxas são expressas em juros compostos com base em 252 dias úteis."
     },
     {
-        "id": "101",
+        "id": 101,
         "modulo": "Economia",
         "pergunta": "Conforme a Lei dos Rendimentos Decrescentes:",
-        "opcoes": ["A) Produção aumenta proporcionalmente ao fator", "B) Produção total é reduzida", "C) Mantendo fatores, produção total aumenta", "D) Aumentando um fator, a produção proporcional deste fator é reduzida"],
-        "resposta": "D"
+        "opcoes": {"A": "Produção aumenta proporcionalmente ao fator", "B": "Produção total é reduzida", "C": "Mantendo fatores, produção total aumenta", "D": "Aumentando um fator, a produção proporcional deste fator é reduzida"},
+        "resposta_correta": "D",
+        "explicacao": "Ao adicionar mais de um fator produtivo enquanto outros ficam fixos, o ganho marginal de produção tende a diminuir."
     },
     {
-        "id": "102",
+        "id": 102,
         "modulo": "Instituições Financeiras",
         "pergunta": "Qual quantidade mínima de associados necessários para que uma cooperativa de crédito seja constituída?",
-        "opcoes": ["A) 20 associados", "B) 30 associados", "C) 50 associados", "D) Não tem quantidade mínima"],
-        "resposta": "A"
+        "opcoes": {"A": "20 associados", "B": "30 associados", "C": "50 associados", "D": "Não tem quantidade mínima"},
+        "resposta_correta": "A",
+        "explicacao": "A legislação exige o mínimo de 20 pessoas físicas para constituir uma cooperativa de crédito."
     },
     {
-        "id": "103",
+        "id": 103,
         "modulo": "Instituições Financeiras",
         "pergunta": "São funções de uma SCTVM, EXCETO:",
-        "opcoes": ["A) Administrar planos de capitalização", "B) Administrar clubes de investimentos", "C) Administrar fundos de investimentos", "D) Realizar operações de câmbio"],
-        "resposta": "A"
+        "opcoes": {"A": "Administrar planos de capitalização", "B": "Administrar clubes de investimentos", "C": "Administrar fundos de investimentos", "D": "Realizar operações de câmbio"},
+        "resposta_correta": "A",
+        "explicacao": "Corretoras (SCTVM) não administram capitalização; isso é exclusividade de sociedades de capitalização autorizadas pela SUSEP."
     },
     {
-        "id": "104",
+        "id": 104,
         "modulo": "Instituições Financeiras",
         "pergunta": "Sobre os Bancos de Investimentos, assinale a correta:",
-        "opcoes": ["A) Ofertam crédito de curto prazo (cheque especial)", "B) Realizam operações com dólar turismo", "C) Fiscalizam o mercado de distribuição", "D) Assessoram fusões, emissões de valores mobiliários e crédito de médio/longo prazo"],
-        "resposta": "D"
+        "opcoes": {"A": "Ofertam crédito de curto prazo (cheque especial)", "B": "Realizam operações com dólar turismo", "C": "Fiscalizam o mercado de distribuição", "D": "Assessoram fusões, emissões de valores mobiliários e crédito de médio/longo prazo"},
+        "resposta_correta": "D",
+        "explicacao": "Bancos de investimento focam no médio/longo prazo e em mercado de capitais (Underwriting)."
     },
     {
-        "id": "105",
+        "id": 105,
         "modulo": "Instituições Financeiras",
         "pergunta": "Podem receber depósitos interfinanceiros (CDI): I-Caixas Econômicas; II-Sociedades de Crédito e Financiamento; III-SCTVM. Está correto:",
-        "opcoes": ["A) I e II", "B) I e III", "C) Apenas I", "D) I, II e III"],
-        "resposta": "A"
+        "opcoes": {"A": "I e II", "B": "I e III", "C": "Apenas I", "D": "I, II e III"},
+        "resposta_correta": "A",
+        "explicacao": "Caixas e Financeiras operam CDI. Corretoras (SCTVM) não captam via depósitos interfinanceiros no mesmo molde bancário."
     },
     {
-        "id": "106",
+        "id": 106,
         "modulo": "Instituições Financeiras",
         "pergunta": "Sobre o BNDES, assinale a alternativa correta:",
-        "opcoes": ["A) É um banco de desenvolvimento federal", "B) É sociedade de economia mista com ações em bolsa", "C) Fomenta apenas o mercado imobiliário", "D) É instrumento para fomentar setores estratégicos"],
-        "resposta": "D"
+        "opcoes": {"A": "É um banco de desenvolvimento federal", "B": "É sociedade de economia mista com ações em bolsa", "C": "Fomenta apenas o mercado imobiliário", "D": "É instrumento para fomentar setores estratégicos"},
+        "resposta_correta": "D",
+        "explicacao": "O BNDES é uma empresa pública federal usada como braço de fomento de longo prazo do governo."
     },
     {
-        "id": "107",
+        "id": 107,
         "modulo": "Instituições Financeiras",
         "pergunta": "Para ofertar leasing e crédito imobiliário em um único balanço, Júlio precisa de:",
-        "opcoes": ["A) Banco com carteira de crédito e arrendamento", "B) Banco Múltiplo (Comercial ou Desenv.) + Arrendamento", "C) Banco Múltiplo (Comercial ou Invest.) + Desenv. e Imobiliário", "D) Banco Múltiplo (Comercial ou Invest.) + Arrendamento e Imobiliário"],
-        "resposta": "D"
+        "opcoes": {"A": "Banco com carteira de crédito e arrendamento", "B": "Banco Múltiplo (Comercial ou Desenv.) + Arrendamento", "C": "Banco Múltiplo (Comercial ou Invest.) + Desenv. e Imobiliário", "D": "Banco Múltiplo (Comercial ou Invest.) + Arrendamento e Imobiliário"},
+        "resposta_correta": "D",
+        "explicacao": "Um banco múltiplo precisa das carteiras específicas para operar cada produto sob o mesmo CNPJ."
     },
     {
-        "id": "108",
+        "id": 108,
         "modulo": "Instituições Financeiras",
         "pergunta": "É uma carteira que deve estar presente em um Banco Múltiplo, obrigatoriamente (para ser considerado múltiplo):",
-        "opcoes": ["A) Comercial ou de Investimento", "B) Crédito e Financiamento", "C) Crédito Imobiliário", "D) Desenvolvimento"],
-        "resposta": "A"
+        "opcoes": {"A": "Comercial ou de Investimento", "B": "Crédito e Financiamento", "C": "Crédito Imobiliário", "D": "Desenvolvimento"},
+        "resposta_correta": "A",
+        "explicacao": "Para ser banco múltiplo, a instituição deve possuir pelo menos duas carteiras, sendo uma delas Comercial ou de Investimento."
     },
     {
-        "id": "109",
+        "id": 109,
         "modulo": "Instituições Financeiras",
         "pergunta": "Instituição Financeira autorizada a captar através de depósito à vista:",
-        "opcoes": ["A) Banco Comercial", "B) Banco de Investimento", "C) Banco de Desenvolvimento", "D) Financeiras"],
-        "resposta": "A"
+        "opcoes": {"A": "Banco Comercial", "B": "Banco de Investimento", "C": "Banco de Desenvolvimento", "D": "Financeiras"},
+        "resposta_correta": "A",
+        "explicacao": "A captação de depósitos à vista é a característica principal dos bancos comerciais."
     },
     {
-        "id": "110",
+        "id": 110,
         "modulo": "Instituições Financeiras",
         "pergunta": "As Financeiras são instituições ____ e tem como principal característica o financiamento para ____.",
-        "opcoes": ["A) bancárias / atividade produtiva", "B) bancárias / capital fixo", "C) não bancárias / capital social", "D) não bancárias / capital de giro"],
-        "resposta": "D"
+        "opcoes": {"A": "bancárias / atividade produtiva", "B": "bancárias / capital fixo", "C": "não bancárias / capital social", "D": "não bancárias / capital de giro"},
+        "resposta_correta": "D",
+        "explicacao": "Financeiras não são bancárias (não captam depósito à vista) e focam em crédito ao consumidor e capital de giro."
     },
     {
-        "id": "111",
+        "id": 111,
         "modulo": "Instituições Financeiras",
         "pergunta": "Qual das opções abaixo configura um banco múltiplo?",
-        "opcoes": ["A) Banco de Desenv. com carteira imobiliária", "B) Banco Comercial (apenas)", "C) Banco com carteira de financiamento e arrendamento", "D) Banco de investimento com carteira de arrendamento mercantil"],
-        "resposta": "D"
+        "opcoes": {"A": "Banco de Desenv. com carteira imobiliária", "B": "Banco Comercial (apenas)", "C": "Banco com carteira de financiamento e arrendamento", "D": "Banco de investimento com carteira de arrendamento mercantil"},
+        "resposta_correta": "D",
+        "explicacao": "Contém a carteira de Investimento (obrigatória para ser múltiplo neste caso) + uma carteira adicional."
     },
     {
-    "id": "112",
-    "modulo": "Matemática Financeira",
-    "pergunta": "Germano resolveu trocar sua geladeira. Promoção à vista com 10% de desconto ou 10 vezes de R$ 280,00 sem desconto. Qual a taxa de juros embutida na operação?",
-    "opcoes": [
-        "26,27% a.a.",
-        "1,86% a.m.",
-        "Taxa zero, pois parcelamento foi sem juros.",
-        "1,94% a.m."
-    ],
-    "resposta": "26,27% a.a."
-},
-{
-    "id": "113",
-    "modulo": "Matemática Financeira",
-    "pergunta": "No conceito de taxa over, a equivalente diária é descapitalizada segundo o regime:",
-    "opcoes": [
-        "Composto, por 360 dias corridos.",
-        "Composto, por 252 dias úteis.",
-        "Simples, por 360 dias corridos.",
-        "Simples, por 252 dias úteis."
-    ],
-    "resposta": "Composto, por 252 dias úteis."
-},
-{ 
-    "id": "114",
-    "modulo": "Matemática Financeira",
-    "pergunta": "Investidor comprou LFT com prazo de 846 dias úteis, com ágio de 0.20% a.a., pagando PU de R$ 4.446. O preço par desse papel é:",
-    "opcoes": ["4.256", "4.446", "4.416", "4.387"],
-    "resposta": "4.416"
-},
-{
-    "id": "115",
-    "modulo": "Matemática Financeira",
-    "pergunta": "Carro financiado em 24 parcelas de R$ 3.106,85, com a primeira no ato. Valor financiado: R$ 60 mil. Qual a taxa?",
-    "opcoes": ["1,82% mês", "26,68% ano", "1,76% mês", "24,86% ano"],
-    "resposta": "26,68% ano"
-},
-{
-    "id": "116",
-    "modulo": "Matemática Financeira",
-    "pergunta": "Se o VPL de um projeto de investimento for positivo, isso indica que:",
-    "opcoes": [
-        "Não devemos investir, resultado indiferente.",
-        "Podemos investir, o projeto é lucrativo para essa taxa.",
-        "Podemos investir, resultado indiferente.",
-        "Não devemos investir, o projeto não é lucrativo."
-    ],
-    "resposta": "Podemos investir, o projeto é lucrativo para essa taxa."
-},
-{
-    "id": "117",
-    "modulo": "Clubes de Investimentos",
-    "pergunta": "Número máximo de participantes de um Clube de Ações:",
-    "opcoes": ["50", "150", "3", "30"],
-    "resposta": "50"
-},
-{
-    "id": "118",
-    "modulo": "Clubes de Investimentos",
-    "pergunta": "Qual o percentual máximo do patrimônio que um Clube pode ter em Títulos Públicos Federais?",
-    "opcoes": ["67%", "33%", "80%", "100%"],
-    "resposta": "33%"
-},
-{
-    "id": "119",
-    "modulo": "Administração de Risco",
-    "pergunta": "Sobre o conceito de Value At Risk (VaR), assinale a correta:",
-    "opcoes": [
-        "Pode ser reduzido com hedge cambial.",
-        "Risco de crédito é a oscilação de valores na carteira.",
-        "Risco sistemático é reduzido com diversificação.",
-        "O VaR define a perda máxima potencial com um nível de confiança."
-    ],
-    "resposta": "O VaR define a perda máxima potencial com um nível de confiança."
-},
-{
-    "id": "120",
-    "modulo": "Administração de Risco",
-    "pergunta": "Uma carteira 100% composta por ações possui os seguintes riscos, EXCETO:",
-    "opcoes": ["Liquidez", "Mercado", "Crédito", "Sistemático"],
-    "resposta": "Crédito"
-},
-{    
-    "id": "121",
-    "modulo": "Administração de Risco",
-    "pergunta": "Para menor risco de crédito e menor risco de reinvestimento, qual a melhor escolha?",
-    "opcoes": [
-        "Tesouro IPCA 2028 com juros semestrais",
-        "Debêntures incentivadas 2031",
-        "NTN-B Principal 2028",
-        "CDB pré-fixado com juros mensais"
-    ],
-    "resposta": "NTN-B Principal 2028"
-    ]
+        "id": 112,
+        "modulo": "Matemática Financeira",
+        "pergunta": "Germano resolveu trocar sua geladeira. Promoção à vista com 10% de desconto ou 10 vezes de R$ 280,00 sem desconto. Qual a taxa de juros embutida na operação?",
+        "opcoes": {"A": "26,27% a.a.", "B": "1,86% a.m.", "C": "Taxa zero", "D": "1,94% a.m."},
+        "resposta_correta": "A",
+        "explicacao": "Considerando PV = 2520 (90% de 2800) e PMT = 280 em 10 meses. A taxa mensal é ~1,94%, que anualizada dá 26,27%."
+    },
+    {
+        "id": 113,
+        "modulo": "Matemática Financeira",
+        "pergunta": "No conceito de taxa over, a equivalente diária é descapitalizada segundo o regime:",
+        "opcoes": {"A": "Composto, por 360 dias corridos.", "B": "Composto, por 252 dias úteis.", "C": "Simples, por 360 dias corridos.", "D": "Simples, por 252 dias úteis."},
+        "resposta_correta": "B",
+        "explicacao": "Taxas 'Over' no Brasil sempre utilizam juros compostos e a base de 252 dias úteis."
+    },
+    {
+        "id": 114,
+        "modulo": "Matemática Financeira",
+        "pergunta": "Investidor comprou LFT com prazo de 846 dias úteis, com ágio de 0.20% a.a., pagando PU de R$ 4.446. O preço par desse papel é:",
+        "opcoes": {"A": "4.256", "B": "4.446", "C": "4.416", "D": "4.387"},
+        "resposta_correta": "C",
+        "explicacao": "O PU par é o valor nominal sem o ágio/deságio. No caso, o PU pago está acima do par devido ao ágio."
+    },
+    {
+        "id": 115,
+        "modulo": "Matemática Financeira",
+        "pergunta": "Carro financiado em 24 parcelas de R$ 3.106,85, com a primeira no ato. Valor financiado: R$ 60 mil. Qual a taxa?",
+        "opcoes": {"A": "1,82% mês", "B": "26,68% ano", "C": "1,76% mês", "D": "24,86% ano"},
+        "resposta_correta": "B",
+        "explicacao": "Cálculo de taxa em regime de antecipação (Begin mode na HP12c). A taxa mensal resultante anualizada é 26,68%."
+    },
+    {
+        "id": 116,
+        "modulo": "Matemática Financeira",
+        "pergunta": "Se o VPL de um projeto de investimento for positivo, isso indica que:",
+        "opcoes": {
+            "A": "Não devemos investir, resultado indiferente.",
+            "B": "Podemos investir, o projeto é lucrativo para essa taxa.",
+            "C": "Podemos investir, resultado indiferente.",
+            "D": "Não devemos investir, o projeto não é lucrativo."
+        },
+        "resposta_correta": "B",
+        "explicacao": "VPL > 0 significa que o retorno do projeto supera a taxa mínima de atratividade definida."
+    },
+    {
+        "id": 117,
+        "modulo": "Clubes de Investimentos",
+        "pergunta": "Número máximo de participantes de um Clube de Ações:",
+        "opcoes": {"A": "50", "B": "150", "C": "3", "D": "30"},
+        "resposta_correta": "A",
+        "explicacao": "Clubes de investimento têm limite mínimo de 3 e máximo de 50 participantes."
+    },
+    {
+        "id": 118,
+        "modulo": "Clubes de Investimentos",
+        "pergunta": "Qual o percentual máximo do patrimônio que um Clube pode ter em Títulos Públicos Federais?",
+        "opcoes": {"A": "67%", "B": "33%", "C": "80%", "D": "100%"},
+        "resposta_correta": "B",
+        "explicacao": "Pelo menos 67% deve ser em ações. Logo, o limite para outros ativos (como TPF) é de 33%."
+    },
+    {
+        "id": 119,
+        "modulo": "Administração de Risco",
+        "pergunta": "Sobre o conceito de Value At Risk (VaR), assinale a correta:",
+        "opcoes": {
+            "A": "Pode ser reduzido com hedge cambial.",
+            "B": "Risco de crédito é a oscilação de valores na carteira.",
+            "C": "Risco sistemático é reduzido com diversificação.",
+            "D": "O VaR define a perda máxima potencial com um nível de confiança."
+        },
+        "resposta_correta": "D",
+        "explicacao": "VaR é uma medida estatística que indica a perda máxima esperada para um dado horizonte e confiança."
+    },
+    {
+        "id": 120,
+        "modulo": "Administração de Risco",
+        "pergunta": "Uma carteira 100% composta por ações possui os seguintes riscos, EXCETO:",
+        "opcoes": {"A": "Liquidez", "B": "Mercado", "C": "Crédito", "D": "Sistemático"},
+        "resposta_correta": "C",
+        "explicacao": "Ações não possuem risco de crédito (promessa de pagamento), mas sim risco de mercado (oscilação de preço)."
+    },
+    {
+        "id": 121,
+        "modulo": "Administração de Risco",
+        "pergunta": "Para menor risco de crédito e menor risco de reinvestimento, qual a melhor escolha?",
+        "opcoes": {
+            "A": "Tesouro IPCA 2028 com juros semestrais",
+            "B": "Debêntures incentivadas 2031",
+            "C": "NTN-B Principal 2028",
+            "D": "CDB pré-fixado com juros mensais"
+        },
+        "resposta_correta": "C",
+        "explicacao": "NTN-B Principal é garantida pelo governo (baixo crédito) e não paga cupons (zero risco de reinvestimento)."
+    }
+]
