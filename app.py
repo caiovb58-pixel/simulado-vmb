@@ -52,7 +52,6 @@ def carregar_progresso(usuario):
     try:
         df = conn.read(worksheet="Progresso")
         user = df[df["Usuario"] == usuario]
-
         if not user.empty:
             return int(user.iloc[0]["Simulado_Atual"])
         return 0
@@ -63,26 +62,26 @@ def salvar_progresso(usuario, indice, status):
     try:
         df = conn.read(worksheet="Progresso")
 
-        if "Usuario" not in df.columns:
-            df = pd.DataFrame(columns=["Usuario","Simulado_Atual","Ultimo_Status","Atualizado_em"])
-
         if usuario in df["Usuario"].values:
             df.loc[df["Usuario"] == usuario, "Simulado_Atual"] = indice
             df.loc[df["Usuario"] == usuario, "Ultimo_Status"] = status
-            df.loc[df["Usuario"] == usuario, "Atualizado_em"] = datetime.now().strftime("%d/%m/%Y %H:%M")
         else:
             novo = pd.DataFrame([{
                 "Usuario": usuario,
                 "Simulado_Atual": indice,
-                "Ultimo_Status": status,
-                "Atualizado_em": datetime.now().strftime("%d/%m/%Y %H:%M")
+                "Ultimo_Status": status
             }])
             df = pd.concat([df, novo], ignore_index=True)
 
         conn.update(worksheet="Progresso", data=df)
+    except:
+        pass
 
-    except Exception as e:
-        st.error(f"Erro ao salvar progresso: {e}")
+# --- LOGOUT ---
+def logout():
+    for k in list(st.session_state.keys()):
+        del st.session_state[k]
+    st.rerun()
 
 # --- LOGIN ---
 def login(u, p):
@@ -118,19 +117,22 @@ with st.sidebar:
 
     menu = st.radio("Menu", menu_opcoes)
 
+    if st.button("🚪 Sair"):
+        logout()
+
 # --- BOAS VINDAS ---
 if "primeiro" not in st.session_state:
-    st.image("https://via.placeholder.com/200x80?text=VMB", width=200)  # 🔥 TROCAR PELA SUA LOGO
+    st.image("vmb_logo_fundo_preto.png", width=220)
 
-    st.title("Simulado ANCORD - Preparação Profissional")
+    st.title("Simulado ANCORD - VMB Invest")
 
     st.markdown("""
     ### 🎯 Objetivo
-    Simular a prova real ANCORD com alto nível de exigência.
+    Simular a prova real ANCORD com nível profissional.
 
     ### 📋 Estrutura
-    - Até 20 questões
-    - Tempo: 30 minutos
+    - Até 20 questões  
+    - Tempo: 30 minutos  
 
     ### 🏆 Aprovação
     - 70% ou mais
@@ -173,19 +175,9 @@ if menu == "Simulado":
                 materias = DIC_SIMULADOS[sim_atual]
                 pool = [q for q in BANCO_QUESTOES if q["modulo"] in materias]
 
-                random.seed(st.session_state.usuario + sim_atual + str(datetime.now().date()))
-                random.shuffle(pool)
-
                 qtd = min(20, len(pool))
-                questoes = pool[:qtd]
+                st.session_state.questoes = random.sample(pool, qtd)
 
-                # 🔥 embaralhar alternativas
-                for q in questoes:
-                    itens = list(q["opcoes"].items())
-                    random.shuffle(itens)
-                    q["opcoes"] = dict(itens)
-
-                st.session_state.questoes = questoes
                 st.session_state.respostas = {}
                 st.session_state.tempo = datetime.now() + timedelta(minutes=30)
                 st.session_state.simulado_nome = sim_atual
@@ -204,32 +196,48 @@ if menu == "Simulado":
                     st.markdown(f"**{i+1}. {q['pergunta']}**")
 
                     opcoes_map = {f"{k}) {v}": k for k,v in q["opcoes"].items()}
-                    resp = st.radio("Resposta", list(opcoes_map.keys()), key=f"q{i}")
+
+                    resp = st.radio(
+                        "Resposta:",
+                        list(opcoes_map.keys()),
+                        key=f"q{i}",
+                        index=None
+                    )
 
                     if resp:
                         st.session_state.respostas[i] = opcoes_map[resp]
 
-                enviar = st.form_submit_button("Finalizar")
+                enviar = st.form_submit_button("Finalizar Simulado")
 
             if enviar or restante <= 0:
 
-                acertos = sum(
-                    1 for i, q in enumerate(st.session_state.questoes)
-                    if st.session_state.respostas.get(i) == q["resposta_correta"]
-                )
+                acertos = 0
+                por_modulo = {}
+
+                for i, q in enumerate(st.session_state.questoes):
+                    mod = q["modulo"]
+                    por_modulo.setdefault(mod, [0,0])
+                    por_modulo[mod][1] += 1
+
+                    if st.session_state.respostas.get(i) == q["resposta_correta"]:
+                        acertos += 1
+                        por_modulo[mod][0] += 1
 
                 total = len(st.session_state.questoes)
                 nota = (acertos / total) * 100 if total else 0
                 status = "Aprovado" if nota >= 70 else "Reprovado"
 
-                # certificado
-                if status == "Aprovado":
-                    st.success("🎓 CERTIFICADO")
-                    st.markdown(f"""
-                    **{st.session_state.usuario}**  
-                    Concluiu com sucesso o **{sim_atual}**  
-                    Nota: **{nota:.1f}%**
-                    """)
+                st.success(f"Nota: {nota:.1f}%")
+                st.markdown(f"### Status: {status}")
+
+                # 🔥 GRÁFICO POR MÓDULO
+                df_mod = pd.DataFrame([
+                    {"Modulo": m, "Aproveitamento": (v[0]/v[1])*100}
+                    for m, v in por_modulo.items()
+                ])
+
+                st.subheader("📊 Desempenho por módulo")
+                st.bar_chart(df_mod.set_index("Modulo"))
 
                 # progresso
                 novo = progresso
@@ -239,14 +247,13 @@ if menu == "Simulado":
                 salvar_progresso(st.session_state.usuario, novo, status)
                 st.session_state.simulado_atual_indice = novo
 
-                st.success(f"Nota: {nota:.1f}%")
-
                 st.session_state.simulado_iniciado = False
 
 # --- EVOLUÇÃO ---
 elif menu == "Evolução":
     df = conn.read(worksheet="Resultados")
     user = df[df["Usuario"] == st.session_state.usuario]
+
     st.dataframe(user)
     st.line_chart(user["Nota"])
 
