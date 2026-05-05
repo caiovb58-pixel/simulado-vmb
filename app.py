@@ -4,6 +4,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 from streamlit_gsheets import GSheetsConnection
 import plotly.graph_objects as go
+import time
 
 # --- CONFIG ---
 st.set_page_config(page_title="Simulado ANCORD", layout="wide")
@@ -14,12 +15,12 @@ from questoes import BANCO_QUESTOES
 
 # --- SIMULADOS ---
 DIC_SIMULADOS = {
-    "Simulado 1 (Semanas 1 e 2)": ["Atividade do AAI", "Lavagem de Dinheiro"],
-    "Simulado 2 (Semanas 3 e 4)": ["Mercado de Capitais", "Securitização e Recebíveis", "Derivativos"],
-    "Simulado 3 (Semanas 5 e 6)": ["Fundos de Investimentos", "Outros Fundos", "Clube de Investimentos"],
-    "Simulado 4 (Semanas 7 e 8)": ["Mercado Financeiro", "Sistema Financeiro Nacional"],
-    "Simulado 5 (Semanas 9 e 10)": ["Instituições Financeiras", "Economia"],
-    "Simulado 6 (Semanas 11 e 12)": ["Matemática Financeira", "Administração de Risco", "Clube de Investimentos"]
+    "Simulado 1": ["Atividade do AAI", "Lavagem de Dinheiro"],
+    "Simulado 2": ["Mercado de Capitais", "Securitização", "Derivativos"],
+    "Simulado 3": ["Fundos", "Outros Fundos"],
+    "Simulado 4": ["Mercado Financeiro", "SFN"],
+    "Simulado 5": ["Instituições", "Economia"],
+    "Simulado 6": ["Matemática Financeira", "Risco"]
 }
 
 SIMULADOS_ORDEM = list(DIC_SIMULADOS.keys())
@@ -41,7 +42,7 @@ def login(u, p):
 
 if not st.session_state.logado:
     with st.form("login_form"):
-        st.title("🔐 Acesso ao Simulado")
+        st.title("🔐 Login")
         u = st.text_input("Usuário")
         p = st.text_input("Senha", type="password")
 
@@ -51,7 +52,7 @@ if not st.session_state.logado:
                 st.session_state.usuario = u
                 st.rerun()
             else:
-                st.error("Credenciais inválidas")
+                st.error("Erro no login")
     st.stop()
 
 # --- MENU ---
@@ -62,22 +63,27 @@ menu = st.sidebar.radio("Menu", ["Simulado", "Evolução"])
 # =========================
 if menu == "Simulado":
 
+    # ESCOLHA
     if not st.session_state.simulado_iniciado:
+
+        st.title("Escolha o Simulado")
 
         for i, nome in enumerate(SIMULADOS_ORDEM):
             if st.button(nome, key=f"sim_{i}"):
+
                 materias = DIC_SIMULADOS[nome]
                 pool = [q for q in BANCO_QUESTOES if q["modulo"] in materias]
 
                 st.session_state.questoes = random.sample(pool, min(20, len(pool)))
                 st.session_state.respostas = {}
                 st.session_state.tempo = datetime.now() + timedelta(minutes=30)
-                st.session_state.inicio_prova = datetime.now()
-                st.session_state.simulado_iniciado = True
                 st.session_state.simulado_nome = nome
+                st.session_state.simulado_iniciado = True
                 st.session_state.resultado_final = False
+
                 st.rerun()
 
+    # PROVA
     elif not st.session_state.resultado_final:
 
         restante = int((st.session_state.tempo - datetime.now()).total_seconds())
@@ -85,7 +91,11 @@ if menu == "Simulado":
 
         st.info(f"⏱️ {minutos:02d}:{segundos:02d}")
 
-        with st.form("prova_form"):
+        # 🔥 TIMER REALTIME
+        time.sleep(1)
+        st.rerun()
+
+        with st.form("form_prova"):
             for i, q in enumerate(st.session_state.questoes):
 
                 st.markdown(f"**{i+1}. {q['pergunta']}**")
@@ -93,12 +103,14 @@ if menu == "Simulado":
                 opcoes = list(q["opcoes"].keys())
 
                 resp = st.radio(
-                    "Resposta:",
+                    "Escolha:",
                     opcoes,
-                    key=f"questao_{i}"
+                    key=f"q_{i}"
                 )
 
-                st.session_state.respostas[i] = resp
+                # salva só se respondeu
+                if resp:
+                    st.session_state.respostas[i] = resp
 
             enviar = st.form_submit_button("Finalizar")
 
@@ -106,8 +118,9 @@ if menu == "Simulado":
             st.session_state.resultado_final = True
             st.rerun()
 
+    # RESULTADO
     else:
-        # --- RESULTADO ---
+
         acertos = 0
         por_modulo = {}
 
@@ -124,7 +137,7 @@ if menu == "Simulado":
 
         st.success(f"Nota: {nota:.1f}%")
 
-        # --- RADAR ---
+        # --- RADAR REAL ---
         categorias = list(por_modulo.keys())
         valores = [(v[0]/v[1])*100 for v in por_modulo.values()]
 
@@ -141,9 +154,29 @@ if menu == "Simulado":
             showlegend=False
         )
 
-        st.plotly_chart(fig, use_container_width=True, key="radar_chart")
+        st.plotly_chart(fig, use_container_width=True)
 
-        if st.button("Voltar"):
+        # --- SALVAR RESULTADO ---
+        try:
+            df = conn.read(worksheet="Resultados")
+        except:
+            df = pd.DataFrame(columns=["Usuario","Simulado","Nota","Data"])
+
+        novo = pd.DataFrame([{
+            "Usuario": st.session_state.usuario,
+            "Simulado": st.session_state.simulado_nome,
+            "Nota": nota,
+            "Data": datetime.now().strftime("%d/%m/%Y %H:%M")
+        }])
+
+        df_final = pd.concat([df, novo], ignore_index=True)
+
+        conn.update(
+            worksheet="Resultados",
+            data=df_final
+        )
+
+        if st.button("Refazer / Novo Simulado"):
             st.session_state.simulado_iniciado = False
             st.session_state.resultado_final = False
             st.rerun()
@@ -157,6 +190,7 @@ elif menu == "Evolução":
     user = df[df["Usuario"] == st.session_state.usuario]
 
     if not user.empty:
+        st.title("Sua evolução")
         st.line_chart(user["Nota"])
     else:
         st.info("Sem dados ainda")
