@@ -222,8 +222,12 @@ if menu == "Simulado":
                 st.success(f"Nota: {nota:.1f}%")
                 st.write(f"⏱️ Tempo médio por questão: {tempo_medio:.1f}s")
 
-                # salvar resultado
+                # --- SALVAR RESULTADOS (CORRIGIDO) ---
                 df_res = conn.read(worksheet="Resultados")
+
+                if "Tempo_medio" not in df_res.columns:
+                    df_res["Tempo_medio"] = None
+
                 novo = pd.DataFrame([{
                     "Usuario": st.session_state.usuario,
                     "Simulado": sim_atual,
@@ -231,23 +235,8 @@ if menu == "Simulado":
                     "Tempo_medio": tempo_medio,
                     "Data": datetime.now().strftime("%d/%m/%Y %H:%M")
                 }])
+
                 conn.update("Resultados", pd.concat([df_res, novo]))
-
-                # salvar métricas por módulo
-                df_met = conn.read(worksheet="Metricas")
-
-                novos = []
-                for m, v in por_modulo.items():
-                    score = (v[0]/v[1])*100
-                    novos.append({
-                        "Usuario": st.session_state.usuario,
-                        "Simulado": sim_atual,
-                        "Modulo": m,
-                        "Score": score,
-                        "Data": datetime.now().strftime("%d/%m/%Y %H:%M")
-                    })
-
-                conn.update("Metricas", pd.concat([df_met, pd.DataFrame(novos)]))
 
                 # progresso
                 novo_idx = progresso
@@ -266,20 +255,18 @@ elif menu == "Evolução":
     df = conn.read(worksheet="Resultados")
     user = df[df["Usuario"] == st.session_state.usuario]
 
+    if user.empty:
+        st.warning("Nenhum resultado ainda.")
+        st.stop()
+
     st.subheader("Notas ao longo do tempo")
     st.line_chart(user["Nota"])
 
-    st.subheader("Tempo médio por prova")
-    st.line_chart(user["Tempo_medio"])
-
-    # métricas por módulo
-    df_met = conn.read(worksheet="Metricas")
-    user_met = df_met[df_met["Usuario"] == st.session_state.usuario]
-
-    if not user_met.empty:
-        pivot = user_met.pivot_table(index="Modulo", values="Score", aggfunc="mean")
-        st.subheader("📊 Média por módulo")
-        st.bar_chart(pivot)
+    if "Tempo_medio" in user.columns:
+        st.subheader("Tempo médio por prova")
+        st.line_chart(user["Tempo_medio"])
+    else:
+        st.info("Tempo médio aparecerá nas próximas provas.")
 
 # --- ADMIN ---
 elif menu == "Admin":
