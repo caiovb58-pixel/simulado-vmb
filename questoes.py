@@ -1257,5 +1257,200 @@ BANCO_QUESTOES = [
         },
         "resposta_correta": "C",
         "explicacao": "A remuneração do AI é baseada na receita gerada pela sua carteira de clientes junto à instituição contratante[cite: 16]."
+    },
+    {
+        "id": 132,
+        "modulo": "Administração de Risco",
+        "pergunta": "Com relação ao risco operacional, assinale a alternativa correta:",
+        "opcoes": {
+            "A": "É o risco de perdas (diretas ou indiretas) determinadas por erros humanos, falhas nos sistemas de informações e computadores",
+            "B": "É o risco de perdas (diretas ou indiretas) determinadas por oscilações nos valores dos ativos presentes na carteira de uma instituição financeira",
+            "C": "Com o objetivo de reduzir o risco operacional, é indicado que as instituições financeiras mantenham sempre a tecnologia atual sem melhorias de processos",
+            "D": "É o risco de perdas (diretas ou indiretas) determinadas por oscilações de valores de dívidas lastreadas em moeda estrangeira"
+        },
+        "resposta_correta": "A",
+        "explicacao": "O risco operacional deriva de falhas em processos internos, pessoas, sistemas ou eventos externos[cite: 17]."
+    },
+    {
+        "id": 133,
+        "modulo": "Administração de Risco",
+        "pergunta": "Sobre riscos, analise as afirmações: I) Risco de crédito está associado ao não pagamento do compromisso pelo emissor (CDB, ações e debêntures); II) Risco de liquidez está associado à dificuldade de converter ativo em dinheiro; III) Risco de mercado pode ser sistemático ou não sistemático e ambos podem ser neutralizados.",
+        "opcoes": {
+            "A": "Todas são verdadeiras",
+            "B": "Todas são falsas",
+            "C": "Somente I e III são verdadeiras",
+            "D": "Somente III é falsa"
+        },
+        "resposta_correta": "B",
+        "explicacao": "A afirmação I está incorreta porque ações não possuem risco de crédito (o acionista é sócio). A III está incorreta pois o risco sistemático não pode ser neutralizado/eliminado[cite: 17]."
+    },
+    {
+        "id": 134,
+        "modulo": "Administração de Risco",
+        "pergunta": "Com relação a risco, assinale a alternativa correta:",
+        "opcoes": {
+            "A": "O risco de mercado pode ser reduzido com operações de hedge, já o risco de liquidez é aquele decorrente da variação ligado à moeda estrangeira",
+            "B": "Risco de crédito é a possibilidade de perdas decorrentes por falta de pagamento dos emissores, já o risco operacional é decorrente das oscilações dos valores dos títulos",
+            "C": "O risco Sistemático pode ser reduzido através da diversificação",
+            "D": "O Value At Risk define a perda máxima potencial de uma carteira, com um determinado nível de confiança"
+        },
+        "resposta_correta": "D",
+        "explicacao": "O VaR é uma métrica estatística que estima a perda máxima esperada para um portfólio em um dado horizonte de tempo e nível de confiança[cite: 17]."
+    },
+    {
+        "id": 135,
+        "modulo": "Administração de Risco",
+        "pergunta": "Com relação aos conceitos de Duration e Duration Modificada: I - A Duration é o prazo médio de um título; II - A Duration Modificada representa o quanto oscila um título; III - A Duration Modificada sempre será duas vezes superior à Duration.",
+        "opcoes": {
+            "A": "I e II estão corretas",
+            "B": "I e III estão corretas",
+            "C": "II e III estão corretas",
+            "D": "I, II e III estão corretas"
+        },
+        "resposta_correta": "A",
+        "explicacao": "A Duration mede o tempo médio de recuperação do capital, e a Modificada mede a sensibilidade do preço do título às variações na taxa de juros[cite: 17]."
+    },
+    {
+        "id": 136,
+        "modulo": "Administração de Risco",
+        "pergunta": "Dois ativos (A e B) de mesmo emissor possuem prazo de 1 e 10 anos, respectivamente. O título B terá:",
+        "opcoes": {
+            "A": "Maior risco e menor rentabilidade que o ativo A",
+            "B": "Maior risco e maior rentabilidade que o ativo A",
+            "C": "Menor risco e maior rentabilidade que o ativo A",
+            "D": "Menor risco e menor rentabilidade que o ativo A"
+        },
+        "resposta_correta": "B",
+        "explicacao": "Prazos mais longos aumentam a exposição às oscilações de mercado (risco), exigindo maior prêmio de retorno (rentabilidade)[cite: 17]."
+    },
+    {
+        "id": 137,
+        "modulo": "Administração de Risco",
+        "pergunta": "Ao realizar um aporte em um fundo de ações do tipo Small Caps, quais os principais riscos presentes:",
+        "opcoes": {
+            "A": "Operacional e Crédito",
+            "B": "Operacional e Liquidez",
+            "C": "Mercado e Crédito",
+            "D": "Mercado e Liquidez"
+        },
+        "resposta_correta": "D",
+        "explicacao": "Small Caps possuem alta volatilidade (mercado) e menor volume de negociação comparado às Blue Chips (liquidez)[cite: 17]."
+    },
+    {
+        "id": 138,
+        "modulo": "Administração de Risco",
+        "pergunta": "O risco de liquidez presente em um título refere-se a:",
+        "opcoes": {
+            "A": "Impossibilidade de se comercializar um ativo por seu preço justo",
+            "B": "Oscilações naturais no preço do ativo",
+            "C": "Não pagamento das obrigações por parte do emissor do ativo",
+            "D": "Excesso de recursos em um determinado mercado"
+        },
+        "resposta_correta": "A",
+        "explicacao": "Liquidez é a facilidade de converter o ativo em caixa sem perda significativa de valor (preço justo)[cite: 17]."
+    },
+    {
+        "id": 139,
+        "modulo": "Administração de Risco",
+        "pergunta": "Um investidor que deseja reduzir o seu risco de oscilação de taxa de juros de uma carteira de renda fixa pós-fixada, poderia:",
+        "opcoes": {
+            "A": "Vender contratos futuros de índice DI",
+            "B": "Fazer um contrato de SWAP com ponta ativa em Juros-DI e ponta passiva em Pré-Fixado",
+            "C": "Comprar contratos futuros de índice DI",
+            "D": "Vender contratos futuros de Ibovespa"
+        },
+        "resposta_correta": "A",
+        "explicacao": "A venda de contratos futuros de DI permite travar a taxa e proteger contra oscilações indesejadas[cite: 17]."
+    },
+    {
+        "id": 140,
+        "modulo": "Administração de Risco",
+        "pergunta": "Um ativo com maior risco de crédito é aquele que tem:",
+        "opcoes": {
+            "A": "Maior prazo",
+            "B": "Maior chance de inadimplência",
+            "C": "Menor juros",
+            "D": "Menor liquidez"
+        },
+        "resposta_correta": "B",
+        "explicacao": "O risco de crédito é diretamente a probabilidade de o emissor não cumprir com suas obrigações financeiras[cite: 17]."
+    },
+    {
+        "id": 141,
+        "modulo": "Administração de Risco",
+        "pergunta": "Seu cliente está montando uma carteira 100% composta com ações. Essa carteira possui os seguintes riscos, COM EXCEÇÃO DE:",
+        "opcoes": {
+            "A": "Liquidez",
+            "B": "Mercado",
+            "C": "Crédito",
+            "D": "Sistemático"
+        },
+        "resposta_correta": "C",
+        "explicacao": "Ações não possuem risco de crédito, pois o investidor torna-se sócio da empresa, não credor[cite: 17]."
+    },
+    {
+        "id": 142,
+        "modulo": "Administração de Risco",
+        "pergunta": "Um investidor comprou uma ação por R$ 20,00. Na venda, a melhor oferta foi de R$ 13,00. Qual risco estava presente principalmente?",
+        "opcoes": {
+            "A": "Mercado",
+            "B": "Crédito",
+            "C": "Liquidez",
+            "D": "Legal"
+        },
+        "resposta_correta": "A",
+        "explicacao": "A queda no preço do ativo devido às condições de oferta e demanda caracteriza o risco de mercado[cite: 17]."
+    },
+    {
+        "id": 143,
+        "modulo": "Administração de Risco",
+        "pergunta": "Tipo de risco que pode ser reduzido com a diversificação:",
+        "opcoes": {
+            "A": "Sistemático",
+            "B": "Não Sistemático",
+            "C": "Não Específico",
+            "D": "De Conjuntura"
+        },
+        "resposta_correta": "B",
+        "explicacao": "O risco não sistemático (específico) é aquele restrito a um setor ou empresa e pode ser diluído em uma carteira diversificada[cite: 17]."
+    },
+    {
+        "id": 144,
+        "modulo": "Administração de Risco",
+        "pergunta": "Um investidor possui uma carteira com Duration = 900 dias. Para diminuir essa Duration, ele deverá:",
+        "opcoes": {
+            "A": "Comprar ativos com mais risco",
+            "B": "Comprar ativos com prazo maior que 900 dias",
+            "C": "Comprar ativos com prazo inferior a 900 dias",
+            "D": "Comprar ativos mais defensivos"
+        },
+        "resposta_correta": "C",
+        "explicacao": "A Duration é o prazo médio; adicionar ativos com prazos menores reduz a média ponderada da carteira[cite: 17]."
+    },
+    {
+        "id": 145,
+        "modulo": "Administração de Risco",
+        "pergunta": "Sobre o sistema de Custódia Fungível, é correto afirmar:",
+        "opcoes": {
+            "A": "Não há vínculo entre o proprietário do ativo e o seu depositante",
+            "B": "O ativo original depositado é o que deve ser devolvido",
+            "C": "Um ativo com características idênticas ao depositado pode ser devolvido, sem necessidade de ser o original",
+            "D": "A devolução somente pode ser feita ao proprietário original"
+        },
+        "resposta_correta": "C",
+        "explicacao": "Bens fungíveis são aqueles que podem ser substituídos por outros da mesma espécie, qualidade e quantidade[cite: 17]."
+    },
+    {
+        "id": 146,
+        "modulo": "Administração de Risco",
+        "pergunta": "Um investidor busca menor risco de crédito e menor risco de reinvestimento. Qual a melhor escolha?",
+        "opcoes": {
+            "A": "Tesouro IPCA+ com juros semestrais",
+            "B": "Debêntures incentivadas com juros anuais",
+            "C": "Tesouro IPCA+ Principal (sem juros semestrais)",
+            "D": "CDB pré-fixado com juros mensais"
+        },
+        "resposta_correta": "C",
+        "explicacao": "Títulos públicos têm o menor risco de crédito do país. Títulos 'Principal' eliminam o risco de reinvestimento dos cupons antes do vencimento[cite: 17]."
     }
 ]
