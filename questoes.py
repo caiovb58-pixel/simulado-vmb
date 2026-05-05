@@ -836,5 +836,175 @@ BANCO_QUESTOES = [
             "D) Originam-se de lucros retidos e IR com alíquota única de 15%"
         ],
         "resposta": "D"
+    },
+    {
+        "id": "4071",
+        "tema": "Economia",
+        "pergunta": "Sob a ótica do consumo, o PIB será a soma de: I- Consumo das famílias; II- Investimentos; III- Gastos Governamentais; IV - Exportações, deduzidas as importações. Está correto o que se afirma em:",
+        "opcoes": ["A) Todas as alternativas", "B) I, II e III", "C) I, II e IV", "D) II e III"],
+        "resposta": "A"
+    },
+    {
+        "id": "20224509",
+        "tema": "Economia",
+        "pergunta": "Uma política monetária é dita ____ quando injeta maior volume de recursos nos mercados, e quando age em sentido contrário, retraindo a atividade econômica, é chamada de ____.",
+        "opcoes": ["A) Ativa / Passiva", "B) Agressiva / Expansionista", "C) Passiva / Ativa", "D) Expansionista / Restritiva"],
+        "resposta": "D"
+    },
+    {
+        "id": "4064",
+        "tema": "Economia",
+        "pergunta": "Com intenção de reduzir a demanda agregada da economia, o BACEN deveria realizar qual tipo de alteração na política monetária:",
+        "opcoes": ["A) Diminuir o depósito compulsório", "B) Aumentar o depósito compulsório", "C) Reduzir a taxa do redesconto", "D) Realizar operações de 'open market' de compra de títulos"],
+        "resposta": "B"
+    },
+    {
+        "id": "4062",
+        "tema": "Economia",
+        "pergunta": "Em um regime cambial de taxa flutuante, com a conta corrente e a conta de capitais sendo superavitárias e sem intervenção, espera-se que:",
+        "opcoes": ["A) Valorize a moeda local", "B) Desvalorize a moeda local", "C) O governo atue para reduzir a alta da moeda estrangeira", "D) O governo atue para aumentar a cotação da moeda estrangeira"],
+        "resposta": "A"
+    },
+    {
+        "id": "4072",
+        "tema": "Economia",
+        "pergunta": "Um investimento com rendimento nominal de 15% e inflação de 5% no mesmo período, teve uma taxa real de aproximadamente:",
+        "opcoes": ["A) 5%", "B) 20%", "C) 15%", "D) 10%"],
+        "resposta": "D"
+    },
+    {
+        "id": "4058",
+        "tema": "Economia",
+        "pergunta": "Um Superávit Consolidado contempla as contas do(s):",
+        "opcoes": ["A) Governo Federal, somente", "B) Governo Federal e Estados", "C) Governo Federal, Estados e Municípios", "D) Governo Federal, Estados, Municípios e Empresas Estatais"],
+        "resposta": "D"
+    },
+    {
+        "id": "4069",
+        "tema": "Economia",
+        "pergunta": "Assinale o item que contém somente medidas contracionistas: I-Redução da Selic; II-Aumento do compulsório; III-Redução do IPI; IV-Redução dos gastos governamentais.",
+        "opcoes": ["A) I e III", "B) II e III", "C) II, III e IV", "D) II e IV"],
+        "resposta": "D"
+    },
+    {
+        "id": "4070",
+        "tema": "Economia",
+        "pergunta": "Assinale a alternativa correta sobre taxas e índices:",
+        "opcoes": ["A) A T.R é usada pelo BNDES", "B) Taxa DI é lastreada em títulos públicos", "C) O IGP-M é mais afetado por preços no atacado", "D) O spread de crédito é livre de risco"],
+        "resposta": "C"
+    },
+    {
+        "id": "4060",
+        "tema": "Economia",
+        "pergunta": "Inflação de 6 meses: Jan(+0,16%), Fev(+0,35%), Mar(-0,16%), Abr(-0,02%), Mai(+0,05%), Jun(-0,02%). Qual a acumulada?",
+        "opcoes": ["A) 0,3600%", "B) 0,3598%", "C) 0,3698%", "D) 0,3740%"],
+        "resposta": "B"
+    },
+    {
+        "id": "4066",
+        "tema": "Economia",
+        "pergunta": "Quando o BACEN reduz o compulsório, a liquidez ____, as taxas de juros ____ e o consumo ____.",
+        "opcoes": ["A) aumente, caiam, aumente", "B) aumente, caiam, caia", "C) caia, aumentem, caia", "D) caia, caiam, aumente"],
+        "resposta": "A"
+    },
+    {
+        "id": "4068",
+        "tema": "Economia",
+        "pergunta": "A diferença entre Taxa Selic Meta e Selic Over é que:",
+        "opcoes": ["A) Meta é mercado, Over é Copom", "B) Meta é títulos privados, Over é públicos", "C) Meta é anual, Over é semestral", "D) Meta é Copom, Over é mercado"],
+        "resposta": "D"
+    },
+    {
+        "id": "20224545",
+        "tema": "Economia",
+        "pergunta": "O índice IPC-FIPE estima as variações do custo de vida das famílias de:",
+        "opcoes": ["A) São Paulo", "B) Região Sudeste", "C) Região Sul", "D) IBGE"],
+        "resposta": "A"
+    },
+    {
+        "id": "422020",
+        "tema": "Economia",
+        "pergunta": "A taxa 'Selic Over' diária é obtida com juros ____ e métrica de ____ dias.",
+        "opcoes": ["A) Compostos; 252", "B) Compostos; 360", "C) Simples; 252", "D) Simples; 360"],
+        "resposta": "A"
+    },
+    {
+        "id": "422019",
+        "tema": "Economia",
+        "pergunta": "Conforme a Lei dos Rendimentos Decrescentes:",
+        "opcoes": ["A) Produção aumenta proporcionalmente ao fator", "B) Produção total é reduzida", "C) Mantendo fatores, produção total aumenta", "D) Aumentando um fator, a produção proporcional deste fator é reduzida"],
+        "resposta": "D"
+    },
+
+    # --- MÓDULO: INSTITUIÇÕES E INTERMEDIADORES ---
+    {
+        "id": "20234001",
+        "tema": "Instituições Financeiras",
+        "pergunta": "Qual quantidade mínima de associados necessários para que uma cooperativa de crédito seja constituída?",
+        "opcoes": ["A) 20 associados", "B) 30 associados", "C) 50 associados", "D) Não tem quantidade mínima"],
+        "resposta": "A"
+    },
+    {
+        "id": "4094",
+        "tema": "Instituições Financeiras",
+        "pergunta": "São funções de uma SCTVM, EXCETO:",
+        "opcoes": ["A) Administrar planos de capitalização", "B) Administrar clubes de investimentos", "C) Administrar fundos de investimentos", "D) Realizar operações de câmbio"],
+        "resposta": "A"
+    },
+    {
+        "id": "4098",
+        "tema": "Instituições Financeiras",
+        "pergunta": "Sobre os Bancos de Investimentos, assinale a correta:",
+        "opcoes": ["A) Ofertam crédito de curto prazo (cheque especial)", "B) Realizam operações com dólar turismo", "C) Fiscalizam o mercado de distribuição", "D) Assessoram fusões, emissões de valores mobiliários e crédito de médio/longo prazo"],
+        "resposta": "D"
+    },
+    {
+        "id": "20224526",
+        "tema": "Instituições Financeiras",
+        "pergunta": "Podem receber depósitos interfinanceiros (CDI): I-Caixas Econômicas; II-Sociedades de Crédito e Financiamento; III-SCTVM. Está correto:",
+        "opcoes": ["A) I e II", "B) I e III", "C) Apenas I", "D) I, II e III"],
+        "resposta": "A"
+    },
+    {
+        "id": "4095",
+        "tema": "Instituições Financeiras",
+        "pergunta": "Sobre o BNDES, assinale a alternativa correta:",
+        "opcoes": ["A) É um banco de desenvolvimento federal", "B) É sociedade de economia mista com ações em bolsa", "C) Fomenta apenas o mercado imobiliário", "D) É instrumento para fomentar setores estratégicos"],
+        "resposta": "D"
+    },
+    {
+        "id": "20234015",
+        "tema": "Instituições Financeiras",
+        "pergunta": "Para ofertar leasing e crédito imobiliário em um único balanço, Júlio precisa de:",
+        "opcoes": ["A) Banco com carteira de crédito e arrendamento", "B) Banco Múltiplo (Comercial ou Desenv.) + Arrendamento", "C) Banco Múltiplo (Comercial ou Invest.) + Desenv. e Imobiliário", "D) Banco Múltiplo (Comercial ou Invest.) + Arrendamento e Imobiliário"],
+        "resposta": "D"
+    },
+    {
+        "id": "4097",
+        "tema": "Instituições Financeiras",
+        "pergunta": "É uma carteira que deve estar presente em um Banco Múltiplo, obrigatoriamente (para ser considerado múltiplo):",
+        "opcoes": ["A) Comercial ou de Investimento", "B) Crédito e Financiamento", "C) Crédito Imobiliário", "D) Desenvolvimento"],
+        "resposta": "A"
+    },
+    {
+        "id": "4096",
+        "tema": "Instituições Financeiras",
+        "pergunta": "Instituição Financeira autorizada a captar através de depósito à vista:",
+        "opcoes": ["A) Banco Comercial", "B) Banco de Investimento", "C) Banco de Desenvolvimento", "D) Financeiras"],
+        "resposta": "A"
+    },
+    {
+        "id": "4090",
+        "tema": "Instituições Financeiras",
+        "pergunta": "As Financeiras são instituições ____ e tem como principal característica o financiamento para ____.",
+        "opcoes": ["A) bancárias / atividade produtiva", "B) bancárias / capital fixo", "C) não bancárias / capital social", "D) não bancárias / capital de giro"],
+        "resposta": "D"
+    },
+    {
+        "id": "20234009",
+        "tema": "Instituições Financeiras",
+        "pergunta": "Qual das opções abaixo configura um banco múltiplo?",
+        "opcoes": ["A) Banco de Desenv. com carteira imobiliária", "B) Banco Comercial (apenas)", "C) Banco com carteira de financiamento e arrendamento", "D) Banco de investimento com carteira de arrendamento mercantil"],
+        "resposta": "D"
     }
 ]
