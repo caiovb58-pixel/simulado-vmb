@@ -1127,5 +1127,135 @@ BANCO_QUESTOES = [
         },
         "resposta_correta": "C",
         "explicacao": "NTN-B Principal é garantida pelo governo (baixo crédito) e não paga cupons (zero risco de reinvestimento)."
+    },
+    {
+        "id": 122,
+        "modulo": "A Atividade do Assessor de Investimentos (AI)",
+        "pergunta": "Trata-se de uma descrição da atividade de Assessor de Investimentos (AI):",
+        "opcoes": {
+            "A": "Distribuir cotas de fundos de investimento sob a responsabilidade e como preposto de instituição integrante do sistema de distribuição",
+            "B": "Entregar numerário (dinheiro em espécie) aos clientes da sua carteira",
+            "C": "Atuar como representante de uma instituição e simultaneamente como consultor de investimentos",
+            "D": "Terceirizar o serviço pelo qual foi contratado pela instituição integrante do sistema de distribuição"
+        },
+        "resposta_correta": "A",
+        "explicacao": "O AI atua como preposto da instituição contratante, sendo vedado o manuseio de numerário ou a atuação simultânea como consultor[cite: 16]."
+    },
+    {
+        "id": 123,
+        "modulo": "A Atividade do Assessor de Investimentos (AI)",
+        "pergunta": "São requisitos mínimos para ser cadastrado como Assessor de Investimentos, EXCETO:",
+        "opcoes": {
+            "A": "Efetuar o recolhimento da taxa mensal de fiscalização da CVM",
+            "B": "Aderir ao Código de Conduta Profissional da entidade credenciadora",
+            "C": "Ter sido aprovado em exame de qualificação técnica (Ancord)",
+            "D": "Ter ensino médio completo no país ou equivalente no exterior"
+        },
+        "resposta_correta": "A",
+        "explicacao": "O recolhimento de taxas é uma obrigação de manutenção, não um requisito técnico ou educacional para o cadastramento inicial[cite: 16]."
+    },
+    {
+        "id": 124,
+        "modulo": "A Atividade do Assessor de Investimentos (AI)",
+        "pergunta": "Qual o prazo para que a instituição contratante avise à Ancord sobre a extinção de contrato com o AI?",
+        "opcoes": {
+            "A": "Em até 10 dias úteis",
+            "B": "Imediatamente",
+            "C": "Em até 24 horas",
+            "D": "Em até 30 dias corridos"
+        },
+        "resposta_correta": "B",
+        "explicacao": "Conforme a regulamentação, a comunicação de quebra de vínculo deve ser imediata para fins de atualização cadastral[cite: 16]."
+    },
+    {
+        "id": 125,
+        "modulo": "A Atividade do Assessor de Investimentos (AI)",
+        "pergunta": "Sobre o vínculo de escritórios de AI (Pessoa Jurídica) com intermediários, é correto afirmar que:",
+        "opcoes": {
+            "A": "O escritório pode se vincular a diversas Corretoras ou Distribuidoras",
+            "B": "O escritório deve ser exclusivo a apenas uma Corretora ou Distribuidora",
+            "C": "O escritório deve, obrigatoriamente, ser vinculado a pelo menos duas instituições",
+            "D": "A pluralidade de vínculos só é permitida para escritórios com custódia acima de R$ 10 milhões"
+        },
+        "resposta_correta": "A",
+        "explicacao": "A Resolução CVM 178 extinguiu a exclusividade obrigatória, permitindo o modelo de 'multivínculo' para as PJs[cite: 16]."
+    },
+    {
+        "id": 126,
+        "modulo": "A Atividade do Assessor de Investimentos (AI)",
+        "pergunta": "Um Assessor de Investimentos decide migrar para a atividade de Gestor de Carteira Administrada. Nesse caso, ele deve:",
+        "opcoes": {
+            "A": "Solicitar o cancelamento do seu registro de AI",
+            "B": "Solicitar a suspensão temporária por até 3 anos",
+            "C": "Manter os dois registros ativos simultaneamente",
+            "D": "Apenas alterar sua classificação no site da Ancord"
+        },
+        "resposta_correta": "A",
+        "explicacao": "As atividades de AI e Gestor/Consultor são inacumuláveis; o profissional deve optar por uma delas e cancelar a outra[cite: 16]."
+    },
+    {
+        "id": 127,
+        "modulo": "A Atividade do Assessor de Investimentos (AI)",
+        "pergunta": "As regras de uso de logotipos do AI em materiais publicitários aplicam-se a: I. Apostilas e Treinamentos; II. E-mails; III. Sites e Redes Sociais. Está(ão) correto(s):",
+        "opcoes": {
+            "A": "Apenas I e III",
+            "B": "Apenas II e III",
+            "C": "Apenas I e II",
+            "D": "I, II e III"
+        },
+        "resposta_correta": "D",
+        "explicacao": "Toda e qualquer comunicação do AI, seja física ou digital, deve seguir as normas de identificação visual da CVM[cite: 16]."
+    },
+    {
+        "id": 128,
+        "modulo": "A Atividade do Assessor de Investimentos (AI)",
+        "pergunta": "Sobre a estrutura societária de um escritório de AI (PJ), marque a alternativa INCORRETA:",
+        "opcoes": {
+            "A": "O escritório poderá ser uma Sociedade Limitada (Ltda)",
+            "B": "O escritório poderá ser uma Sociedade Anônima (S/A)",
+            "C": "O escritório não poderá ser uma Sociedade Simples",
+            "D": "O escritório não precisa de uma classificação específica de sociedade (pode ser qualquer tipo)"
+        },
+        "resposta_correta": "D",
+        "explicacao": "A norma exige tipos societários específicos que permitam a fiscalização e a responsabilidade técnica adequada[cite: 16]."
+    },
+    {
+        "id": 129,
+        "modulo": "A Atividade do Assessor de Investimentos (AI)",
+        "pergunta": "O descumprimento do Programa de Educação Continuada (PEC) da Ancord resulta em:",
+        "opcoes": {
+            "A": "Advertência por escrito",
+            "B": "Suspensão temporária de 180 dias",
+            "C": "Cancelamento do credenciamento",
+            "D": "Multa pecuniária fixa de R$ 5.000,00"
+        },
+        "resposta_correta": "C",
+        "explicacao": "A manutenção da capacidade técnica via PEC é obrigatória; a falha resulta na perda da credencial[cite: 16]."
+    },
+    {
+        "id": 130,
+        "modulo": "A Atividade do Assessor de Investimentos (AI)",
+        "pergunta": "É vedado ao Assessor de Investimentos, mesmo com autorização do cliente:",
+        "opcoes": {
+            "A": "Prospectar novos clientes para a corretora",
+            "B": "Prestar informações sobre os produtos da instituição contratante",
+            "C": "Utilizar a senha ou assinatura eletrônica do cliente para transmitir ordens",
+            "D": "Transmitir ordens verbais recebidas do cliente para a mesa de operações"
+        },
+        "resposta_correta": "C",
+        "explicacao": "O uso de senhas de clientes é uma infração grave e vedada em qualquer circunstância para garantir a segurança[cite: 16]."
+    },
+    {
+        "id": 131,
+        "modulo": "A Atividade do Assessor de Investimentos (AI)",
+        "pergunta": "Sobre a remuneração do AI, assinale a alternativa correta:",
+        "opcoes": {
+            "A": "Possui um salário fixo mensal acrescido de bônus por metas",
+            "B": "É exclusivamente composta por salário fixo garantido pela corretora",
+            "C": "Não possui valor fixo mensal; provém do rateio de comissões das operações dos clientes",
+            "D": "É tabelada pela CVM para evitar concorrência desleal entre escritórios"
+        },
+        "resposta_correta": "C",
+        "explicacao": "A remuneração do AI é baseada na receita gerada pela sua carteira de clientes junto à instituição contratante[cite: 16]."
     }
 ]
