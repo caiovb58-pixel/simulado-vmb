@@ -4,18 +4,14 @@ import pandas as pd
 from datetime import datetime, timedelta
 from streamlit_gsheets import GSheetsConnection
 import time
-import math
 
 # --- CONFIG ---
 st.set_page_config(page_title="Simulado ANCORD", layout="wide")
 
-# --- ADMINS ---
 ADMINS = ["Caio", "Admin"]
 
-# --- QUESTÕES ---
 from questoes import BANCO_QUESTOES
 
-# --- SIMULADOS ---
 DIC_SIMULADOS = {
     "Simulado 1 (Semanas 1 e 2)": ["Atividade do AAI", "Lavagem de Dinheiro"],
     "Simulado 2 (Semanas 3 e 4)": ["Mercado de Capitais", "Securitização e Recebíveis", "Derivativos"],
@@ -181,6 +177,9 @@ if menu == "Simulado":
 
             st.info(f"⏱️ {minutos:02d}:{segundos:02d}")
 
+            time.sleep(1)
+            st.rerun()
+
             with st.form("form"):
                 for i, q in enumerate(st.session_state.questoes):
 
@@ -223,40 +222,64 @@ if menu == "Simulado":
                 st.success(f"Nota: {nota:.1f}%")
                 st.write(f"⏱️ Tempo médio por questão: {tempo_medio:.1f}s")
 
-                # --- RADAR ---
-                st.subheader("🎯 Radar de Performance")
+                # salvar resultado
+                df_res = conn.read(worksheet="Resultados")
+                novo = pd.DataFrame([{
+                    "Usuario": st.session_state.usuario,
+                    "Simulado": sim_atual,
+                    "Nota": nota,
+                    "Tempo_medio": tempo_medio,
+                    "Data": datetime.now().strftime("%d/%m/%Y %H:%M")
+                }])
+                conn.update("Resultados", pd.concat([df_res, novo]))
 
-                categorias = list(por_modulo.keys())
-                valores = [(v[0]/v[1])*100 for v in por_modulo.values()]
+                # salvar métricas por módulo
+                df_met = conn.read(worksheet="Metricas")
 
-                df_radar = pd.DataFrame({
-                    "Modulo": categorias,
-                    "Score": valores
-                })
+                novos = []
+                for m, v in por_modulo.items():
+                    score = (v[0]/v[1])*100
+                    novos.append({
+                        "Usuario": st.session_state.usuario,
+                        "Simulado": sim_atual,
+                        "Modulo": m,
+                        "Score": score,
+                        "Data": datetime.now().strftime("%d/%m/%Y %H:%M")
+                    })
 
-                st.line_chart(df_radar.set_index("Modulo"))
-
-                # --- BARRA ---
-                st.subheader("📊 Desempenho por módulo")
-                st.bar_chart(df_radar.set_index("Modulo"))
+                conn.update("Metricas", pd.concat([df_met, pd.DataFrame(novos)]))
 
                 # progresso
-                novo = progresso
+                novo_idx = progresso
                 if status == "Aprovado" and indice == progresso:
-                    novo += 1
+                    novo_idx += 1
 
-                salvar_progresso(st.session_state.usuario, novo, status)
-                st.session_state.simulado_atual_indice = novo
-
+                salvar_progresso(st.session_state.usuario, novo_idx, status)
+                st.session_state.simulado_atual_indice = novo_idx
                 st.session_state.simulado_iniciado = False
 
 # --- EVOLUÇÃO ---
 elif menu == "Evolução":
+
+    st.title("📊 Sua Evolução")
+
     df = conn.read(worksheet="Resultados")
     user = df[df["Usuario"] == st.session_state.usuario]
 
-    st.dataframe(user)
+    st.subheader("Notas ao longo do tempo")
     st.line_chart(user["Nota"])
+
+    st.subheader("Tempo médio por prova")
+    st.line_chart(user["Tempo_medio"])
+
+    # métricas por módulo
+    df_met = conn.read(worksheet="Metricas")
+    user_met = df_met[df_met["Usuario"] == st.session_state.usuario]
+
+    if not user_met.empty:
+        pivot = user_met.pivot_table(index="Modulo", values="Score", aggfunc="mean")
+        st.subheader("📊 Média por módulo")
+        st.bar_chart(pivot)
 
 # --- ADMIN ---
 elif menu == "Admin":
@@ -264,5 +287,4 @@ elif menu == "Admin":
         st.error("Acesso restrito")
         st.stop()
 
-    df = conn.read(worksheet="Resultados")
-    st.dataframe(df)
+    st.dataframe(conn.read("Resultados"))
