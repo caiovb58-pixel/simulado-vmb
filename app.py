@@ -31,7 +31,6 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # --- CONTROLE DE ESTADO ---
-# Inicialização robusta para evitar quedas no recarregamento
 if 'logado' not in st.session_state:
     st.session_state.logado = False
 if 'usuario_nome' not in st.session_state:
@@ -40,8 +39,12 @@ if 'simulado_iniciado' not in st.session_state:
     st.session_state.simulado_iniciado = False
 if 'tempo_fim' not in st.session_state:
     st.session_state.tempo_fim = None
+# Controla se o usuário já passou pela tela inicial de Boas-vindas
+if 'primeiro_acesso' not in st.session_state:
+    st.session_state.primeiro_acesso = True
+# Menu atual inicia no Simulado por padrão para a lógica do rádio
 if 'menu_atual' not in st.session_state:
-    st.session_state.menu_atual = "Boas-vindas"
+    st.session_state.menu_atual = "Simulado ANCORD"
 
 # --- FUNÇÕES ---
 def logout():
@@ -85,31 +88,10 @@ if not st.session_state.logado:
                     st.error("Credenciais inválidas")
     st.stop()
 
-# --- MENU LATERAL ---
-with st.sidebar:
-    if os.path.exists("logo_vmb.png"):
-        st.image("logo_vmb.png", width=150)
-    st.write(f"👤 **{st.session_state.usuario_nome}**")
-    
-    # Sincroniza o rádio com o estado do menu para permitir o redirecionamento via botão
-    opcoes_menu = ["Boas-vindas", "Simulado ANCORD", "Evolução"]
-    indice_atual = opcoes_menu.index(st.session_state.menu_atual)
-    
-    escolha = st.radio("Navegação", opcoes_menu, index=indice_atual)
-    
-    # Se o usuário mudar manualmente no rádio, atualiza o estado
-    if escolha != st.session_state.menu_atual:
-        st.session_state.menu_atual = escolha
-        st.rerun()
-        
-    st.markdown("---")
-    if st.button("🚪 Sair"):
-        logout()
+# --- LÓGICA DE NAVEGAÇÃO ---
 
-conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
-
-# --- PÁGINA: BOAS-VINDAS ---
-if st.session_state.menu_atual == "Boas-vindas":
+# Se for o primeiro acesso após o login, mostra a página de Boas-vindas fora do menu lateral
+if st.session_state.primeiro_acesso:
     st.title(f"Bem-vindo, {st.session_state.usuario_nome}!")
     st.markdown("""
     ### Regras e Instruções do Simulado
@@ -123,13 +105,36 @@ if st.session_state.menu_atual == "Boas-vindas":
     > "O sucesso é a soma de pequenos esforços repetidos dia após dia."
     """)
     
-    # CORREÇÃO: Agora o botão muda o estado do menu e dá rerun
     if st.button("Entendido, ir para o Simulado"):
+        st.session_state.primeiro_acesso = False
         st.session_state.menu_atual = "Simulado ANCORD"
         st.rerun()
+    st.stop() # Interrompe aqui para não mostrar o menu lateral na tela de boas-vindas
+
+# --- MENU LATERAL (Aparece após o "Entendido") ---
+with st.sidebar:
+    if os.path.exists("logo_vmb.png"):
+        st.image("logo_vmb.png", width=150)
+    st.write(f"👤 **{st.session_state.usuario_nome}**")
+    
+    # "Boas-vindas" removido daqui
+    opcoes_menu = ["Simulado ANCORD", "Evolução"]
+    indice_atual = opcoes_menu.index(st.session_state.menu_atual)
+    
+    escolha = st.radio("Navegação", opcoes_menu, index=indice_atual)
+    
+    if escolha != st.session_state.menu_atual:
+        st.session_state.menu_atual = escolha
+        st.rerun()
+        
+    st.markdown("---")
+    if st.button("🚪 Sair"):
+        logout()
+
+conn = st.connection("gsheets", type=GSheetsConnection, ttl=0)
 
 # --- PÁGINA: SIMULADO ---
-elif st.session_state.menu_atual == "Simulado ANCORD":
+if st.session_state.menu_atual == "Simulado ANCORD":
     if not st.session_state.simulado_iniciado:
         st.title("Configurar Novo Simulado")
         modulos = sorted(list(set([q['modulo'] for q in BANCO_QUESTOES])))
@@ -148,13 +153,12 @@ elif st.session_state.menu_atual == "Simulado ANCORD":
                 st.warning("Selecione ao menos um módulo com questões.")
 
     else:
-        # --- CORREÇÃO DO CRONÔMETRO ---
-        # Exibição do Cronômetro flutuante
+        # Cronômetro
         tempo_atual = datetime.now()
         restante = st.session_state.tempo_fim - tempo_atual
         
         if restante.total_seconds() <= 0:
-            st.error("Tempo esgotado! O simulado será encerrado.")
+            st.error("Tempo esgotado!")
             st.session_state.simulado_iniciado = False
             time.sleep(2)
             st.rerun()
@@ -166,7 +170,6 @@ elif st.session_state.menu_atual == "Simulado ANCORD":
             </div>
         """, unsafe_allow_html=True)
 
-        # FORMULÁRIO DE QUESTÕES
         with st.form("simulado_form"):
             for idx, q in enumerate(st.session_state.questoes_sorteadas):
                 st.markdown(f"**Questão {idx+1}** <span style='color:gray; font-size:12px;'>({q['modulo']})</span>", unsafe_allow_html=True)
@@ -178,40 +181,32 @@ elif st.session_state.menu_atual == "Simulado ANCORD":
             enviado = st.form_submit_button("FINALIZAR SIMULADO E SALVAR")
 
         if enviado:
-            acertos = 0
-            for idx, q in enumerate(st.session_state.questoes_sorteadas):
-                resp = st.session_state.respostas_usuario[idx]
-                correta = q['resposta_correta']
-                if resp and resp.startswith(correta):
-                    acertos += 1
-                
+            acertos = sum(1 for idx, q in enumerate(st.session_state.questoes_sorteadas) 
+                         if st.session_state.respostas_usuario[idx] and st.session_state.respostas_usuario[idx].startswith(q['resposta_correta']))
+            
             total = len(st.session_state.questoes_sorteadas)
             nota_final = (acertos / total) * 100
             
             if nota_final >= 70:
-                st.success(f"🔥 APROVADO! Nota: {nota_final:.1f}% ({acertos}/{total})")
+                st.success(f"🔥 APROVADO! Nota: {nota_final:.1f}%")
                 st.balloons()
             else:
-                st.error(f"⚠️ REPROVADO. Nota: {nota_final:.1f}% ({acertos}/{total}). Mínimo exigido: 70%.")
+                st.error(f"⚠️ REPROVADO. Nota: {nota_final:.1f}%")
 
             try:
                 df_res = conn.read(worksheet="Resultados")
                 novo_registro = pd.DataFrame([{
                     "Data": datetime.now().strftime("%d/%m/%Y %H:%M"),
                     "Usuario": st.session_state.usuario_nome,
-                    "Acertos": acertos,
-                    "Total": total,
-                    "Nota": nota_final,
+                    "Acertos": acertos, "Total": total, "Nota": nota_final,
                     "Status": "Aprovado" if nota_final >= 70 else "Reprovado"
                 }])
-                df_final = pd.concat([df_res, novo_registro], ignore_index=True)
-                conn.update(worksheet="Resultados", data=df_final)
-                st.info("Resultado registrado na base da VMB.")
+                conn.update(worksheet="Resultados", data=pd.concat([df_res, novo_registro], ignore_index=True))
                 st.session_state.simulado_iniciado = False
-                time.sleep(4)
+                time.sleep(2)
                 st.rerun()
             except Exception as e:
-                st.error(f"Erro ao salvar no GSheets: {e}")
+                st.error(f"Erro ao salvar: {e}")
 
 # --- PÁGINA: EVOLUÇÃO ---
 elif st.session_state.menu_atual == "Evolução":
@@ -221,9 +216,8 @@ elif st.session_state.menu_atual == "Evolução":
         dados_user = df[df['Usuario'] == st.session_state.usuario_nome]
         if not dados_user.empty:
             st.dataframe(dados_user.sort_values(by="Data", ascending=False), use_container_width=True)
-            # Gráfico simples de evolução
             st.line_chart(dados_user.set_index("Data")["Nota"])
         else:
-            st.warning("Ainda não existem registros de simulados para o seu usuário.")
+            st.warning("Sem histórico.")
     except:
-        st.error("Erro ao conectar com a base de dados de evolução.")
+        st.error("Erro ao carregar dados.")
