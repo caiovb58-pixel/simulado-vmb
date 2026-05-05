@@ -20,7 +20,7 @@ BANCO_QUESTOES = [
     {
         "id": 12,
         "modulo": "Administração de Risco",
-        "pergunta": "O concept de 'VaR' (Value at Risk) é utilizado para medir:",
+        "pergunta": "O conceito de 'VaR' (Value at Risk) é utilizado para medir:",
         "opcoes": {
             "A": "A perda máxima esperada em um determinado horizonte de tempo e nível de confiança",
             "B": "O lucro médio de uma carteira no longo prazo",
@@ -32,7 +32,7 @@ BANCO_QUESTOES = [
     },
     {
         "id": 13,
-        "modulo": "Prevenção à Lavagem de Dinheiro",
+        "modulo": "Lavagem de Dinheiro",
         "pergunta": "Qual o prazo que as instituições financeiras têm para comunicar ao COAF operações suspeitas de lavagem de dinheiro?",
         "opcoes": {
             "A": "Até o final do mês corrente",
@@ -58,7 +58,7 @@ BANCO_QUESTOES = [
     },
     {
         "id": 15,
-        "modulo": "A Atividade do Assessor de Investimentos",
+        "modulo": "Atividade do AAI",
         "pergunta": "O Assessor de Investimentos pode receber ordens de seus clientes por quais meios?",
         "opcoes": {
             "A": "Apenas por escrito",
@@ -71,7 +71,7 @@ BANCO_QUESTOES = [
     },
     {
         "id": 16,
-        "modulo": "Economia",
+        "modulo": "Sistema Financeiro Nacional",
         "pergunta": "Qual é a principal função do Conselho Monetário Nacional (CMN)?",
         "opcoes": {
             "A": "Fiscalizar as bolsas de valores",
@@ -80,11 +80,11 @@ BANCO_QUESTOES = [
             "D": "Emitir papel-moeda"
         },
         "resposta_correta": "C",
-        "explicacao": "O CMN é o órgão deliberativo máximo do SFN, responsável por estabelecer as diretrizes que outros órgãos, como o BCB, devem executar."
+        "explicacao": "O CMN é o órgão deliberativo máximo do SFN, responsável por estabelecer as diretrizes que outros órgãos devem executar."
     },
     {
         "id": 17,
-        "modulo": "Prevenção à Lavagem de Dinheiro",
+        "modulo": "Lavagem de Dinheiro",
         "pergunta": "A etapa da Lavagem de Dinheiro que visa introduzir o dinheiro 'limpo' no sistema econômico com aparência lícita é:",
         "opcoes": {
             "A": "Colocação",
@@ -123,7 +123,7 @@ BANCO_QUESTOES = [
     },
     {
         "id": 20,
-        "modulo": "Fundos de Investimento",
+        "modulo": "Fundos de Investimentos",
         "pergunta": "Um fundo de investimento que possui a política de aplicar no mínimo 67% do seu patrimônio líquido em ações é classificado como:",
         "opcoes": {
             "A": "Fundo de Renda Fixa",
@@ -136,7 +136,7 @@ BANCO_QUESTOES = [
     },
     {
         "id": 21,
-        "modulo": "Mercado de Derivativos",
+        "modulo": "Derivativos",
         "pergunta": "No mercado de opções, o investidor que adquire o direito de comprar um ativo por um preço determinado é o:",
         "opcoes": {
             "A": "Titular de uma opção de compra (Call)",
@@ -145,11 +145,11 @@ BANCO_QUESTOES = [
             "D": "Lançador de uma opção de venda (Put)"
         },
         "resposta_correta": "A",
-        "explicacao": "O titular de uma Call paga um prêmio para ter o direito (mas não a obrigação) de comprar o ativo objeto."
+        "explicacao": "O titular de uma Call paga um prêmio para ter o direito de comprar o ativo objeto."
     },
     {
         "id": 22,
-        "modulo": "Tributação",
+        "modulo": "Mercado Financeiro",
         "pergunta": "Qual a alíquota de Imposto de Renda para operações de Day Trade com ações para pessoas físicas?",
         "opcoes": {
             "A": "15%",
@@ -162,7 +162,7 @@ BANCO_QUESTOES = [
     },
     {
         "id": 23,
-        "modulo": "Previdência Complementar",
+        "modulo": "Mercado Financeiro",
         "pergunta": "O plano de previdência onde o Imposto de Renda incide apenas sobre os rendimentos no momento do resgate é o:",
         "opcoes": {
             "A": "PGBL",
@@ -171,11 +171,11 @@ BANCO_QUESTOES = [
             "D": "Tesouro Direto"
         },
         "resposta_correta": "B",
-        "explicacao": "O VGBL (Vida Gerador de Benefício Livre) tributa apenas o ganho de capital, sendo ideal para quem faz declaração simplificada de IR."
+        "explicacao": "O VGBL tributa apenas o ganho de capital, sendo ideal para quem faz declaração simplificada de IR."
     },
     {
         "id": 24,
-        "modulo": "Ética e Conduta",
+        "modulo": "Atividade do AAI",
         "pergunta": "O 'Front Running' é uma prática ilícita que consiste em:",
         "opcoes": {
             "A": "Divulgar informações falsas para manipular preços",
@@ -197,11 +197,11 @@ BANCO_QUESTOES = [
             "D": "IPA"
         },
         "resposta_correta": "B",
-        "explicacao": "O IPCA é calculado pelo IBGE e serve de referência para o regime de metas de inflação do Banco Central."
+        "explicacao": "O IPCA é calculado pelo IBGE e serve de referência para o regime de metas de inflação."
     },
     {
         "id": 26,
-        "modulo": "A Atividade do Assessor de Investimentos",
+        "modulo": "Atividade do AAI",
         "pergunta": "É vedado ao Assessor de Investimentos, no exercício de sua atividade:",
         "opcoes": {
             "A": "Entregar material técnico aos clientes",
@@ -210,11 +210,11 @@ BANCO_QUESTOES = [
             "D": "Prospectar novos investidores"
         },
         "resposta_correta": "C",
-        "explicacao": "Garantir rentabilidade é uma prática vedada e fere os princípios de transparência e risco do mercado."
+        "explicacao": "Garantir rentabilidade é uma prática vedada no mercado financeiro."
     },
     {
         "id": 27,
-        "modulo": "Mercado de Capitais",
+        "modulo": "Securitização e Recebíveis",
         "pergunta": "Uma debênture incentivada possui como principal característica para a Pessoa Física:",
         "opcoes": {
             "A": "Garantia do FGC",
@@ -223,7 +223,7 @@ BANCO_QUESTOES = [
             "D": "Participação nos lucros da empresa"
         },
         "resposta_correta": "B",
-        "explicacao": "Debêntures incentivadas financiam obras de infraestrutura e oferecem isenção de IR para atrair investidores PF."
+        "explicacao": "Debêntures incentivadas (infraestrutura) oferecem isenção de IR para atrair investidores Pessoa Física."
     },
     {
         "id": 28,
@@ -236,12 +236,12 @@ BANCO_QUESTOES = [
             "D": "Risco Legal"
         },
         "resposta_correta": "B",
-        "explicacao": "A diversificação dilui riscos específicos de ativos individuais, mas não elimina o risco do mercado como um todo (sistemático)."
+        "explicacao": "A diversificação dilui riscos específicos de ativos individuais, mas não elimina o risco do mercado (sistemático)."
     },
     {
         "id": 29,
-        "modulo": "Tributação",
-        "pergunta": "O IOF (Imposto sobre Operações Financeiras) em aplicações de renda fixa incide apenas se o resgate ocorrer em um prazo inferior a:",
+        "modulo": "Matemática Financeira",
+        "pergunta": "O IOF em aplicações de renda fixa incide apenas se o resgate ocorrer em um prazo inferior a:",
         "opcoes": {
             "A": "15 dias",
             "B": "30 dias",
@@ -253,7 +253,7 @@ BANCO_QUESTOES = [
     },
     {
         "id": 30,
-        "modulo": "Fundos de Investimento",
+        "modulo": "Fundos de Investimentos",
         "pergunta": "Em um fundo de investimento, quem é o responsável legal pela guarda dos ativos da carteira?",
         "opcoes": {
             "A": "O Administrador",
@@ -266,8 +266,8 @@ BANCO_QUESTOES = [
     },
     {
         "id": 31,
-        "modulo": "Mercado de Derivativos",
-        "pergunta": "O contrato que obriga as partes a comprar e vender um ativo em data futura por preço fixo, com liquidação diária de ganhos e perdas, é o:",
+        "modulo": "Derivativos",
+        "pergunta": "O contrato com liquidação diária de ganhos e perdas é o:",
         "opcoes": {
             "A": "Contrato a Termo",
             "B": "Contrato Futuro",
@@ -279,8 +279,8 @@ BANCO_QUESTOES = [
     },
     {
         "id": 32,
-        "modulo": "Previdência Complementar",
-        "pergunta": "No regime de tributação regressivo da previdência, a alíquota de 10% é aplicada para prazos de acumulação acima de:",
+        "modulo": "Mercado Financeiro",
+        "pergunta": "No regime regressivo da previdência, a alíquota de 10% é aplicada após:",
         "opcoes": {
             "A": "4 anos",
             "B": "6 anos",
@@ -288,11 +288,11 @@ BANCO_QUESTOES = [
             "D": "10 anos"
         },
         "resposta_correta": "D",
-        "explicacao": "A tabela regressiva premia o longo prazo, atingindo a alíquota mínima após 10 anos."
+        "explicacao": "A tabela regressiva atinge a alíquota mínima de 10% após 10 anos de acumulação."
     },
     {
         "id": 33,
-        "modulo": "Prevenção à Lavagem de Dinheiro",
+        "modulo": "Lavagem de Dinheiro",
         "pergunta": "O crime de lavagem de dinheiro no Brasil é punível com:",
         "opcoes": {
             "A": "Apenas multa administrativa",
@@ -301,84 +301,84 @@ BANCO_QUESTOES = [
             "D": "Trabalhos comunitários"
         },
         "resposta_correta": "B",
-        "explicacao": "A Lei 9.613/98 estabelece penas de reclusão de 3 a 10 anos, além de multas severas."
+        "explicacao": "A Lei 9.613/98 estabelece penas de reclusão de 3 a 10 anos e multa."
     },
     {
         "id": 34,
         "modulo": "Economia",
-        "pergunta": "Se o Banco Central deseja reduzir a liquidez da economia, ele deve:",
+        "pergunta": "Para reduzir a liquidez da economia, o Banco Central deve:",
         "opcoes": {
-            "A": "Comprar títulos públicos no Open Market",
-            "B": "Reduzir a taxa de depósito compulsório",
+            "A": "Comprar títulos públicos",
+            "B": "Reduzir o compulsório",
             "C": "Vender títulos públicos no Open Market",
-            "D": "Diminuir a taxa SELIC"
+            "D": "Diminuir a SELIC"
         },
         "resposta_correta": "C",
-        "explicacao": "Ao vender títulos, o BC retira dinheiro do sistema (caixa dos bancos) e entrega papéis, reduzindo a liquidez."
+        "explicacao": "Ao vender títulos, o BC retira dinheiro do sistema e entrega papéis, reduzindo a liquidez."
     },
     {
         "id": 35,
-        "modulo": "A Atividade do Assessor de Investimentos",
-        "pergunta": "O Assessor de Investimentos pode atuar como preposto de quantas instituições intermediárias?",
+        "modulo": "Atividade do AAI",
+        "pergunta": "O Assessor de Investimentos PF pode atuar como preposto de quantas instituições?",
         "opcoes": {
             "A": "Apenas uma (exclusividade)",
             "B": "Até duas",
-            "C": "Quantas ele desejar, desde que informe a CVM",
-            "D": "Apenas se as instituições forem do mesmo conglomerado financeiro"
+            "C": "Quantas ele desejar",
+            "D": "Apenas instituições do mesmo grupo"
         },
         "resposta_correta": "A",
-        "explicacao": "O regime de exclusividade é uma regra para o AI pessoa física vinculado a uma corretora ou distribuidora."
+        "explicacao": "O regime de exclusividade é regra para o AI pessoa física vinculado a uma corretora."
     },
     {
         "id": 36,
         "modulo": "Mercado de Capitais",
-        "pergunta": "O 'Tag Along' de 80% para ações ordinárias em caso de alienação de controle é um direito garantido por lei para:",
+        "pergunta": "O 'Tag Along' de 80% para ações ordinárias é garantido por lei para:",
         "opcoes": {
-            "A": "Apenas empresas do Novo Mercado",
+            "A": "Apenas Novo Mercado",
             "B": "Todas as companhias abertas",
-            "C": "Apenas empresas estatais",
-            "D": "Empresas com lucro líquido negativo"
+            "C": "Apenas estatais",
+            "D": "Apenas empresas com lucro"
         },
         "resposta_correta": "B",
-        "explicacao": "A Lei das S.A. garante o Tag Along mínimo de 80% para as ações ordinárias de todas as companhias abertas."
+        "explicacao": "A Lei das S.A. garante o Tag Along mínimo de 80% para ONs de todas as companhias abertas."
     },
     {
         "id": 37,
-        "modulo": "Tributação",
-        "pergunta": "Investimentos em Letras de Crédito Imobiliário (LCI) são isentos de IR para:",
+        "modulo": "Instituições Financeiras",
+        "pergunta": "As Letras de Crédito Imobiliário (LCI) são isentas de IR para:",
         "opcoes": {
-            "A": "Pessoas Jurídicas apenas",
+            "A": "Pessoas Jurídicas",
             "B": "Pessoas Físicas apenas",
-            "C": "Ambos (PF e PJ)",
-            "D": "Ninguém, todos pagam pela tabela regressiva"
+            "C": "Ambos",
+            "D": "Ninguém"
         },
         "resposta_correta": "B",
-        "explicacao": "O incentivo fiscal de isenção de IR em LCI e LCA é exclusivo para investidores Pessoa Física."
+        "explicacao": "A isenção de IR em LCI e LCA é um incentivo exclusivo para Pessoa Física."
     },
     {
         "id": 38,
-        "modulo": "Previdência Complementar",
-        "pergunta": "A portabilidade de um plano de previdência permite ao investidor:",
+        "modulo": "Outros Fundos",
+        "pergunta": "A portabilidade de um plano de previdência permite:",
         "opcoes": {
-            "A": "Resgatar o dinheiro sem pagar imposto",
-            "B": "Transferir os recursos para outro plano ou seguradora sem incidência de IR",
-            "C": "Trocar de PGBL para VGBL livremente",
-            "D": "Sacar apenas os rendimentos"
+            "A": "Resgate isento",
+            "B": "Transferir para outro plano sem incidência de IR",
+            "C": "Trocar PGBL por VGBL",
+            "D": "Sacar rendimentos"
         },
         "resposta_correta": "B",
-        "explicacao": "A portabilidade mantém o diferimento fiscal, mas não permite a troca de categoria (PGBL para VGBL ou vice-versa)."
+        "explicacao": "A portabilidade mantém o diferimento fiscal, mas não permite trocar a categoria do plano."
     },
     {
         "id": 39,
-        "modulo": "Fundos de Investimento",
-        "pergunta": "O documento que contém todas as regras de funcionamento, taxas e política de investimento de um fundo é o:",
+        "modulo": "Fundos de Investimentos",
+        "pergunta": "O documento que contém as regras e taxas de um fundo é o:",
         "opcoes": {
             "A": "Prospecto",
             "B": "Regulamento",
-            "C": "Lâmina de Informações Essenciais",
+            "C": "Lâmina",
             "D": "Termo de Adesão"
         },
         "resposta_correta": "B",
-        "explicacao": "O regulamento é o contrato principal que rege a relação entre o fundo e os cotistas."
+        "explicacao": "O regulamento é o contrato principal entre o fundo e os cotistas."
     }
 ]
