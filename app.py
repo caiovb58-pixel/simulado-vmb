@@ -49,9 +49,9 @@ def carregar_progresso(usuario):
         user = df[df["Usuario"] == usuario]
         if not user.empty:
             return int(user.iloc[0]["Simulado_Atual"])
-        return 0
     except:
-        return 0
+        pass
+    return 0
 
 def salvar_progresso(usuario, indice, status):
     try:
@@ -103,39 +103,6 @@ with st.sidebar:
         st.session_state.clear()
         st.rerun()
 
-# --- BOAS VINDAS ---
-if "primeiro" not in st.session_state:
-
-    st.image("vmb_logo_fundo_preto.png", use_container_width=True)
-
-    st.title("Simulado ANCORD - VMB Invest")
-
-    st.markdown("""
-    ### 🎯 Objetivo
-    Simular a prova ANCORD em nível profissional.
-
-    ### 📋 Estrutura
-    - 20 questões  
-    - Tempo: 30 minutos  
-
-    ### ⚠️ Regras
-    - Não consultar material  
-    - Não atualizar a página  
-    - Foco total  
-
-    ### 🏆 Aprovação
-    - 70% ou mais  
-
-    ---
-    💬 **"Disciplina hoje, liberdade amanhã."**
-    """)
-
-    if st.button("🔥 Começar"):
-        st.session_state.primeiro = False
-        st.rerun()
-
-    st.stop()
-
 # --- SIMULADO ---
 if menu == "Simulado":
 
@@ -143,7 +110,6 @@ if menu == "Simulado":
     total = len(SIMULADOS_ORDEM)
 
     st.progress(progresso / total)
-    st.write(f"Progresso: {progresso}/{total}")
 
     for i, nome in enumerate(SIMULADOS_ORDEM):
         if i <= progresso:
@@ -162,7 +128,6 @@ if menu == "Simulado":
         if not st.session_state.simulado_iniciado:
 
             if st.button("Iniciar Simulado"):
-
                 materias = DIC_SIMULADOS[sim_atual]
                 pool = [q for q in BANCO_QUESTOES if q["modulo"] in materias]
 
@@ -181,17 +146,11 @@ if menu == "Simulado":
 
             with st.form("form"):
                 for i, q in enumerate(st.session_state.questoes):
-
                     st.markdown(f"**{i+1}. {q['pergunta']}**")
 
                     opcoes_map = {f"{k}) {v}": k for k,v in q["opcoes"].items()}
 
-                    resp = st.radio(
-                        "Resposta:",
-                        list(opcoes_map.keys()),
-                        key=f"q{i}",
-                        index=None
-                    )
+                    resp = st.radio("Resposta:", list(opcoes_map.keys()), key=f"q{i}", index=None)
 
                     if resp:
                         st.session_state.respostas[i] = opcoes_map[resp]
@@ -219,38 +178,25 @@ if menu == "Simulado":
                 status = "Aprovado" if nota >= 70 else "Reprovado"
 
                 st.success(f"Nota: {nota:.1f}%")
-                st.write(f"⏱️ Tempo médio por questão: {tempo_medio:.1f}s")
 
-                # --- RADAR CHART REAL ---
-                if por_modulo:
-                    st.subheader("🎯 Radar de Performance")
+                # --- RADAR REAL ---
+                categorias = list(por_modulo.keys())
+                valores = [(v[0]/v[1])*100 for v in por_modulo.values()]
 
-                    categorias = list(por_modulo.keys())
-                    valores = [(v[0]/v[1])*100 for v in por_modulo.values()]
+                valores += valores[:1]
+                angles = np.linspace(0, 2*np.pi, len(categorias), endpoint=False).tolist()
+                angles += angles[:1]
 
-                    valores += valores[:1]
-                    categorias += categorias[:1]
+                fig, ax = plt.subplots(subplot_kw=dict(polar=True))
+                ax.plot(angles, valores)
+                ax.fill(angles, valores, alpha=0.3)
+                ax.set_xticks(angles[:-1])
+                ax.set_xticklabels(categorias)
 
-                    angulos = np.linspace(0, 2*np.pi, len(categorias), endpoint=True)
+                st.pyplot(fig)
 
-                    fig, ax = plt.subplots(subplot_kw=dict(polar=True))
-                    ax.plot(angulos, valores)
-                    ax.fill(angulos, valores, alpha=0.1)
-
-                    ax.set_xticks(angulos)
-                    ax.set_xticklabels(categorias)
-
-                    ax.set_yticks([20,40,60,80,100])
-                    ax.set_yticklabels(["20","40","60","80","100"])
-
-                    st.pyplot(fig)
-
-                # --- SALVAR RESULTADO ---
-                try:
-                    df_res = conn.read(worksheet="Resultados")
-                except:
-                    df_res = pd.DataFrame(columns=["Usuario","Simulado","Nota","Tempo_medio","Data"])
-
+                # --- SALVAR ---
+                df_res = conn.read(worksheet="Resultados")
                 novo = pd.DataFrame([{
                     "Usuario": st.session_state.usuario,
                     "Simulado": sim_atual,
@@ -259,40 +205,20 @@ if menu == "Simulado":
                     "Data": datetime.now().strftime("%d/%m/%Y %H:%M")
                 }])
 
-                df_final = pd.concat([df_res, novo], ignore_index=True)
+                conn.update(worksheet="Resultados", data=pd.concat([df_res, novo]))
 
-                conn.update(worksheet="Resultados", data=df_final)
+                salvar_progresso(st.session_state.usuario, progresso+1, status)
 
-                # progresso
-                novo_idx = progresso
-                if status == "Aprovado" and indice == progresso:
-                    novo_idx += 1
-
-                salvar_progresso(st.session_state.usuario, novo_idx, status)
-                st.session_state.simulado_atual_indice = novo_idx
                 st.session_state.simulado_iniciado = False
                 st.rerun()
 
 # --- EVOLUÇÃO ---
 elif menu == "Evolução":
 
-    st.title("📊 Sua Evolução")
-
     df = conn.read(worksheet="Resultados")
     user = df[df["Usuario"] == st.session_state.usuario]
 
     if not user.empty:
         st.line_chart(user["Nota"])
-
-        if "Tempo_medio" in user.columns:
-            st.line_chart(user["Tempo_medio"])
     else:
-        st.info("Nenhum dado ainda.")
-
-# --- ADMIN ---
-elif menu == "Admin":
-    if st.session_state.usuario not in ADMINS:
-        st.error("Acesso restrito")
-        st.stop()
-
-    st.dataframe(conn.read(worksheet="Resultados"))
+        st.info("Sem dados ainda")
