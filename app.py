@@ -37,7 +37,7 @@ defaults = {
     "simulado_atual_indice": 0
 }
 
-for k,v in defaults.items():
+for k, v in defaults.items():
     if k not in st.session_state:
         st.session_state[k] = v
 
@@ -48,11 +48,11 @@ def logout():
     st.rerun()
 
 # --- LOGIN ---
-def login(u,p):
+def login(u, p):
     try:
         conn = st.connection("gsheets", type=GSheetsConnection)
         df = conn.read(worksheet="Usuarios")
-        return not df[(df["Nome"]==u)&(df["Senha"]==p)].empty
+        return not df[(df["Nome"] == u) & (df["Senha"] == p)].empty
     except:
         return False
 
@@ -62,9 +62,9 @@ if not st.session_state.logado:
         u = st.text_input("Usuário")
         p = st.text_input("Senha", type="password")
         if st.form_submit_button("Entrar"):
-            if login(u,p):
-                st.session_state.logado=True
-                st.session_state.usuario=u
+            if login(u, p):
+                st.session_state.logado = True
+                st.session_state.usuario = u
                 st.rerun()
             else:
                 st.error("Credenciais inválidas")
@@ -79,6 +79,40 @@ with st.sidebar:
 
 conn = st.connection("gsheets", type=GSheetsConnection)
 
+# --- TELA DE BOAS-VINDAS ---
+if "primeiro" not in st.session_state:
+    st.title("🚀 Simulado ANCORD - Preparação Profissional")
+
+    st.markdown("""
+    ### 🎯 Objetivo
+    Este simulado replica o nível real da prova ANCORD, preparando você para performance máxima.
+
+    ### 📋 Estrutura
+    - 20 questões por simulado (ou menos, dependendo do banco)
+    - Tempo: **30 minutos**
+    - Baseado no cronograma de 12 semanas
+
+    ### ⚠️ Regras
+    - Não consultar materiais externos
+    - Não atualizar a página
+    - Manter foco total durante o simulado
+
+    ### 🏆 Aprovação
+    - Mínimo de **70% de acerto**
+
+    ---
+    ### 💬 Mentalidade
+    > "Disciplina supera motivação. Quem executa, vence."
+
+    Entre como candidato. Saia aprovado.
+    """)
+
+    if st.button("🔥 Começar Simulado"):
+        st.session_state.primeiro = False
+        st.rerun()
+
+    st.stop()
+
 # --- SIMULADO ---
 if menu == "Simulado":
 
@@ -86,18 +120,15 @@ if menu == "Simulado":
 
     if not st.session_state.simulado_iniciado:
         st.title("Configurar Simulado")
-
-        st.info(f"Simulado disponível: **{sim_atual}**")
+        st.info(f"Simulado atual: **{sim_atual}**")
 
         if st.button("Iniciar"):
             materias = DIC_SIMULADOS[sim_atual]
             pool = [q for q in BANCO_QUESTOES if q["modulo"] in materias]
 
-            if len(pool) < 20:
-                st.error(f"Você precisa de pelo menos 20 questões. Atualmente: {len(pool)}")
-                st.stop()
+            qtd = min(20, len(pool))  # 🔥 VOLTOU FLEXÍVEL
 
-            st.session_state.questoes = random.sample(pool, 20)
+            st.session_state.questoes = random.sample(pool, qtd)
             st.session_state.respostas = {}
             st.session_state.tempo = datetime.now() + timedelta(minutes=30)
             st.session_state.simulado_nome = sim_atual
@@ -120,7 +151,7 @@ if menu == "Simulado":
 
                 st.markdown(f"**{i+1}. {q['pergunta']}**")
 
-                opcoes_map = {f"{k}) {v}": k for k,v in q["opcoes"].items()}
+                opcoes_map = {f"{k}) {v}": k for k, v in q["opcoes"].items()}
                 opcoes_lista = list(opcoes_map.keys())
 
                 resposta = st.radio(
@@ -151,19 +182,22 @@ if menu == "Simulado":
 
             enviar = st.form_submit_button("Finalizar Simulado")
 
-        # 🔥 IMPORTANTE: AGORA NÃO ATRAPALHA O BOTÃO
+        # 🔥 AUTO REFRESH (SEM QUEBRAR BOTÃO)
         if not st.session_state.mostrar_resultado and not enviar:
             time.sleep(1)
             st.rerun()
 
+        # 🔥 FINALIZAÇÃO GARANTIDA
         if enviar or restante == 0:
+
             acertos = 0
+            total = len(st.session_state.questoes)
 
             for i, q in enumerate(st.session_state.questoes):
                 if st.session_state.respostas.get(i) == q["resposta_correta"]:
                     acertos += 1
 
-            nota = (acertos / 20) * 100
+            nota = (acertos / total) * 100 if total > 0 else 0
             status = "Aprovado" if nota >= 70 else "Reprovado"
 
             try:
@@ -187,13 +221,12 @@ if menu == "Simulado":
             st.success(f"Nota: {nota:.1f}%")
             st.markdown(f"### Status: {status}")
 
-            # 🔥 CONTROLE DE PROGRESSÃO
             if status == "Aprovado":
-                st.success("Você avançou para o próximo simulado!")
+                st.success("Você avançou para o próximo simulado.")
                 if st.session_state.simulado_atual_indice < 5:
                     st.session_state.simulado_atual_indice += 1
             else:
-                st.warning("Você precisa refazer este simulado para avançar.")
+                st.warning("Refaça este simulado para avançar.")
 
             st.session_state.simulado_iniciado = False
 
