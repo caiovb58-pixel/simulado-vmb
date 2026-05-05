@@ -1608,5 +1608,109 @@ BANCO_QUESTOES = [
         },
         "resposta_correta": "D",
         "explicacao": "Nenhum cotista pode ser detentor de mais de 40% das cotas emitidas pelo clube[cite: 18]."
+    },
+    {
+        "id": 159,
+        "modulo": "Fundos de Investimento",
+        "pergunta": "Com relação à taxa de performance em fundos de investimento, é correto afirmar:",
+        "opcoes": {
+            "A": "É cobrada sobre o patrimônio líquido total do fundo",
+            "B": "É cobrada sempre que o fundo apresenta rentabilidade positiva",
+            "C": "É cobrada apenas quando o fundo excede a variação de um índice de referência (benchmark)",
+            "D": "É obrigatória em todos os fundos de renda fixa"
+        },
+        "resposta_correta": "C",
+        "explicacao": "A taxa de performance é um prêmio pago ao gestor quando o resultado do fundo supera o benchmark estabelecido."
+    },
+    {
+        "id": 160,
+        "modulo": "Fundos de Investimento",
+        "pergunta": "O documento que contém as informações essenciais sobre o fundo, de forma resumida e em linguagem clara, é o:",
+        "opcoes": {
+            "A": "Regulamento",
+            "B": "Lâmina de Informações Essenciais",
+            "C": "Formulário de Informações Complementares",
+            "D": "Termo de Adesão"
+        },
+        "resposta_correta": "B",
+        "explicacao": "A Lâmina é o documento de leitura obrigatória que resume os principais riscos e características do fundo."
+    },
+    {
+        "id": 161,
+        "modulo": "Fundos de Investimento",
+        "pergunta": "Um fundo de investimento que possui a maior parte de sua carteira em títulos públicos federais ou títulos privados de baixo risco de crédito é classificado como:",
+        "opcoes": {
+            "A": "Renda Fixa Simples",
+            "B": "Ações",
+            "C": "Multimercado",
+            "D": "Cambial"
+        },
+        "resposta_correta": "A",
+        "explicacao": "Fundos de Renda Fixa Simples devem ter pelo menos 95% do patrimônio em títulos públicos ou privados de baixo risco."
+    },
+    {
+        "id": 162,
+        "modulo": "Fundos de Investimento",
+        "pergunta": "O responsável pela guarda dos ativos que compõem a carteira do fundo é o:",
+        "opcoes": {
+            "A": "Gestor",
+            "B": "Administrador",
+            "C": "Custodiante",
+            "D": "Auditor Independente"
+        },
+        "resposta_correta": "C",
+        "explicacao": "O custodiante faz a guarda física e o controle dos ativos financeiros do fundo."
+    },
+    {
+        "id": 163,
+        "modulo": "Fundos de Investimento",
+        "pergunta": "A marcação a mercado (MtM) em fundos de investimento tem como objetivo principal:",
+        "opcoes": {
+            "A": "Garantir rentabilidade fixa ao investidor",
+            "B": "Evitar a transferência de riqueza entre os cotistas",
+            "C": "Reduzir o risco de crédito da carteira",
+            "D": "Isentar o fundo do pagamento de impostos"
+        },
+        "resposta_correta": "B",
+        "explicacao": "Ao precificar os ativos pelo valor de saída diário, evita-se que cotistas que entram ou saem prejudiquem os demais."
+    },
+    {
+        "id": 164,
+        "modulo": "Fundos de Investimento",
+        "pergunta": "Sobre o sistema de 'Come-Cotas', assinale a alternativa correta:",
+        "opcoes": {
+            "A": "Ocorre mensalmente em todos os fundos de investimento",
+            "B": "É a antecipação do Imposto de Renda que ocorre nos meses de maio e novembro",
+            "C": "Aplica-se apenas aos fundos de ações",
+            "D": "É uma taxa cobrada pelo administrador para cobrir custos operacionais"
+        },
+        "resposta_correta": "B",
+        "explicacao": "O Come-Cotas é a tributação semestral automática em fundos de renda fixa e multimercados."
+    },
+    {
+        "id": 165,
+        "modulo": "Fundos de Investimento",
+        "pergunta": "Um fundo de investimento 'Fechado' é aquele em que:",
+        "opcoes": {
+            "A": "As cotas podem ser resgatadas a qualquer momento",
+            "B": "O resgate das cotas só é permitido ao término do prazo de duração do fundo",
+            "C": "Não há cobrança de taxa de administração",
+            "D": "Apenas investidores qualificados podem participar"
+        },
+        "resposta_correta": "B",
+        "explicacao": "Nos fundos fechados, o investidor que deseja sair antes do prazo deve vender suas cotas no mercado secundário."
+    },
+    {
+        "id": 166,
+        "modulo": "Fundos de Investimento",
+        "pergunta": "A decisão de onde investir os recursos do fundo, escolhendo quais ativos comprar ou vender, cabe ao:",
+        "opcoes": {
+            "A": "Custodiante",
+            "B": "Auditor",
+            "C": "Gestor",
+            "D": "Distribuidor"
+        },
+        "resposta_correta": "C",
+        "explicacao": "O gestor é o profissional responsável pela estratégia e execução das operações de compra e venda dos ativos."
     }
 ]
