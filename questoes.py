@@ -674,21 +674,21 @@ BANCO_QUESTOES = [
     },
     {
         "id": "422025",
-        "tema": "Sistema Financeiro Nacional",
+        "modulo": "Sistema Financeiro Nacional",
         "pergunta": "A B3, empresa resultante da fusão entre BM&FBovespa e Cetip é uma empresa ____ que atua na infraestrutura do mercado financeiro, com atuação nos mercados de ____ e ____.",
         "opcoes": ["A) Pública; Bolsa; Balcão", "B) Privada; Bolsa; Balcão", "C) Sociedade Mista; Bolsa; Balcão", "D) Sociedade Mista; Primário; Secundário"],
         "resposta": "B"
     },
     {
-        "id": "4074",
+        "id": "70",
         "tema": "Sistema Financeiro Nacional",
         "pergunta": "É o órgão responsável pela administração da dívida pública mobiliária e contratual, interna e externa, da União:",
         "opcoes": ["A) Tesouro Nacional", "B) Bacen", "C) CMN", "D) CVM"],
         "resposta": "A"
     },
     {
-        "id": "4079",
-        "tema": "Sistema Financeiro Nacional",
+        "id": "71",
+        "modulo": "Sistema Financeiro Nacional",
         "pergunta": "É uma definição correta sobre o Sistema de Pagamentos Brasileiro - SPB:",
         "opcoes": [
             "A) Sistema criado para transferir fundos entre bancos de um mesmo conglomerado",
@@ -699,8 +699,8 @@ BANCO_QUESTOES = [
         "resposta": "C"
     },
     {
-        "id": "4083",
-        "tema": "Sistema Financeiro Nacional",
+        "id": "72",
+        "modulo": "Sistema Financeiro Nacional",
         "pergunta": "Tipo de Sociedade que a Comissão de Valores Mobiliários (CVM) fiscaliza:",
         "opcoes": [
             "A) Sociedades de Economia Mista que sejam de propriedade privada",
@@ -711,8 +711,8 @@ BANCO_QUESTOES = [
         "resposta": "B"
     },
     {
-        "id": "4084",
-        "tema": "Sistema Financeiro Nacional",
+        "id": "73",
+        "modulo": "Sistema Financeiro Nacional",
         "pergunta": "O Sistema de Pagamentos Brasileiro (SPB) é o conjunto de:",
         "opcoes": [
             "A) Entidades, sistemas e mecanismos relacionados com o processamento e a liquidação de operações de transferência de fundos, de operações com moeda estrangeira ou com ativo financeiros e valores mobiliários.",
@@ -723,22 +723,22 @@ BANCO_QUESTOES = [
         "resposta": "A"
     },
     {
-        "id": "422022",
-        "tema": "Sistema Financeiro Nacional",
+        "id": "74",
+        "modulo": "Sistema Financeiro Nacional",
         "pergunta": "São funções da CVM: I-Estimular a formação de poupança e sua aplicação em valores mobiliários; II-Proteger os investidores do mercado de capitais; III-Fiscalizar as S.A abertas, principalmente aquelas que apresentam falta de lucro contábil. Está correto:",
         "opcoes": ["A) I e II", "B) II e III", "C) Apenas I", "D) I, II e III"],
         "resposta": "A"
     },
     {
-        "id": "4085",
-        "tema": "Sistema Financeiro Nacional",
+        "id": "75",
+        "modulo": "Sistema Financeiro Nacional",
         "pergunta": "É a entidade responsável pelas diretrizes das operações dos 'Fundos de Pensão':",
         "opcoes": ["A) CNSP", "B) CNPC", "C) CMN", "D) PREVIC"],
         "resposta": "B"
     },
     {
-        "id": "4077",
-        "tema": "Sistema Financeiro Nacional",
+        "id": "76",
+        "modulo": "Sistema Financeiro Nacional",
         "pergunta": "O Conselho Monetário Nacional (CMN) tem como função:",
         "opcoes": [
             "A) Exercer a fiscalização das instituições financeiras",
@@ -749,57 +749,57 @@ BANCO_QUESTOES = [
         "resposta": "D"
     },
     {
-        "id": "20234026",
-        "tema": "Sistema Financeiro Nacional",
+        "id": "77",
+        "modulo": "Sistema Financeiro Nacional",
         "pergunta": "De quem é a responsabilidade de fiscalizar um título de capitalização (como o Shark Cap)?",
         "opcoes": ["A) BACEN", "B) SUSEP", "C) CVM", "D) COAF"],
         "resposta": "B"
     },
     {
-        "id": "20234013",
-        "tema": "Sistema Financeiro Nacional",
+        "id": "78",
+        "modulo": "Sistema Financeiro Nacional",
         "pergunta": "Assinale as funções que competem ao BACEN: I) Receber compulsórios; II) Fixar diretrizes cambiais; III) Emitir papel moeda; IV) Proteger titulares de valores mobiliários; V) Controle do crédito.",
         "opcoes": ["A) Todas", "B) I, II, V", "C) II, III, IV", "D) I, III, V"],
         "resposta": "D"
     },
     {
-        "id": "422021",
-        "tema": "Sistema Financeiro Nacional",
+        "id": "79",
+        "modulo": "Sistema Financeiro Nacional",
         "pergunta": "São funções do CNSP: I-Fixar diretrizes de seguros privados; II-Fiscalizar seguradoras; III-Fixar diretrizes cambiais. Está correto:",
         "opcoes": ["A) I e II", "B) II e III", "C) Apenas I", "D) Apenas III"],
         "resposta": "C"
     },
     {
-        "id": "20224529",
-        "tema": "Sistema Financeiro Nacional",
+        "id": "80",
+        "modulo": "Sistema Financeiro Nacional",
         "pergunta": "A BSM é responsável pela administração do ____ e possui personalidade jurídica e ____ para sua atuação.",
         "opcoes": ["A) SFN | Orçamento Próprio", "B) Orçamento Próprio | Subordinação ao BACEN", "C) MRP | Subordinação ao BACEN", "D) MRP | Orçamento Próprio"],
         "resposta": "D"
     },
     {
-        "id": "20224539",
-        "tema": "Sistema Financeiro Nacional",
+        "id": "81",
+        "modulo": "Sistema Financeiro Nacional",
         "pergunta": "São considerados Índices Amplos da B3: I-IBRX-100 e IBRX-50; II-Ibovespa; III-ISE.",
         "opcoes": ["A) I e II", "B) II e III", "C) I e III", "D) I, II e III"],
         "resposta": "A"
     },
     {
-        "id": "4087",
-        "tema": "Sistema Financeiro Nacional",
+        "id": "82",
+        "modulo": "Sistema Financeiro Nacional",
         "pergunta": "Os sistemas que integram o SPB NÃO incluem o sistema:",
         "opcoes": ["A) Cetip", "B) SICAF", "C) STR", "D) Selic"],
         "resposta": "B"
     },
     {
-        "id": "4086",
-        "tema": "Sistema Financeiro Nacional",
+        "id": "83",
+        "modulo": "Sistema Financeiro Nacional",
         "pergunta": "Órgão máximo do Sistema Financeiro Nacional:",
         "opcoes": ["A) CNSP", "B) Bacen", "C) CMN", "D) Tesouro Nacional"],
         "resposta": "C"
     },
     {
-        "id": "4078",
-        "tema": "Sistema Financeiro Nacional",
+        "id": "84",
+        "modulo": "Sistema Financeiro Nacional",
         "pergunta": "É uma função da CVM:",
         "opcoes": [
             "A) Fiscalizar instituições do ramo bancário",
@@ -810,22 +810,22 @@ BANCO_QUESTOES = [
         "resposta": "C"
     },
     {
-        "id": "4170",
-        "tema": "Mercado de Capitais",
+        "id": "85",
+        "modulo": "Mercado de Capitais",
         "pergunta": "Quanto ao prazo máximo de emissão das Notas Promissórias – Commercial Papers, assinale a correta:",
         "opcoes": ["A) 180 dias (Fechada) e 360 (Aberta)", "B) 360 dias (Fechada e Aberta)", "C) 180 dias (Fechada e Aberta)", "D) 180 dias (Aberta) e 360 (Fechada)"],
         "resposta": "B"
     },
     {
-        "id": "4149",
-        "tema": "Mercado de Capitais",
+        "id": "86",
+        "modulo": "Mercado de Capitais",
         "pergunta": "O que deve constar obrigatoriamente na escritura de uma debênture?",
         "opcoes": ["A) Intervenção de um Agente Fiduciário", "B) Rating de crédito", "C) Direitos iguais independente da série", "D) Garantia de pagamento pelo Agente Fiduciário"],
         "resposta": "A"
     },
     {
-        "id": "4158",
-        "tema": "Mercado de Capitais",
+        "id": "87",
+        "modulo": "Mercado de Capitais",
         "pergunta": "Sobre o Juros Sobre Capital Próprio – JSCP, assinale a correta:",
         "opcoes": [
             "A) Isentos de IR e originam-se em lucros retidos",
@@ -836,169 +836,169 @@ BANCO_QUESTOES = [
         "resposta": "D"
     },
     {
-        "id": "4071",
-        "tema": "Economia",
+        "id": "88",
+        "modulo": "Economia",
         "pergunta": "Sob a ótica do consumo, o PIB será a soma de: I- Consumo das famílias; II- Investimentos; III- Gastos Governamentais; IV - Exportações, deduzidas as importações. Está correto o que se afirma em:",
         "opcoes": ["A) Todas as alternativas", "B) I, II e III", "C) I, II e IV", "D) II e III"],
         "resposta": "A"
     },
     {
-        "id": "20224509",
-        "tema": "Economia",
+        "id": "89",
+        "modulo": "Economia",
         "pergunta": "Uma política monetária é dita ____ quando injeta maior volume de recursos nos mercados, e quando age em sentido contrário, retraindo a atividade econômica, é chamada de ____.",
         "opcoes": ["A) Ativa / Passiva", "B) Agressiva / Expansionista", "C) Passiva / Ativa", "D) Expansionista / Restritiva"],
         "resposta": "D"
     },
     {
-        "id": "4064",
-        "tema": "Economia",
+        "id": "90",
+        "modulo": "Economia",
         "pergunta": "Com intenção de reduzir a demanda agregada da economia, o BACEN deveria realizar qual tipo de alteração na política monetária:",
         "opcoes": ["A) Diminuir o depósito compulsório", "B) Aumentar o depósito compulsório", "C) Reduzir a taxa do redesconto", "D) Realizar operações de 'open market' de compra de títulos"],
         "resposta": "B"
     },
     {
-        "id": "4062",
-        "tema": "Economia",
+        "id": "91",
+        "modulo": "Economia",
         "pergunta": "Em um regime cambial de taxa flutuante, com a conta corrente e a conta de capitais sendo superavitárias e sem intervenção, espera-se que:",
         "opcoes": ["A) Valorize a moeda local", "B) Desvalorize a moeda local", "C) O governo atue para reduzir a alta da moeda estrangeira", "D) O governo atue para aumentar a cotação da moeda estrangeira"],
         "resposta": "A"
     },
     {
-        "id": "4072",
-        "tema": "Economia",
+        "id": "92",
+        "modulo": "Economia",
         "pergunta": "Um investimento com rendimento nominal de 15% e inflação de 5% no mesmo período, teve uma taxa real de aproximadamente:",
         "opcoes": ["A) 5%", "B) 20%", "C) 15%", "D) 10%"],
         "resposta": "D"
     },
     {
-        "id": "4058",
-        "tema": "Economia",
+        "id": "93",
+        "modulo": "Economia",
         "pergunta": "Um Superávit Consolidado contempla as contas do(s):",
         "opcoes": ["A) Governo Federal, somente", "B) Governo Federal e Estados", "C) Governo Federal, Estados e Municípios", "D) Governo Federal, Estados, Municípios e Empresas Estatais"],
         "resposta": "D"
     },
     {
-        "id": "4069",
-        "tema": "Economia",
+        "id": "94",
+        "modulo": "Economia",
         "pergunta": "Assinale o item que contém somente medidas contracionistas: I-Redução da Selic; II-Aumento do compulsório; III-Redução do IPI; IV-Redução dos gastos governamentais.",
         "opcoes": ["A) I e III", "B) II e III", "C) II, III e IV", "D) II e IV"],
         "resposta": "D"
     },
     {
-        "id": "4070",
-        "tema": "Economia",
+        "id": "95",
+        "modulo": "Economia",
         "pergunta": "Assinale a alternativa correta sobre taxas e índices:",
         "opcoes": ["A) A T.R é usada pelo BNDES", "B) Taxa DI é lastreada em títulos públicos", "C) O IGP-M é mais afetado por preços no atacado", "D) O spread de crédito é livre de risco"],
         "resposta": "C"
     },
     {
-        "id": "4060",
-        "tema": "Economia",
+        "id": "96",
+        "modulo": "Economia",
         "pergunta": "Inflação de 6 meses: Jan(+0,16%), Fev(+0,35%), Mar(-0,16%), Abr(-0,02%), Mai(+0,05%), Jun(-0,02%). Qual a acumulada?",
         "opcoes": ["A) 0,3600%", "B) 0,3598%", "C) 0,3698%", "D) 0,3740%"],
         "resposta": "B"
     },
     {
-        "id": "4066",
-        "tema": "Economia",
+        "id": "97",
+        "modulo": "Economia",
         "pergunta": "Quando o BACEN reduz o compulsório, a liquidez ____, as taxas de juros ____ e o consumo ____.",
         "opcoes": ["A) aumente, caiam, aumente", "B) aumente, caiam, caia", "C) caia, aumentem, caia", "D) caia, caiam, aumente"],
         "resposta": "A"
     },
     {
-        "id": "4068",
-        "tema": "Economia",
+        "id": "98",
+        "modulo": "Economia",
         "pergunta": "A diferença entre Taxa Selic Meta e Selic Over é que:",
         "opcoes": ["A) Meta é mercado, Over é Copom", "B) Meta é títulos privados, Over é públicos", "C) Meta é anual, Over é semestral", "D) Meta é Copom, Over é mercado"],
         "resposta": "D"
     },
     {
-        "id": "20224545",
-        "tema": "Economia",
+        "id": "99",
+        "modulo": "Economia",
         "pergunta": "O índice IPC-FIPE estima as variações do custo de vida das famílias de:",
         "opcoes": ["A) São Paulo", "B) Região Sudeste", "C) Região Sul", "D) IBGE"],
         "resposta": "A"
     },
     {
-        "id": "422020",
-        "tema": "Economia",
+        "id": "100",
+        "modulo": "Economia",
         "pergunta": "A taxa 'Selic Over' diária é obtida com juros ____ e métrica de ____ dias.",
         "opcoes": ["A) Compostos; 252", "B) Compostos; 360", "C) Simples; 252", "D) Simples; 360"],
         "resposta": "A"
     },
     {
-        "id": "422019",
-        "tema": "Economia",
+        "id": "101",
+        "modulo": "Economia",
         "pergunta": "Conforme a Lei dos Rendimentos Decrescentes:",
         "opcoes": ["A) Produção aumenta proporcionalmente ao fator", "B) Produção total é reduzida", "C) Mantendo fatores, produção total aumenta", "D) Aumentando um fator, a produção proporcional deste fator é reduzida"],
         "resposta": "D"
     },
     {
-        "id": "20234001",
-        "tema": "Instituições Financeiras",
+        "id": "102",
+        "modulo": "Instituições Financeiras",
         "pergunta": "Qual quantidade mínima de associados necessários para que uma cooperativa de crédito seja constituída?",
         "opcoes": ["A) 20 associados", "B) 30 associados", "C) 50 associados", "D) Não tem quantidade mínima"],
         "resposta": "A"
     },
     {
-        "id": "4094",
-        "tema": "Instituições Financeiras",
+        "id": "103",
+        "modulo": "Instituições Financeiras",
         "pergunta": "São funções de uma SCTVM, EXCETO:",
         "opcoes": ["A) Administrar planos de capitalização", "B) Administrar clubes de investimentos", "C) Administrar fundos de investimentos", "D) Realizar operações de câmbio"],
         "resposta": "A"
     },
     {
-        "id": "4098",
-        "tema": "Instituições Financeiras",
+        "id": "104",
+        "modulo": "Instituições Financeiras",
         "pergunta": "Sobre os Bancos de Investimentos, assinale a correta:",
         "opcoes": ["A) Ofertam crédito de curto prazo (cheque especial)", "B) Realizam operações com dólar turismo", "C) Fiscalizam o mercado de distribuição", "D) Assessoram fusões, emissões de valores mobiliários e crédito de médio/longo prazo"],
         "resposta": "D"
     },
     {
-        "id": "20224526",
-        "tema": "Instituições Financeiras",
+        "id": "105",
+        "modulo": "Instituições Financeiras",
         "pergunta": "Podem receber depósitos interfinanceiros (CDI): I-Caixas Econômicas; II-Sociedades de Crédito e Financiamento; III-SCTVM. Está correto:",
         "opcoes": ["A) I e II", "B) I e III", "C) Apenas I", "D) I, II e III"],
         "resposta": "A"
     },
     {
-        "id": "4095",
-        "tema": "Instituições Financeiras",
+        "id": "106",
+        "modulo": "Instituições Financeiras",
         "pergunta": "Sobre o BNDES, assinale a alternativa correta:",
         "opcoes": ["A) É um banco de desenvolvimento federal", "B) É sociedade de economia mista com ações em bolsa", "C) Fomenta apenas o mercado imobiliário", "D) É instrumento para fomentar setores estratégicos"],
         "resposta": "D"
     },
     {
-        "id": "20234015",
-        "tema": "Instituições Financeiras",
+        "id": "107",
+        "modulo": "Instituições Financeiras",
         "pergunta": "Para ofertar leasing e crédito imobiliário em um único balanço, Júlio precisa de:",
         "opcoes": ["A) Banco com carteira de crédito e arrendamento", "B) Banco Múltiplo (Comercial ou Desenv.) + Arrendamento", "C) Banco Múltiplo (Comercial ou Invest.) + Desenv. e Imobiliário", "D) Banco Múltiplo (Comercial ou Invest.) + Arrendamento e Imobiliário"],
         "resposta": "D"
     },
     {
-        "id": "4097",
-        "tema": "Instituições Financeiras",
+        "id": "108",
+        "modulo": "Instituições Financeiras",
         "pergunta": "É uma carteira que deve estar presente em um Banco Múltiplo, obrigatoriamente (para ser considerado múltiplo):",
         "opcoes": ["A) Comercial ou de Investimento", "B) Crédito e Financiamento", "C) Crédito Imobiliário", "D) Desenvolvimento"],
         "resposta": "A"
     },
     {
-        "id": "4096",
-        "tema": "Instituições Financeiras",
+        "id": "109",
+        "modulo": "Instituições Financeiras",
         "pergunta": "Instituição Financeira autorizada a captar através de depósito à vista:",
         "opcoes": ["A) Banco Comercial", "B) Banco de Investimento", "C) Banco de Desenvolvimento", "D) Financeiras"],
         "resposta": "A"
     },
     {
-        "id": "4090",
-        "tema": "Instituições Financeiras",
+        "id": "110",
+        "modulo": "Instituições Financeiras",
         "pergunta": "As Financeiras são instituições ____ e tem como principal característica o financiamento para ____.",
         "opcoes": ["A) bancárias / atividade produtiva", "B) bancárias / capital fixo", "C) não bancárias / capital social", "D) não bancárias / capital de giro"],
         "resposta": "D"
     },
     {
-        "id": "20234009",
-        "tema": "Instituições Financeiras",
+        "id": "111",
+        "modulo": "Instituições Financeiras",
         "pergunta": "Qual das opções abaixo configura um banco múltiplo?",
         "opcoes": ["A) Banco de Desenv. com carteira imobiliária", "B) Banco Comercial (apenas)", "C) Banco com carteira de financiamento e arrendamento", "D) Banco de investimento com carteira de arrendamento mercantil"],
         "resposta": "D"
