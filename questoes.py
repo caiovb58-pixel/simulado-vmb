@@ -673,5 +673,168 @@ BANCO_QUESTOES = [
         },
         "resposta_correta": "D",
         "explicacao": "O FIP caracteriza-se pela participação no processo decisório da companhia investida."
+    },
+    {
+        "id": "422025",
+        "tema": "Sistema Financeiro Nacional",
+        "pergunta": "A B3, empresa resultante da fusão entre BM&FBovespa e Cetip é uma empresa ____ que atua na infraestrutura do mercado financeiro, com atuação nos mercados de ____ e ____.",
+        "opcoes": ["A) Pública; Bolsa; Balcão", "B) Privada; Bolsa; Balcão", "C) Sociedade Mista; Bolsa; Balcão", "D) Sociedade Mista; Primário; Secundário"],
+        "resposta": "B"
+    },
+    {
+        "id": "4074",
+        "tema": "Sistema Financeiro Nacional",
+        "pergunta": "É o órgão responsável pela administração da dívida pública mobiliária e contratual, interna e externa, da União:",
+        "opcoes": ["A) Tesouro Nacional", "B) Bacen", "C) CMN", "D) CVM"],
+        "resposta": "A"
+    },
+    {
+        "id": "4079",
+        "tema": "Sistema Financeiro Nacional",
+        "pergunta": "É uma definição correta sobre o Sistema de Pagamentos Brasileiro - SPB:",
+        "opcoes": [
+            "A) Sistema criado para transferir fundos entre bancos de um mesmo conglomerado",
+            "B) Sistema criado para realização de DOC's para valores superiores a R$ 5 mil",
+            "C) É a transferência de fundos próprio e de terceiros realizados entre bancos em tempo real, com o objetivo de reduzir o risco sistêmico",
+            "D) Sistema criado para gerenciar o risco de crédito das instituições ao custodiar todos os CDB's emitidos por essas instituições"
+        ],
+        "resposta": "C"
+    },
+    {
+        "id": "4083",
+        "tema": "Sistema Financeiro Nacional",
+        "pergunta": "Tipo de Sociedade que a Comissão de Valores Mobiliários (CVM) fiscaliza:",
+        "opcoes": [
+            "A) Sociedades de Economia Mista que sejam de propriedade privada",
+            "B) Sociedades Anônimas que possuem ações negociadas em Bolsa de Valores e Mercado de Balcão",
+            "C) Sociedades Anônimas que possuem ações negociadas em Bolsa de Valores e Mercado Primário",
+            "D) Sociedades Limitadas que possuem ações negociadas em Bolsa de Valores"
+        ],
+        "resposta": "B"
+    },
+    {
+        "id": "4084",
+        "tema": "Sistema Financeiro Nacional",
+        "pergunta": "O Sistema de Pagamentos Brasileiro (SPB) é o conjunto de:",
+        "opcoes": [
+            "A) Entidades, sistemas e mecanismos relacionados com o processamento e a liquidação de operações de transferência de fundos, de operações com moeda estrangeira ou com ativo financeiros e valores mobiliários.",
+            "B) Instituições financeiras, cooperativas de crédito e centrais depositárias de ações e de títulos de dívida corporativa.",
+            "C) Sistemas eletrônicos disponibilizados pelo governo brasileiro para transferência de fundos e pagamentos de tributos",
+            "D) Sistemas e mecanismos que possuem relação com a liquidação de câmbio entre as instituições financeiras"
+        ],
+        "resposta": "A"
+    },
+    {
+        "id": "422022",
+        "tema": "Sistema Financeiro Nacional",
+        "pergunta": "São funções da CVM: I-Estimular a formação de poupança e sua aplicação em valores mobiliários; II-Proteger os investidores do mercado de capitais; III-Fiscalizar as S.A abertas, principalmente aquelas que apresentam falta de lucro contábil. Está correto:",
+        "opcoes": ["A) I e II", "B) II e III", "C) Apenas I", "D) I, II e III"],
+        "resposta": "A"
+    },
+    {
+        "id": "4085",
+        "tema": "Sistema Financeiro Nacional",
+        "pergunta": "É a entidade responsável pelas diretrizes das operações dos 'Fundos de Pensão':",
+        "opcoes": ["A) CNSP", "B) CNPC", "C) CMN", "D) PREVIC"],
+        "resposta": "B"
+    },
+    {
+        "id": "4077",
+        "tema": "Sistema Financeiro Nacional",
+        "pergunta": "O Conselho Monetário Nacional (CMN) tem como função:",
+        "opcoes": [
+            "A) Exercer a fiscalização das instituições financeiras",
+            "B) Conceder autorização para abertura de bancos estrangeiros no Brasil",
+            "C) Realizar operações de redesconto junto às instituições financeiras",
+            "D) Definir as diretrizes e normas referentes ao câmbio"
+        ],
+        "resposta": "D"
+    },
+    {
+        "id": "20234026",
+        "tema": "Sistema Financeiro Nacional",
+        "pergunta": "De quem é a responsabilidade de fiscalizar um título de capitalização (como o Shark Cap)?",
+        "opcoes": ["A) BACEN", "B) SUSEP", "C) CVM", "D) COAF"],
+        "resposta": "B"
+    },
+    {
+        "id": "20234013",
+        "tema": "Sistema Financeiro Nacional",
+        "pergunta": "Assinale as funções que competem ao BACEN: I) Receber compulsórios; II) Fixar diretrizes cambiais; III) Emitir papel moeda; IV) Proteger titulares de valores mobiliários; V) Controle do crédito.",
+        "opcoes": ["A) Todas", "B) I, II, V", "C) II, III, IV", "D) I, III, V"],
+        "resposta": "D"
+    },
+    {
+        "id": "422021",
+        "tema": "Sistema Financeiro Nacional",
+        "pergunta": "São funções do CNSP: I-Fixar diretrizes de seguros privados; II-Fiscalizar seguradoras; III-Fixar diretrizes cambiais. Está correto:",
+        "opcoes": ["A) I e II", "B) II e III", "C) Apenas I", "D) Apenas III"],
+        "resposta": "C"
+    },
+    {
+        "id": "20224529",
+        "tema": "Sistema Financeiro Nacional",
+        "pergunta": "A BSM é responsável pela administração do ____ e possui personalidade jurídica e ____ para sua atuação.",
+        "opcoes": ["A) SFN | Orçamento Próprio", "B) Orçamento Próprio | Subordinação ao BACEN", "C) MRP | Subordinação ao BACEN", "D) MRP | Orçamento Próprio"],
+        "resposta": "D"
+    },
+    {
+        "id": "20224539",
+        "tema": "Sistema Financeiro Nacional",
+        "pergunta": "São considerados Índices Amplos da B3: I-IBRX-100 e IBRX-50; II-Ibovespa; III-ISE.",
+        "opcoes": ["A) I e II", "B) II e III", "C) I e III", "D) I, II e III"],
+        "resposta": "A"
+    },
+    {
+        "id": "4087",
+        "tema": "Sistema Financeiro Nacional",
+        "pergunta": "Os sistemas que integram o SPB NÃO incluem o sistema:",
+        "opcoes": ["A) Cetip", "B) SICAF", "C) STR", "D) Selic"],
+        "resposta": "B"
+    },
+    {
+        "id": "4086",
+        "tema": "Sistema Financeiro Nacional",
+        "pergunta": "Órgão máximo do Sistema Financeiro Nacional:",
+        "opcoes": ["A) CNSP", "B) Bacen", "C) CMN", "D) Tesouro Nacional"],
+        "resposta": "C"
+    },
+    {
+        "id": "4078",
+        "tema": "Sistema Financeiro Nacional",
+        "pergunta": "É uma função da CVM:",
+        "opcoes": [
+            "A) Fiscalizar instituições do ramo bancário",
+            "B) Determinar diretrizes do mercado de câmbio",
+            "C) Limitar comissões cobradas por instituições no mercado de distribuição de valores mobiliários",
+            "D) Estimular investimentos em poupança"
+        ],
+        "resposta": "C"
+    },
+    {
+        "id": "4170",
+        "tema": "Mercado de Capitais",
+        "pergunta": "Quanto ao prazo máximo de emissão das Notas Promissórias – Commercial Papers, assinale a correta:",
+        "opcoes": ["A) 180 dias (Fechada) e 360 (Aberta)", "B) 360 dias (Fechada e Aberta)", "C) 180 dias (Fechada e Aberta)", "D) 180 dias (Aberta) e 360 (Fechada)"],
+        "resposta": "B"
+    },
+    {
+        "id": "4149",
+        "tema": "Mercado de Capitais",
+        "pergunta": "O que deve constar obrigatoriamente na escritura de uma debênture?",
+        "opcoes": ["A) Intervenção de um Agente Fiduciário", "B) Rating de crédito", "C) Direitos iguais independente da série", "D) Garantia de pagamento pelo Agente Fiduciário"],
+        "resposta": "A"
+    },
+    {
+        "id": "4158",
+        "tema": "Mercado de Capitais",
+        "pergunta": "Sobre o Juros Sobre Capital Próprio – JSCP, assinale a correta:",
+        "opcoes": [
+            "A) Isentos de IR e originam-se em lucros retidos",
+            "B) Originam-se de lucros retidos e IR regressivo",
+            "C) Lucros distribuídos e isentos de IR",
+            "D) Originam-se de lucros retidos e IR com alíquota única de 15%"
+        ],
+        "resposta": "D"
     }
 ]
