@@ -1004,6 +1004,7 @@ BANCO_QUESTOES = [
         "resposta": "D"
     },
     {
+    "id": "112",
     "modulo": "Matemática Financeira",
     "pergunta": "Germano resolveu trocar sua geladeira. Promoção à vista com 10% de desconto ou 10 vezes de R$ 280,00 sem desconto. Qual a taxa de juros embutida na operação?",
     "opcoes": [
@@ -1015,6 +1016,7 @@ BANCO_QUESTOES = [
     "resposta": "26,27% a.a."
 },
 {
+    "id": "113",
     "modulo": "Matemática Financeira",
     "pergunta": "No conceito de taxa over, a equivalente diária é descapitalizada segundo o regime:",
     "opcoes": [
@@ -1025,19 +1027,22 @@ BANCO_QUESTOES = [
     ],
     "resposta": "Composto, por 252 dias úteis."
 },
-{
+{ 
+    "id": "114",
     "modulo": "Matemática Financeira",
     "pergunta": "Investidor comprou LFT com prazo de 846 dias úteis, com ágio de 0.20% a.a., pagando PU de R$ 4.446. O preço par desse papel é:",
     "opcoes": ["4.256", "4.446", "4.416", "4.387"],
     "resposta": "4.416"
 },
 {
+    "id": "115",
     "modulo": "Matemática Financeira",
     "pergunta": "Carro financiado em 24 parcelas de R$ 3.106,85, com a primeira no ato. Valor financiado: R$ 60 mil. Qual a taxa?",
     "opcoes": ["1,82% mês", "26,68% ano", "1,76% mês", "24,86% ano"],
     "resposta": "26,68% ano"
 },
 {
+    "id": "116",
     "modulo": "Matemática Financeira",
     "pergunta": "Se o VPL de um projeto de investimento for positivo, isso indica que:",
     "opcoes": [
@@ -1049,18 +1054,21 @@ BANCO_QUESTOES = [
     "resposta": "Podemos investir, o projeto é lucrativo para essa taxa."
 },
 {
+    "id": "117",
     "modulo": "Clubes de Investimentos",
     "pergunta": "Número máximo de participantes de um Clube de Ações:",
     "opcoes": ["50", "150", "3", "30"],
     "resposta": "50"
 },
 {
+    "id": "118",
     "modulo": "Clubes de Investimentos",
     "pergunta": "Qual o percentual máximo do patrimônio que um Clube pode ter em Títulos Públicos Federais?",
     "opcoes": ["67%", "33%", "80%", "100%"],
     "resposta": "33%"
 },
 {
+    "id": "119",
     "modulo": "Administração de Risco",
     "pergunta": "Sobre o conceito de Value At Risk (VaR), assinale a correta:",
     "opcoes": [
@@ -1072,12 +1080,14 @@ BANCO_QUESTOES = [
     "resposta": "O VaR define a perda máxima potencial com um nível de confiança."
 },
 {
+    "id": "120",
     "modulo": "Administração de Risco",
     "pergunta": "Uma carteira 100% composta por ações possui os seguintes riscos, EXCETO:",
     "opcoes": ["Liquidez", "Mercado", "Crédito", "Sistemático"],
     "resposta": "Crédito"
 },
-{
+{    
+    "id": "121",
     "modulo": "Administração de Risco",
     "pergunta": "Para menor risco de crédito e menor risco de reinvestimento, qual a melhor escolha?",
     "opcoes": [
