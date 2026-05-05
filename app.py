@@ -1,7 +1,6 @@
 import streamlit as st
 import random
 import pandas as pd
-import os
 from datetime import datetime, timedelta
 from streamlit_gsheets import GSheetsConnection
 
@@ -15,33 +14,28 @@ except ImportError:
 # --- CONFIG ---
 st.set_page_config(page_title="Simulado ANCORD", layout="wide")
 
+# --- SIMULADOS (12 SEMANAS) ---
 DIC_SIMULADOS = {
-    "Simulado 1": ["Atividade do AAI", "Lavagem de Dinheiro"],
-    "Simulado 2": ["Mercado de Capitais", "Derivativos"],
-    "Simulado 3": ["Fundos de Investimentos"],
+    "Simulado 1 (Semanas 1 e 2)": ["Atividade do AAI", "Lavagem de Dinheiro"],
+    "Simulado 2 (Semanas 3 e 4)": ["Mercado de Capitais", "Securitização e Recebíveis", "Derivativos"],
+    "Simulado 3 (Semanas 5 e 6)": ["Fundos de Investimentos", "Outros Fundos", "Clube de Investimentos"],
+    "Simulado 4 (Semanas 7 e 8)": ["Mercado Financeiro", "Sistema Financeiro Nacional"],
+    "Simulado 5 (Semanas 9 e 10)": ["Instituições Financeiras", "Economia"],
+    "Simulado 6 (Semanas 11 e 12)": ["Matemática Financeira", "Administração de Risco", "Clube de Investimentos"]
 }
-
-# --- CSS ---
-st.markdown("""
-<style>
-.timer {
-position: fixed; top: 20px; right: 20px;
-background: white; padding: 10px;
-border: 2px solid red; border-radius: 10px;
-font-weight: bold;
-}
-</style>
-""", unsafe_allow_html=True)
 
 # --- SESSION ---
-for key, val in {
+defaults = {
     "logado": False,
     "simulado_iniciado": False,
     "mostrar_resultado": False,
-    "nivel": 1
-}.items():
-    if key not in st.session_state:
-        st.session_state[key] = val
+    "tempo": None,
+    "usuario": ""
+}
+
+for k,v in defaults.items():
+    if k not in st.session_state:
+        st.session_state[k] = v
 
 # --- LOGIN ---
 def login(u,p):
@@ -62,7 +56,7 @@ if not st.session_state.logado:
                 st.session_state.usuario=u
                 st.rerun()
             else:
-                st.error("Erro login")
+                st.error("Credenciais inválidas")
     st.stop()
 
 # --- PRIMEIRO ACESSO ---
@@ -70,162 +64,159 @@ if "primeiro" not in st.session_state:
     st.title("Simulado ANCORD - Preparação Profissional")
 
     st.markdown("""
-    ### Diretrizes Oficiais do Simulado
+    ### Diretrizes Oficiais
 
-    - 20 questões por simulado
-    - Tempo máximo: 30 minutos
-    - Proibido consulta externa
-    - Não recarregar a página durante a prova
-    - Critério de aprovação: mínimo de 70%
+    • 20 questões por simulado  
+    • Tempo limite: 30 minutos  
+    • Ambiente controlado (sem consulta externa)  
+    • Não atualizar a página durante a execução  
+    • Aprovação: mínimo de 70% de acerto  
 
-    Este ambiente simula condições reais da certificação.
+    Este simulado replica as condições reais da certificação ANCORD.
     """)
 
-    if st.button("Iniciar"):
-        st.session_state.primeiro=False
+    if st.button("Iniciar Simulado"):
+        st.session_state.primeiro = False
         st.rerun()
+
     st.stop()
 
 # --- MENU ---
 menu = st.sidebar.radio("Menu", ["Simulado", "Evolução"])
-
 conn = st.connection("gsheets", type=GSheetsConnection)
 
 # --- SIMULADO ---
 if menu == "Simulado":
 
     if not st.session_state.simulado_iniciado:
-        sim = st.selectbox("Escolha", list(DIC_SIMULADOS.keys()))
+        st.title("Configurar Simulado")
 
-        if st.button("Começar"):
+        sim = st.selectbox("Escolha o simulado:", list(DIC_SIMULADOS.keys()))
+
+        if st.button("Iniciar"):
             materias = DIC_SIMULADOS[sim]
-
-            # ADAPTATIVO
-            if st.session_state.nivel >= 2:
-                pool = [q for q in BANCO_QUESTOES if q["modulo"] in materias and q.get("dificuldade","medio")!="facil"]
-            else:
-                pool = [q for q in BANCO_QUESTOES if q["modulo"] in materias]
+            pool = [q for q in BANCO_QUESTOES if q["modulo"] in materias]
 
             st.session_state.questoes = random.sample(pool, min(20,len(pool)))
-            st.session_state.respostas={}
-            st.session_state.tempo = datetime.now()+timedelta(minutes=30)
-            st.session_state.simulado_iniciado=True
+            st.session_state.respostas = {}
+            st.session_state.tempo = datetime.now() + timedelta(minutes=30)
+            st.session_state.simulado_nome = sim
+            st.session_state.simulado_iniciado = True
+            st.session_state.mostrar_resultado = False
             st.rerun()
 
     else:
-        restante = int((st.session_state.tempo-datetime.now()).total_seconds())
+        # --- TIMER REAL ---
+        restante = int((st.session_state.tempo - datetime.now()).total_seconds())
 
         if restante <= 0:
-            st.session_state.mostrar_resultado=True
+            st.warning("Tempo esgotado.")
+            st.session_state.mostrar_resultado = True
+            restante = 0
 
-        minutos, segundos = divmod(max(restante,0),60)
+        minutos, segundos = divmod(restante, 60)
 
-        st.markdown(f"<div class='timer'>⏱️ {minutos:02d}:{segundos:02d}</div>", unsafe_allow_html=True)
+        st.info(f"⏱️ Tempo restante: {minutos:02d}:{segundos:02d}")
+
+        # Auto refresh a cada segundo
+        st.experimental_rerun if False else None
 
         with st.form("form"):
-            for i,q in enumerate(st.session_state.questoes):
+            for i, q in enumerate(st.session_state.questoes):
 
-                st.write(f"**{i+1}. {q['pergunta']}**")
+                st.markdown(f"**{i+1}. {q['pergunta']}**")
 
-                ops=[f"{k}) {v}" for k,v in q["opcoes"].items()]
+                opcoes_map = {f"{k}) {v}": k for k,v in q["opcoes"].items()}
+                opcoes_lista = list(opcoes_map.keys())
 
-                st.session_state.respostas[i]=st.radio(
-                    "Resposta",
-                    ops,
+                resposta = st.radio(
+                    "Resposta:",
+                    opcoes_lista,
                     key=f"q{i}",
                     index=None,
                     disabled=st.session_state.mostrar_resultado
                 )
 
+                if resposta:
+                    st.session_state.respostas[i] = opcoes_map[resposta]
+
+                # --- CORREÇÃO ---
                 if st.session_state.mostrar_resultado:
-                    correta=f"{q['resposta_correta']}) {q['opcoes'][q['resposta_correta']]}"
-                    r=st.session_state.respostas[i]
+                    correta = q["resposta_correta"]
+                    user = st.session_state.respostas.get(i)
 
-                    if r and r.startswith(q['resposta_correta']):
-                        st.success("Correto")
+                    texto_correta = f"{correta}) {q['opcoes'][correta]}"
+
+                    if user == correta:
+                        st.success(f"✅ Correto — {texto_correta}")
                     else:
-                        st.error(f"Errado: {correta}")
+                        st.error(f"❌ Incorreto — {texto_correta}")
 
-                    with st.expander("Explicação"):
-                        st.write(q.get("explicacao","-"))
+                    # EXPLICAÇÃO REAL DO BANCO
+                    st.markdown(f"**Explicação:** {q.get('explicacao','Não disponível')}")
 
                 st.markdown("---")
 
-            enviar=st.form_submit_button("Finalizar")
+            enviar = st.form_submit_button("Finalizar Simulado")
 
         if enviar:
-            acertos=0
-            por_materia={}
+            acertos = 0
+            por_materia = {}
 
-            for i,q in enumerate(st.session_state.questoes):
-                r=st.session_state.respostas[i]
-                mod=q["modulo"]
+            for i, q in enumerate(st.session_state.questoes):
+                correta = q["resposta_correta"]
+                user = st.session_state.respostas.get(i)
+                mod = q["modulo"]
 
-                por_materia.setdefault(mod,[0,0])
+                por_materia.setdefault(mod, [0,0])
+                por_materia[mod][1] += 1
 
-                por_materia[mod][1]+=1
+                if user == correta:
+                    acertos += 1
+                    por_materia[mod][0] += 1
 
-                if r and r.startswith(q["resposta_correta"]):
-                    acertos+=1
-                    por_materia[mod][0]+=1
-
-            total=len(st.session_state.questoes)
-            nota=(acertos/total)*100
-
-            # ADAPTATIVO
-            if nota>=80:
-                st.session_state.nivel+=1
-            elif nota<50:
-                st.session_state.nivel=1
+            total = len(st.session_state.questoes)
+            nota = (acertos / total) * 100
 
             # salvar
             try:
-                df=conn.read(worksheet="Resultados")
+                df = conn.read(worksheet="Resultados")
 
-                novo=pd.DataFrame([{
-                    "Usuario":st.session_state.usuario,
-                    "Nota":nota,
-                    "Data":datetime.now().strftime("%d/%m"),
+                novo = pd.DataFrame([{
+                    "Usuario": st.session_state.usuario,
+                    "Nota": nota,
+                    "Data": datetime.now().strftime("%d/%m/%Y %H:%M")
                 }])
 
-                conn.update(worksheet="Resultados", data=pd.concat([df,novo]))
+                conn.update(worksheet="Resultados", data=pd.concat([df, novo]))
 
             except:
                 pass
 
-            st.session_state.mostrar_resultado=True
+            st.session_state.mostrar_resultado = True
 
-            st.success(f"Nota: {nota:.1f}%")
+            st.success(f"Resultado final: {nota:.1f}%")
 
-            # % por matéria
+            # desempenho por matéria
             st.subheader("Desempenho por matéria")
-            df_mat=pd.DataFrame([
-                {"Materia":k,"%":v[0]/v[1]*100}
+            df_mat = pd.DataFrame([
+                {"Matéria": k, "Aproveitamento (%)": v[0]/v[1]*100}
                 for k,v in por_materia.items()
             ])
-            st.bar_chart(df_mat.set_index("Materia"))
+            st.bar_chart(df_mat.set_index("Matéria"))
 
             st.rerun()
 
 # --- EVOLUÇÃO ---
 else:
-    st.title("Dashboard de Performance")
+    st.title("Meu Desempenho")
 
     try:
-        df=conn.read(worksheet="Resultados")
+        df = conn.read(worksheet="Resultados")
+        user = df[df["Usuario"] == st.session_state.usuario]
 
-        # ranking
-        st.subheader("Ranking")
-        ranking=df.groupby("Usuario")["Nota"].mean().sort_values(ascending=False)
-        st.dataframe(ranking)
-
-        # heatmap simples
-        st.subheader("Heatmap de notas")
-        st.dataframe(df.pivot_table(index="Usuario", values="Nota", aggfunc="mean"))
-
-        # gráfico
-        user=df[df["Usuario"]==st.session_state.usuario]
+        st.dataframe(user.sort_values(by="Data", ascending=False))
         st.line_chart(user["Nota"])
 
     except:
-        st.error("Erro ao carregar")
+        st.error("Erro ao carregar dados")
