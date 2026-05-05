@@ -173,12 +173,9 @@ if menu == "Simulado":
 
         else:
             restante = int((st.session_state.tempo - datetime.now()).total_seconds())
-            minutos, segundos = divmod(max(restante,0), 60)
+            minutos, segundos = divmod(max(restante, 0), 60)
 
             st.info(f"⏱️ {minutos:02d}:{segundos:02d}")
-
-            time.sleep(1)
-            st.rerun()
 
             with st.form("form"):
                 for i, q in enumerate(st.session_state.questoes):
@@ -222,11 +219,11 @@ if menu == "Simulado":
                 st.success(f"Nota: {nota:.1f}%")
                 st.write(f"⏱️ Tempo médio por questão: {tempo_medio:.1f}s")
 
-                # --- SALVAR RESULTADOS (CORRIGIDO) ---
-                df_res = conn.read(worksheet="Resultados")
-
-                if "Tempo_medio" not in df_res.columns:
-                    df_res["Tempo_medio"] = None
+                # salvar resultado com proteção de coluna
+                try:
+                    df_res = conn.read(worksheet="Resultados")
+                except:
+                    df_res = pd.DataFrame(columns=["Usuario","Simulado","Nota","Tempo_medio","Data"])
 
                 novo = pd.DataFrame([{
                     "Usuario": st.session_state.usuario,
@@ -255,18 +252,13 @@ elif menu == "Evolução":
     df = conn.read(worksheet="Resultados")
     user = df[df["Usuario"] == st.session_state.usuario]
 
-    if user.empty:
-        st.warning("Nenhum resultado ainda.")
-        st.stop()
+    if not user.empty:
+        st.line_chart(user["Nota"])
 
-    st.subheader("Notas ao longo do tempo")
-    st.line_chart(user["Nota"])
-
-    if "Tempo_medio" in user.columns:
-        st.subheader("Tempo médio por prova")
-        st.line_chart(user["Tempo_medio"])
+        if "Tempo_medio" in user.columns:
+            st.line_chart(user["Tempo_medio"])
     else:
-        st.info("Tempo médio aparecerá nas próximas provas.")
+        st.info("Nenhum dado ainda.")
 
 # --- ADMIN ---
 elif menu == "Admin":
