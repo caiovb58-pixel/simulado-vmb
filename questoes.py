@@ -4,24 +4,19 @@
 # para evitar o erro de importação circular (ImportError).
 
 BANCO_QUESTOES = [
-    # --- QUESTÕES EXISTENTES NO SEU CÓDIGO ---
+    # --- QUESTÕES ORIGINAIS DO SEU CÓDIGO ---
     {
         "id": 11,
         "modulo": "Mercado de Capitais",
         "pergunta": "Qual é o prazo de liquidação física e financeira para operações com ações no mercado à vista da B3?",
-        "opcoes": {
-            "A": "D+0",
-            "B": "D+1",
-            "C": "D+2",
-            "D": "D+3"
-        },
+        "opcoes": {"A": "D+0", "B": "D+1", "C": "D+2", "D": "D+3"},
         "resposta_correta": "C",
         "explicacao": "Atualmente, a liquidação das operações no mercado à vista de ações ocorre em dois dias úteis (D+2) após a negociação."
     },
     {
         "id": 12,
         "modulo": "Administração de Risco",
-        "pergunta": "O concept de 'VaR' (Value at Risk) é utilizado para medir:",
+        "pergunta": "O conceito de 'VaR' (Value at Risk) é utilizado para medir:",
         "opcoes": {
             "A": "A perda máxima esperada em um determinado horizonte de tempo e nível de confiança",
             "B": "O lucro médio de uma carteira no longo prazo",
@@ -87,12 +82,7 @@ BANCO_QUESTOES = [
         "id": 17,
         "modulo": "Lavagem de Dinheiro",
         "pergunta": "A etapa da Lavagem de Dinheiro que visa introduzir o dinheiro 'limpo' no sistema econômico com aparência lícita é:",
-        "opcoes": {
-            "A": "Colocação",
-            "B": "Ocultação",
-            "C": "Integração",
-            "D": "Fracionamento"
-        },
+        "opcoes": {"A": "Colocação", "B": "Ocultação", "C": "Integração", "D": "Fracionamento"},
         "resposta_correta": "C",
         "explicacao": "A integração é a última fase, onde o dinheiro retorna à economia formal com aparência de lucro legítimo."
     },
@@ -152,12 +142,7 @@ BANCO_QUESTOES = [
         "id": 22,
         "modulo": "Mercado Financeiro",
         "pergunta": "Qual a alíquota de Imposto de Renda para operações de Day Trade com ações para pessoas físicas?",
-        "opcoes": {
-            "A": "15%",
-            "B": "20%",
-            "C": "22,5%",
-            "D": "Isento até R$ 20.000,00"
-        },
+        "opcoes": {"A": "15%", "B": "20%", "C": "22,5%", "D": "Isento até R$ 20.000,00"},
         "resposta_correta": "B",
         "explicacao": "Diferente das operações comuns (15%), o Day Trade é tributado em 20% e não possui faixa de isenção."
     },
@@ -165,12 +150,7 @@ BANCO_QUESTOES = [
         "id": 23,
         "modulo": "Mercado Financeiro",
         "pergunta": "O plano de previdência onde o Imposto de Renda incide apenas sobre os rendimentos no momento do resgate é o:",
-        "opcoes": {
-            "A": "PGBL",
-            "B": "VGBL",
-            "C": "Fundo de Pensão",
-            "D": "Tesouro Direto"
-        },
+        "opcoes": {"A": "PGBL", "B": "VGBL", "C": "Fundo de Pensão", "D": "Tesouro Direto"},
         "resposta_correta": "B",
         "explicacao": "O VGBL tributa apenas o ganho de capital, sendo ideal para quem faz declaração simplificada de IR."
     },
@@ -191,12 +171,7 @@ BANCO_QUESTOES = [
         "id": 25,
         "modulo": "Economia",
         "pergunta": "O índice de inflação que mede a variação de preços para o consumidor final e é a meta oficial do governo é o:",
-        "opcoes": {
-            "A": "IGP-M",
-            "B": "IPCA",
-            "C": "INPC",
-            "D": "IPA"
-        },
+        "opcoes": {"A": "IGP-M", "B": "IPCA", "C": "INPC", "D": "IPA"},
         "resposta_correta": "B",
         "explicacao": "O IPCA é calculado pelo IBGE e serve de referência para o regime de metas de inflação."
     },
@@ -243,12 +218,7 @@ BANCO_QUESTOES = [
         "id": 29,
         "modulo": "Matemática Financeira",
         "pergunta": "O IOF em aplicações de renda fixa incide apenas se o resgate ocorrer em um prazo inferior a:",
-        "opcoes": {
-            "A": "15 dias",
-            "B": "30 dias",
-            "C": "60 dias",
-            "D": "180 dias"
-        },
+        "opcoes": {"A": "15 dias", "B": "30 dias", "C": "60 dias", "D": "180 dias"},
         "resposta_correta": "B",
         "explicacao": "O IOF segue uma tabela regressiva que chega a zero no 30º dia de aplicação."
     },
@@ -256,12 +226,7 @@ BANCO_QUESTOES = [
         "id": 30,
         "modulo": "Fundos de Investimentos",
         "pergunta": "Em um fundo de investimento, quem é o responsável legal pela guarda dos ativos da carteira?",
-        "opcoes": {
-            "A": "O Administrador",
-            "B": "O Gestor",
-            "C": "O Custodiante",
-            "D": "O Auditor Independente"
-        },
+        "opcoes": {"A": "O Administrador", "B": "O Gestor", "C": "O Custodiante", "D": "O Auditor Independente"},
         "resposta_correta": "C",
         "explicacao": "O custodiante é a instituição responsável por guardar e processar os ativos do fundo."
     },
@@ -269,12 +234,7 @@ BANCO_QUESTOES = [
         "id": 31,
         "modulo": "Derivativos",
         "pergunta": "O contrato com liquidação diária de ganhos e perdas é o:",
-        "opcoes": {
-            "A": "Contrato a Termo",
-            "B": "Contrato Futuro",
-            "C": "Opção de Compra",
-            "D": "Swap"
-        },
+        "opcoes": {"A": "Contrato a Termo", "B": "Contrato Futuro", "C": "Opção de Compra", "D": "Swap"},
         "resposta_correta": "B",
         "explicacao": "A existência do ajuste diário é a marca registrada dos contratos futuros na Bolsa."
     },
@@ -282,12 +242,7 @@ BANCO_QUESTOES = [
         "id": 32,
         "modulo": "Mercado Financeiro",
         "pergunta": "No regime regressivo da previdência, a alíquota de 10% é aplicada após:",
-        "opcoes": {
-            "A": "4 anos",
-            "B": "6 anos",
-            "C": "8 anos",
-            "D": "10 anos"
-        },
+        "opcoes": {"A": "4 anos", "B": "6 anos", "C": "8 anos", "D": "10 anos"},
         "resposta_correta": "D",
         "explicacao": "A tabela regressiva atinge a alíquota mínima de 10% após 10 anos de acumulação."
     },
@@ -347,12 +302,7 @@ BANCO_QUESTOES = [
         "id": 37,
         "modulo": "Instituições Financeiras",
         "pergunta": "As Letras de Crédito Imobiliário (LCI) são isentas de IR para:",
-        "opcoes": {
-            "A": "Pessoas Jurídicas",
-            "B": "Pessoas Físicas apenas",
-            "C": "Ambos",
-            "D": "Ninguém"
-        },
+        "opcoes": {"A": "Pessoas Jurídicas", "B": "Pessoas Físicas apenas", "C": "Ambos", "D": "Ninguém"},
         "resposta_correta": "B",
         "explicacao": "A isenção de IR em LCI e LCA é um incentivo exclusivo para Pessoa Física."
     },
@@ -373,12 +323,7 @@ BANCO_QUESTOES = [
         "id": 39,
         "modulo": "Fundos de Investimentos",
         "pergunta": "O documento que contém as regras e taxas de um fundo é o:",
-        "opcoes": {
-            "A": "Prospecto",
-            "B": "Regulamento",
-            "C": "Lâmina",
-            "D": "Termo de Adesão"
-        },
+        "opcoes": {"A": "Prospecto", "B": "Regulamento", "C": "Lâmina", "D": "Termo de Adesão"},
         "resposta_correta": "B",
         "explicacao": "O regulamento é o contrato principal entre o fundo e os cotistas."
     },
@@ -399,12 +344,7 @@ BANCO_QUESTOES = [
         "id": 41,
         "modulo": "Lavagem de Dinheiro",
         "pergunta": "Sobre as etapas de lavagem de dinheiro, assinale a alternativa correta:\nI) Aquisição de obras de arte com recursos ilícitos é integração.\nII) Múltiplas transferências e vendas de ativos representa a ocultação.\nIII) Compra de empresas com o saldo das operações é colocação.\nIV) O primeiro depósito em conta é a colocação.",
-        "opcoes": {
-            "A": "V, F, F, V",
-            "B": "F, F, V, F",
-            "C": "F, V, F, V",
-            "D": "V, F, V, F"
-        },
+        "opcoes": {"A": "V, F, F, V", "B": "F, F, V, F", "C": "F, V, F, V", "D": "V, F, V, F"},
         "resposta_correta": "C",
         "explicacao": "A fase de ocultação (layering) visa dificultar o rastreamento através de múltiplas operações, enquanto o primeiro depósito é a colocação."
     },
@@ -425,12 +365,7 @@ BANCO_QUESTOES = [
         "id": 43,
         "modulo": "Lavagem de Dinheiro",
         "pergunta": "As instituições financeiras devem manter os registros das operações dos clientes identificados pelo prazo mínimo de:",
-        "opcoes": {
-            "A": "5 anos",
-            "B": "2 anos",
-            "C": "10 anos",
-            "D": "20 anos"
-        },
+        "opcoes": {"A": "5 anos", "B": "2 anos", "C": "10 anos", "D": "20 anos"},
         "resposta_correta": "C",
         "explicacao": "Conforme a circular do BACEN e normas da CVM, o prazo de guarda de registros e documentos é de no mínimo 10 anos."
     },
@@ -477,12 +412,7 @@ BANCO_QUESTOES = [
         "id": 47,
         "modulo": "Lavagem de Dinheiro",
         "pergunta": "Qual o valor máximo da multa pecuniária que pode ser aplicada pelo descumprimento das normas de prevenção à lavagem de dinheiro?",
-        "opcoes": {
-            "A": "R$ 2.000.000,00",
-            "B": "R$ 500.000,00",
-            "C": "R$ 20.000.000,00",
-            "D": "R$ 1.000.000,00"
-        },
+        "opcoes": {"A": "R$ 2.000.000,00", "B": "R$ 500.000,00", "C": "R$ 20.000.000,00", "D": "R$ 1.000.000,00"},
         "resposta_correta": "C",
         "explicacao": "A Lei 12.683/12 aumentou o teto da multa para 20 milhões de reais."
     },
@@ -503,158 +433,245 @@ BANCO_QUESTOES = [
         "id": 49,
         "modulo": "Lavagem de Dinheiro",
         "pergunta": "Operações em espécie (dinheiro vivo) devem ser obrigatoriamente comunicadas ao COAF a partir de qual valor?",
-        "opcoes": {
-            "A": "R$ 10.000,00",
-            "B": "R$ 50.000,00",
-            "C": "R$ 100.000,00",
-            "D": "Qualquer valor"
-        },
+        "opcoes": {"A": "R$ 10.000,00", "B": "R$ 50.000,00", "C": "R$ 100.000,00", "D": "Qualquer valor"},
         "resposta_correta": "B",
         "explicacao": "Depósitos, saques ou pagamentos em espécie de valor igual ou superior a R$ 50 mil devem ser comunicados independentemente de suspeita."
     },
 
-    # --- NOVAS QUESTÕES ADICIONADAS (LUCAS SILVA) ---
+    # --- NOVAS QUESTÕES (PDF 1 & 2) ---
     {
         "id": 50,
-        "modulo": "Securitização de Recebíveis",
-        "pergunta": "Em um processo de securitização de recebíveis o pagamento do fluxo financeiro originário é pago para o (a):",
+        "modulo": "Fundos de Investimentos",
+        "pergunta": "Com relação ao Fundo Multimercado, assinale a alternativa correta:",
         "opcoes": {
-            "A": "Investidor",
-            "B": "Securitizadora",
-            "C": "Emissor da Dívida",
-            "D": "Devedor"
+            "A": "Deve investir no mínimo 50% em crédito privado",
+            "B": "Deve investir no mínimo 67% em ações",
+            "C": "Investe em vários fatores de risco, sem o compromisso de alocação mínima em nenhum desses mercados",
+            "D": "Investe em vários fatores de risco, porém, com concentração mínima em renda fixa"
         },
-        "resposta_correta": "B",
-        "explicacao": "O devedor paga à securitizadora, que então repassa os fluxos aos investidores dos títulos emitidos."
+        "resposta_correta": "C",
+        "explicacao": "Fundos Multimercado possuem política de investimento que envolve vários fatores de risco, sem obrigatoriedade de concentração em um mercado específico."
     },
     {
         "id": 51,
-        "modulo": "Securitização de Recebíveis",
-        "pergunta": "Em uma operação de securitização de recebíveis, uma Sociedade de Propósito Específico (SPE):",
+        "modulo": "Fundos de Investimentos",
+        "pergunta": "Um determinado fundo de investimento possui 75% em Renda Variável, 25% em Renda Fixa e até 40% em derivativos. Esse fundo:",
         "opcoes": {
-            "A": "Capta recursos por meio da emissão de cotas-parte, com o objetivo de adquirir direitos creditórios",
-            "B": "Segrega o risco de crédito dos originadores",
-            "C": "Vende recebíveis para comprar debêntures",
-            "D": "Capta recurso, por meio da emissão de títulos de crédito, visando adquirir direitos creditórios"
+            "A": "Deve ser indicado para um investidor que busca baixo risco",
+            "B": "Deve ser indicado para um investidor que busca um fundo de renda fixa",
+            "C": "Tem possibilidade de ter perdas superiores ao seu patrimônio líquido",
+            "D": "É um fundo de Renda Fixa Simples"
         },
-        "resposta_correta": "D",
-        "explicacao": "A SPE é o veículo que emite os títulos para o mercado para financiar a compra dos créditos do originador."
+        "resposta_correta": "C",
+        "explicacao": "O uso de derivativos para alavancagem permite que as perdas excedam o patrimônio líquido do fundo."
     },
     {
         "id": 52,
-        "modulo": "Mercado de Capitais",
-        "pergunta": "Quanto ao prazo máximo de emissão das Notas Promissórias (Commercial Papers) para S.A. Fechadas e Abertas, respectivamente:",
+        "modulo": "Fundos de Investimentos",
+        "pergunta": "Sobre as operações ex-pit, é correto afirmar que:",
         "opcoes": {
-            "A": "180 dias e 360 dias",
-            "B": "360 dias para ambas",
-            "C": "180 dias para ambas",
-            "D": "360 dias e 180 dias"
+            "A": "Reduzem a liquidez do mercado a termo",
+            "B": "Não possibilitam a precificação de posições",
+            "C": "São submetidas à interferência do mercado",
+            "D": "Constituem negócios realizados fora do pit de negociação ou pregão, de uma bolsa"
         },
-        "resposta_correta": "B",
-        "explicacao": "Atualmente, o prazo máximo para Notas Promissórias de oferta pública é de 360 dias, independente se a S.A é aberta ou fechada."
+        "resposta_correta": "D",
+        "explicacao": "Operações ex-pit são negócios fechados fora do ambiente de negociação centralizado da bolsa."
     },
     {
         "id": 53,
-        "modulo": "Mercado de Capitais",
-        "pergunta": "Ordem discricionária é aquela que:",
+        "modulo": "Fundos de Investimentos",
+        "pergunta": "Um fundo de investimentos constituído sob a forma de condomínio fechado permite o resgate de cotas:",
         "opcoes": {
-            "A": "Estabelece um limite ao preço de negociação",
-            "B": "Envolve obrigatoriamente compra e venda",
-            "C": "Não possui qualquer limitação quanto a preço",
-            "D": "É gerada por administradores de carteira ou representantes de mais de um investidor"
+            "A": "De acordo com as regras do regulamento",
+            "B": "Após o primeiro ano",
+            "C": "Ao término do prazo de duração do fundo",
+            "D": "Se houver concordância de 2/3 dos cotistas"
         },
-        "resposta_correta": "D",
-        "explicacao": "A ordem discricionária permite que o profissional decida o momento e preço da execução em nome do cliente."
+        "resposta_correta": "C",
+        "explicacao": "Em condomínios fechados, as cotas só são resgatadas ao término do prazo de duração do fundo."
     },
     {
         "id": 54,
-        "modulo": "Mercado de Capitais",
-        "pergunta": "Uma empresa deseja emitir títulos na bolsa da Alemanha (Europa). Essa empresa deveria optar por:",
+        "modulo": "Fundos de Investimentos",
+        "pergunta": "Tipo de Fundo de Investimento que dispensa o Termo de Adesão e também o API:",
         "opcoes": {
-            "A": "ADR",
-            "B": "BDR",
-            "C": "GDR",
-            "D": "Debêntures"
+            "A": "Fundo de Renda Fixa",
+            "B": "Fundo de Renda Fixa Simples",
+            "C": "Fundo Cambial",
+            "D": "Fundo Referenciado"
         },
-        "resposta_correta": "C",
-        "explicacao": "GDR (Global Depositary Receipts) são recibos de ações emitidos em mercados fora do país de origem e dos EUA."
+        "resposta_correta": "B",
+        "explicacao": "O Fundo de Renda Fixa Simples é destinado a investidores iniciantes e dispensa esses documentos por sua política conservadora."
     },
     {
         "id": 55,
-        "modulo": "Mercado de Capitais",
-        "pergunta": "O período de uma oferta pública em que se coleta as intenções de aquisição e o preço que os interessados estão dispostos a pagar é o:",
+        "modulo": "Fundos de Investimentos",
+        "pergunta": "Para ser um Fundo de Curto Prazo (Receita Federal), o mesmo deve ter:",
         "opcoes": {
-            "A": "Front Runner",
-            "B": "Chinese Wall",
-            "C": "Bookbuilding",
-            "D": "Churning"
+            "A": "Prazo médio da carteira de até 60 dias",
+            "B": "Prazo médio da carteira de até 365 dias",
+            "C": "Prazo médio da carteira de até 375 dias",
+            "D": "Prazo médio da carteira de até 180 dias"
         },
-        "resposta_correta": "C",
-        "explicacao": "O Bookbuilding serve para 'sentir' o mercado e definir o preço final de uma emissão."
+        "resposta_correta": "B",
+        "explicacao": "Para fins fiscais, fundos de curto prazo possuem carteira com títulos de prazo médio igual ou inferior a 365 dias."
     },
     {
         "id": 56,
-        "modulo": "Mercado de Capitais",
-        "pergunta": "Sobre o Juros Sobre Capital Próprio (JSCP), assinale a alternativa correta:",
+        "modulo": "Fundos de Investimentos",
+        "pergunta": "Quem é o responsável pela definição da Política de Investimentos de um fundo?",
         "opcoes": {
-            "A": "São isentos de IR para pessoa física",
-            "B": "Possuem IR conforme tabela regressiva",
-            "C": "São os lucros da companhia isentos de IR",
-            "D": "Originam-se de lucros retidos e possuem IR com alíquota única de 15%"
+            "A": "Diretor Administrativo",
+            "B": "Cotistas",
+            "C": "Gestor",
+            "D": "Administrador"
         },
         "resposta_correta": "D",
-        "explicacao": "Diferente dos dividendos, o JSCP é tributado na fonte em 15% para o investidor pessoa física."
+        "explicacao": "A responsabilidade pela elaboração do regulamento e definição da política de investimento é do Administrador."
     },
     {
         "id": 57,
-        "modulo": "Mercado de Capitais",
-        "pergunta": "Uma ordem de venda que será executada somente se o ativo atingir um determinado preço (para limitar perdas) é chamada de:",
+        "modulo": "Fundos de Investimentos",
+        "pergunta": "Metodologia utilizada para a cobrança da Taxa de Performance:",
         "opcoes": {
-            "A": "Stop",
-            "B": "A Mercado",
-            "C": "Tudo Ou Nada",
-            "D": "Europeia"
+            "A": "Linha D'água",
+            "B": "Chinese Wall",
+            "C": "Day Trade",
+            "D": "Taxa Over"
         },
         "resposta_correta": "A",
-        "explicacao": "Ordens Stop são gatilhos de segurança usados para proteção de capital ou garantia de lucro."
+        "explicacao": "O método da Linha D'água garante que a taxa de performance só seja cobrada sobre o que exceder o valor máximo anterior da cota."
     },
     {
         "id": 58,
-        "modulo": "Mercado de Capitais",
-        "pergunta": "Em uma Bonificação de Ações:",
+        "modulo": "Fundos de Investimentos",
+        "pergunta": "São considerados investidores profissionais aqueles com investimentos financeiros superiores a:",
         "opcoes": {
-            "A": "O acionista tem o direito de comprar novas ações",
-            "B": "O acionista recebe gratuitamente um número de novas ações",
-            "C": "A empresa capta novos recursos financeiros",
-            "D": "O valor nominal das ações é reduzido"
+            "A": "R$ 1.000.000,00",
+            "B": "R$ 10.000.000,00",
+            "C": "R$ 5.000.000,00",
+            "D": "R$ 50.000.000,00"
         },
         "resposta_correta": "B",
-        "explicacao": "Bonificação é a distribuição gratuita de ações resultante da capitalização de reservas de lucros."
+        "explicacao": "Investidores profissionais são aqueles que atestam essa condição e possuem mais de R$ 10 milhões em investimentos."
     },
     {
         "id": 59,
-        "modulo": "Mercado de Capitais",
-        "pergunta": "Qual a diferença básica entre um bônus de subscrição e o direito de subscrição?",
+        "modulo": "Fundos de Investimentos",
+        "pergunta": "Sobre a taxa de administração em um fundo de investimento:",
         "opcoes": {
-            "A": "O bônus tem validade e o direito não",
-            "B": "O direito é dado a qualquer investidor e o bônus não",
-            "C": "O direito é exclusivo do acionista, o bônus pode ser emitido para terceiros",
-            "D": "Ambos não possuem prazo de validade"
+            "A": "Cobrada apenas se houver lucro",
+            "B": "É devolvida após um período",
+            "C": "É um dos fatores que afeta o valor da cota",
+            "D": "Cobrada apenas no resgate"
         },
         "resposta_correta": "C",
-        "explicacao": "Direitos de subscrição nascem do aumento de capital para acionistas atuais. Bônus são títulos negociáveis emitidos pela companhia."
+        "explicacao": "A taxa de administração é provisionada diariamente e reduz o valor da cota divulgado."
     },
     {
         "id": 60,
-        "modulo": "Mercado de Capitais",
-        "pergunta": "Nas operações de Day Trade com ações, as alíquotas de IR total e retido na fonte (dedo-duro) são, respectivamente:",
+        "modulo": "Fundos de Investimentos",
+        "pergunta": "Um Fundo Cambial deve investir qual percentual mínimo em ativos ligados à variação de moeda estrangeira?",
+        "opcoes": {"A": "67%", "B": "95%", "C": "80%", "D": "100%"},
+        "resposta_correta": "C",
+        "explicacao": "Conforme a CVM, fundos cambiais devem manter pelo menos 80% da carteira em ativos que busquem acompanhar a variação de moedas estrangeiras."
+    },
+    {
+        "id": 61,
+        "modulo": "Fundos de Investimentos",
+        "pergunta": "É característica de um Fundo com Gestão Ativa:",
         "opcoes": {
-            "A": "20% e 0,005%",
-            "B": "15% e 0,005%",
-            "C": "15% e 1%",
-            "D": "20% e 1%"
+            "A": "Replicar um benchmark",
+            "B": "Superar a rentabilidade de um benchmark",
+            "C": "Ser mais defensivo",
+            "D": "Focar apenas em Hedge"
+        },
+        "resposta_correta": "B",
+        "explicacao": "Na gestão ativa, o gestor busca retornos acima do índice de referência (benchmark)."
+    },
+    {
+        "id": 62,
+        "modulo": "Fundos de Investimentos",
+        "pergunta": "Sobre o Come-Cotas em Fundos de Renda Fixa de Longo Prazo, as alíquotas são:",
+        "opcoes": {
+            "A": "15% em maio e novembro",
+            "B": "20% em maio e novembro",
+            "C": "22,5% no resgate",
+            "D": "10% semestralmente"
+        },
+        "resposta_correta": "A",
+        "explicacao": "Para fundos de Longo Prazo, a antecipação semestral (come-cotas) ocorre em maio e novembro com alíquota de 15%."
+    },
+    {
+        "id": 63,
+        "modulo": "Fundos de Investimentos",
+        "pergunta": "Responsável pela escolha dos ativos que serão adquiridos para a carteira do fundo:",
+        "opcoes": {"A": "Administrador", "B": "Custodiante", "C": "Distribuidor", "D": "Gestor"},
+        "resposta_correta": "D",
+        "explicacao": "O gestor é quem toma as decisões de compra e venda dos ativos da carteira."
+    },
+    {
+        "id": 64,
+        "modulo": "Fundos de Investimentos",
+        "pergunta": "O Come-Cotas provoca no investidor uma:",
+        "opcoes": {
+            "A": "Redução no número de cotas",
+            "B": "Aumento no número de cotas",
+            "C": "Redução no valor da cota",
+            "D": "Alteração no benchmark"
+        },
+        "resposta_correta": "A",
+        "explicacao": "O imposto é cobrado através da redução da quantidade de cotas detidas pelo investidor."
+    },
+    {
+        "id": 65,
+        "modulo": "Outros Fundos",
+        "pergunta": "Sobre os Exchange Traded Funds (ETF), assinale a correta:",
+        "opcoes": {
+            "A": "Fundo negociado em bolsa que replica um índice",
+            "B": "Fundo fechado com investimento mínimo de R$ 25 mil",
+            "C": "Fundo atrelado exclusivamente ao mercado imobiliário",
+            "D": "Fundo de mercado de balcão"
+        },
+        "resposta_correta": "A",
+        "explicacao": "ETFs são fundos cujas cotas são negociadas em bolsa e visam replicar o desempenho de um índice de referência."
+    },
+    {
+        "id": 66,
+        "modulo": "Outros Fundos",
+        "pergunta": "A alíquota de IR para rendimentos de FIIs para Pessoa Jurídica é de:",
+        "opcoes": {"A": "15%", "B": "20%", "C": "22,5%", "D": "Isento"},
+        "resposta_correta": "B",
+        "explicacao": "Diferente da PF (que pode ser isenta), a PJ paga 20% de IR sobre os rendimentos distribuídos pelos FIIs."
+    },
+    {
+        "id": 67,
+        "modulo": "Outros Fundos",
+        "pergunta": "O ganho de capital na venda de cotas de FII na bolsa para Pessoa Física é tributado em:",
+        "opcoes": {"A": "15%", "B": "20%", "C": "Depende do prazo", "D": "Isento"},
+        "resposta_correta": "B",
+        "explicacao": "A venda de cotas de fundos imobiliários com lucro é tributada em 20%, sem isenção para PF."
+    },
+    {
+        "id": 68,
+        "modulo": "Outros Fundos",
+        "pergunta": "Percentual mínimo do PL que um FIDC deve comprar em direitos creditórios:",
+        "opcoes": {"A": "67%", "B": "80%", "C": "50%", "D": "95%"},
+        "resposta_correta": "C",
+        "explicacao": "Fundos de Investimento em Direitos Creditórios devem aplicar no mínimo 50% de seu PL em direitos creditórios."
+    },
+    {
+        "id": 69,
+        "modulo": "Outros Fundos",
+        "pergunta": "Um FIP (Participações) deve investir em ativos que:",
+        "opcoes": {
+            "A": "Sejam apenas títulos públicos",
+            "B": "Sejam empresas de capital aberto apenas",
+            "C": "Permitam influenciar nas decisões da empresa",
+            "D": "Garantam renda fixa mensal"
         },
         "resposta_correta": "D",
-        "explicacao": "No Day Trade, o IR total é 20% e a retenção na fonte (dedo-duro) é de 1% sobre o lucro."
+        "explicacao": "O FIP caracteriza-se pela participação no processo decisório da companhia investida."
     }
 ]
