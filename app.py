@@ -8,8 +8,6 @@ import plotly.graph_objects as go
 # --- CONFIG ---
 st.set_page_config(page_title="Simulado ANCORD", layout="wide")
 
-ADMINS = ["Caio", "Admin"]
-
 from questoes import BANCO_QUESTOES
 
 # --- SIMULADOS ---
@@ -62,7 +60,6 @@ menu = st.sidebar.radio("Menu", ["Simulado", "Evolução"])
 # =========================
 if menu == "Simulado":
 
-    # ESCOLHA
     if not st.session_state.simulado_iniciado:
 
         st.title("Escolha o Simulado")
@@ -82,25 +79,13 @@ if menu == "Simulado":
 
                 st.rerun()
 
-    # PROVA
     elif not st.session_state.resultado_final:
 
+        # ⏱️ TIMER PASSIVO (não quebra app)
         restante = int((st.session_state.tempo - datetime.now()).total_seconds())
         minutos, segundos = divmod(max(restante, 0), 60)
 
         st.info(f"⏱️ {minutos:02d}:{segundos:02d}")
-
-        # 🔥 TIMER ESTÁVEL (sem quebrar o app)
-        st.markdown(
-            """
-            <script>
-            setTimeout(function(){
-                window.location.reload();
-            }, 1000);
-            </script>
-            """,
-            unsafe_allow_html=True
-        )
 
         with st.form("form_prova"):
             for i, q in enumerate(st.session_state.questoes):
@@ -116,7 +101,6 @@ if menu == "Simulado":
                     index=None
                 )
 
-                # salva apenas se respondeu
                 if resp is not None:
                     st.session_state.respostas[i] = resp
 
@@ -126,7 +110,6 @@ if menu == "Simulado":
             st.session_state.resultado_final = True
             st.rerun()
 
-    # RESULTADO
     else:
 
         acertos = 0
@@ -164,9 +147,17 @@ if menu == "Simulado":
 
         st.plotly_chart(fig, use_container_width=True)
 
-        # --- SALVAR RESULTADO ---
+        # --- SALVAR RESULTADO (ROBUSTO) ---
         try:
             df = conn.read(worksheet="Resultados")
+            colunas = ["Usuario","Simulado","Nota","Data"]
+
+            for col in colunas:
+                if col not in df.columns:
+                    df[col] = None
+
+            df = df[colunas]
+
         except:
             df = pd.DataFrame(columns=["Usuario","Simulado","Nota","Data"])
 
