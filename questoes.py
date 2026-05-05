@@ -659,7 +659,6 @@ BANCO_QUESTOES = [
         "resposta_correta": "C",
         "explicacao": "Fundos de Investimento em Direitos Creditórios devem aplicar no mínimo 50% de seu PL em direitos creditórios."
     },
-   BANCO_QUESTOES = [
     {
         "id": 69,
         "modulo": "Sistema Financeiro Nacional",
