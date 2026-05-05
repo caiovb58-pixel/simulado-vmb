@@ -55,6 +55,7 @@ def login(u,p):
 
 if not st.session_state.logado:
     with st.form("login"):
+        st.title("🔐 Acesso ao Simulado")
         u = st.text_input("Usuário")
         p = st.text_input("Senha", type="password")
         if st.form_submit_button("Entrar"):
@@ -75,20 +76,39 @@ with st.sidebar:
 
 conn = st.connection("gsheets", type=GSheetsConnection)
 
-# --- PRIMEIRO ACESSO ---
+# --- PRIMEIRO ACESSO (MELHORADO) ---
 if "primeiro" not in st.session_state:
-    st.title("Simulado ANCORD")
+    st.title("🚀 Simulado ANCORD - Preparação Profissional")
 
     st.markdown("""
-    • 20 questões  
-    • 30 minutos  
-    • Aprovação: 70%  
-    • Não atualizar a página  
+    ### 🎯 Objetivo
+    Este simulado foi desenvolvido para replicar com precisão o nível de exigência da prova ANCORD, preparando você para alta performance.
+
+    ### 📋 Estrutura da Avaliação
+    - ✔️ 20 questões por simulado  
+    - ✔️ Tempo total: **30 minutos (cronometrado)**  
+    - ✔️ Conteúdo baseado no cronograma de 12 semanas  
+
+    ### ⚠️ Regras Importantes
+    - ❌ Não é permitido consultar materiais externos  
+    - ❌ Não atualize a página durante a prova  
+    - ❌ Evite sair da aba durante o simulado  
+
+    ### 🏆 Critério de Aprovação
+    - Você precisa atingir **mínimo de 70% de acerto**
+
+    ---
+
+    ### 💬 Mentalidade de Alta Performance
+    > "Disciplina é fazer o que precisa ser feito, mesmo quando você não está motivado."
+
+    Entre como candidato. Saia como certificado.
     """)
 
-    if st.button("Iniciar"):
+    if st.button("🔥 Estou pronto para começar"):
         st.session_state.primeiro=False
         st.rerun()
+
     st.stop()
 
 # --- SIMULADO ---
@@ -121,11 +141,6 @@ if menu == "Simulado":
 
         minutos, segundos = divmod(restante, 60)
         st.info(f"⏱️ Tempo restante: {minutos:02d}:{segundos:02d}")
-
-        # 🔁 ATUALIZA AUTOMÁTICO
-        if not st.session_state.mostrar_resultado:
-            time.sleep(1)
-            st.rerun()
 
         with st.form("form"):
             for i, q in enumerate(st.session_state.questoes):
@@ -162,6 +177,11 @@ if menu == "Simulado":
                 st.markdown("---")
 
             enviar = st.form_submit_button("Finalizar")
+
+        # 🔥 AGORA O AUTO REFRESH ACONTECE DEPOIS DE RENDERIZAR
+        if not st.session_state.mostrar_resultado:
+            time.sleep(1)
+            st.rerun()
 
         if enviar or restante == 0:
             acertos = 0
