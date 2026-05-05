@@ -4,7 +4,6 @@ import pandas as pd
 from datetime import datetime, timedelta
 from streamlit_gsheets import GSheetsConnection
 import plotly.graph_objects as go
-import time
 
 # --- CONFIG ---
 st.set_page_config(page_title="Simulado ANCORD", layout="wide")
@@ -91,9 +90,17 @@ if menu == "Simulado":
 
         st.info(f"⏱️ {minutos:02d}:{segundos:02d}")
 
-        # 🔥 TIMER REALTIME
-        time.sleep(1)
-        st.rerun()
+        # 🔥 TIMER ESTÁVEL (sem quebrar o app)
+        st.markdown(
+            """
+            <script>
+            setTimeout(function(){
+                window.location.reload();
+            }, 1000);
+            </script>
+            """,
+            unsafe_allow_html=True
+        )
 
         with st.form("form_prova"):
             for i, q in enumerate(st.session_state.questoes):
@@ -105,11 +112,12 @@ if menu == "Simulado":
                 resp = st.radio(
                     "Escolha:",
                     opcoes,
-                    key=f"q_{i}"
+                    key=f"q_{i}",
+                    index=None
                 )
 
-                # salva só se respondeu
-                if resp:
+                # salva apenas se respondeu
+                if resp is not None:
                     st.session_state.respostas[i] = resp
 
             enviar = st.form_submit_button("Finalizar")
@@ -137,7 +145,7 @@ if menu == "Simulado":
 
         st.success(f"Nota: {nota:.1f}%")
 
-        # --- RADAR REAL ---
+        # --- RADAR ---
         categorias = list(por_modulo.keys())
         valores = [(v[0]/v[1])*100 for v in por_modulo.values()]
 
