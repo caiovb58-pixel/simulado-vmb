@@ -84,12 +84,6 @@ def salvar_progresso(usuario, indice, status):
     except Exception as e:
         st.error(f"Erro ao salvar progresso: {e}")
 
-# --- LOGOUT ---
-def logout():
-    for k in list(st.session_state.keys()):
-        del st.session_state[k]
-    st.rerun()
-
 # --- LOGIN ---
 def login(u, p):
     try:
@@ -124,12 +118,11 @@ with st.sidebar:
 
     menu = st.radio("Menu", menu_opcoes)
 
-    if st.button("🚪 Sair"):
-        logout()
-
 # --- BOAS VINDAS ---
 if "primeiro" not in st.session_state:
-    st.title("🚀 Simulado ANCORD - Preparação Profissional")
+    st.image("https://via.placeholder.com/200x80?text=VMB", width=200)  # 🔥 TROCAR PELA SUA LOGO
+
+    st.title("Simulado ANCORD - Preparação Profissional")
 
     st.markdown("""
     ### 🎯 Objetivo
@@ -138,19 +131,9 @@ if "primeiro" not in st.session_state:
     ### 📋 Estrutura
     - Até 20 questões
     - Tempo: 30 minutos
-    - Baseado no plano de 12 semanas
-
-    ### ⚠️ Regras
-    - Sem consulta externa
-    - Não atualizar página
-    - Foco total
 
     ### 🏆 Aprovação
     - 70% ou mais
-
-    ---
-    ### 💬 Mentalidade
-    > "Disciplina supera motivação."
     """)
 
     if st.button("🔥 Começar"):
@@ -162,18 +145,12 @@ if "primeiro" not in st.session_state:
 # --- SIMULADO ---
 if menu == "Simulado":
 
-    st.title("Escolha seu Simulado")
-
     progresso = st.session_state.simulado_atual_indice
-    total_simulados = len(SIMULADOS_ORDEM)
+    total = len(SIMULADOS_ORDEM)
 
-    # 🔥 BARRA DE PROGRESSO
-    st.progress(progresso / total_simulados)
-    st.write(f"Progresso: {progresso}/{total_simulados} simulados concluídos")
+    st.progress(progresso / total)
+    st.write(f"Progresso: {progresso}/{total}")
 
-    st.markdown("---")
-
-    # 🔥 LISTA COM BLOQUEIO
     for i, nome in enumerate(SIMULADOS_ORDEM):
 
         if i <= progresso:
@@ -184,7 +161,6 @@ if menu == "Simulado":
         else:
             st.button(f"🔒 {nome}", disabled=True)
 
-    # --- INICIAR SIMULADO ---
     if "simulado_escolhido" in st.session_state:
 
         indice = st.session_state.simulado_escolhido
@@ -192,52 +168,50 @@ if menu == "Simulado":
 
         if not st.session_state.simulado_iniciado:
 
-            st.subheader(f"Iniciar: {sim_atual}")
-
             if st.button("Iniciar Simulado"):
+
                 materias = DIC_SIMULADOS[sim_atual]
                 pool = [q for q in BANCO_QUESTOES if q["modulo"] in materias]
 
-                qtd = min(20, len(pool))
+                random.seed(st.session_state.usuario + sim_atual + str(datetime.now().date()))
+                random.shuffle(pool)
 
-                st.session_state.questoes = random.sample(pool, qtd)
+                qtd = min(20, len(pool))
+                questoes = pool[:qtd]
+
+                # 🔥 embaralhar alternativas
+                for q in questoes:
+                    itens = list(q["opcoes"].items())
+                    random.shuffle(itens)
+                    q["opcoes"] = dict(itens)
+
+                st.session_state.questoes = questoes
                 st.session_state.respostas = {}
                 st.session_state.tempo = datetime.now() + timedelta(minutes=30)
                 st.session_state.simulado_nome = sim_atual
                 st.session_state.simulado_iniciado = True
-                st.session_state.mostrar_resultado = False
                 st.rerun()
 
         else:
             restante = int((st.session_state.tempo - datetime.now()).total_seconds())
+            minutos, segundos = divmod(max(restante,0), 60)
 
-            if restante <= 0:
-                st.session_state.mostrar_resultado = True
-                restante = 0
-
-            minutos, segundos = divmod(restante, 60)
-            st.info(f"⏱️ Tempo restante: {minutos:02d}:{segundos:02d}")
+            st.info(f"⏱️ {minutos:02d}:{segundos:02d}")
 
             with st.form("form"):
                 for i, q in enumerate(st.session_state.questoes):
 
                     st.markdown(f"**{i+1}. {q['pergunta']}**")
 
-                    opcoes_map = {f"{k}) {v}": k for k, v in q["opcoes"].items()}
-                    resposta = st.radio("Resposta:", list(opcoes_map.keys()), key=f"q{i}", index=None)
+                    opcoes_map = {f"{k}) {v}": k for k,v in q["opcoes"].items()}
+                    resp = st.radio("Resposta", list(opcoes_map.keys()), key=f"q{i}")
 
-                    if resposta:
-                        st.session_state.respostas[i] = opcoes_map[resposta]
+                    if resp:
+                        st.session_state.respostas[i] = opcoes_map[resp]
 
-                    st.markdown("---")
+                enviar = st.form_submit_button("Finalizar")
 
-                enviar = st.form_submit_button("Finalizar Simulado")
-
-            if not st.session_state.mostrar_resultado and not enviar:
-                time.sleep(1)
-                st.rerun()
-
-            if enviar or restante == 0:
+            if enviar or restante <= 0:
 
                 acertos = sum(
                     1 for i, q in enumerate(st.session_state.questoes)
@@ -248,59 +222,39 @@ if menu == "Simulado":
                 nota = (acertos / total) * 100 if total else 0
                 status = "Aprovado" if nota >= 70 else "Reprovado"
 
-                # salvar resultado
-                try:
-                    df = conn.read(worksheet="Resultados")
-
-                    novo = pd.DataFrame([{
-                        "Usuario": st.session_state.usuario,
-                        "Simulado": st.session_state.simulado_nome,
-                        "Nota": nota,
-                        "Status": status,
-                        "Data": datetime.now().strftime("%d/%m/%Y %H:%M")
-                    }])
-
-                    conn.update(worksheet="Resultados", data=pd.concat([df, novo]))
-                except:
-                    pass
+                # certificado
+                if status == "Aprovado":
+                    st.success("🎓 CERTIFICADO")
+                    st.markdown(f"""
+                    **{st.session_state.usuario}**  
+                    Concluiu com sucesso o **{sim_atual}**  
+                    Nota: **{nota:.1f}%**
+                    """)
 
                 # progresso
-                novo_indice = progresso
+                novo = progresso
                 if status == "Aprovado" and indice == progresso:
-                    novo_indice += 1
+                    novo += 1
 
-                salvar_progresso(st.session_state.usuario, novo_indice, status)
-                st.session_state.simulado_atual_indice = novo_indice
+                salvar_progresso(st.session_state.usuario, novo, status)
+                st.session_state.simulado_atual_indice = novo
 
                 st.success(f"Nota: {nota:.1f}%")
-                st.markdown(f"### Status: {status}")
 
                 st.session_state.simulado_iniciado = False
 
 # --- EVOLUÇÃO ---
 elif menu == "Evolução":
-    st.title("Meu Desempenho")
-
-    try:
-        df = conn.read(worksheet="Resultados")
-        user = df[df["Usuario"] == st.session_state.usuario]
-
-        st.dataframe(user.sort_values(by="Data", ascending=False))
-        st.line_chart(user["Nota"])
-    except:
-        st.error("Erro ao carregar dados")
+    df = conn.read(worksheet="Resultados")
+    user = df[df["Usuario"] == st.session_state.usuario]
+    st.dataframe(user)
+    st.line_chart(user["Nota"])
 
 # --- ADMIN ---
 elif menu == "Admin":
-
     if st.session_state.usuario not in ADMINS:
-        st.error("Acesso restrito.")
+        st.error("Acesso restrito")
         st.stop()
-
-    st.title("📊 Dashboard Admin")
 
     df = conn.read(worksheet="Resultados")
     st.dataframe(df)
-
-    st.subheader("Média por usuário")
-    st.dataframe(df.groupby("Usuario")["Nota"].mean())
