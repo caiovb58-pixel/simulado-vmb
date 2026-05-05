@@ -3,6 +3,8 @@ import random
 import pandas as pd
 from datetime import datetime, timedelta
 from streamlit_gsheets import GSheetsConnection
+import matplotlib.pyplot as plt
+import numpy as np
 
 # --- CONFIG ---
 st.set_page_config(page_title="Simulado ANCORD", layout="wide")
@@ -201,16 +203,47 @@ if menu == "Simulado":
                 tempo_total = (datetime.now() - st.session_state.inicio_prova).total_seconds()
                 tempo_medio = tempo_total / len(st.session_state.questoes)
 
-                acertos = sum(
-                    1 for i, q in enumerate(st.session_state.questoes)
-                    if st.session_state.respostas.get(i) == q["resposta_correta"]
-                )
+                acertos = 0
+                por_modulo = {}
+
+                for i, q in enumerate(st.session_state.questoes):
+                    mod = q["modulo"]
+                    por_modulo.setdefault(mod, [0,0])
+                    por_modulo[mod][1] += 1
+
+                    if st.session_state.respostas.get(i) == q["resposta_correta"]:
+                        acertos += 1
+                        por_modulo[mod][0] += 1
 
                 nota = (acertos / len(st.session_state.questoes)) * 100
                 status = "Aprovado" if nota >= 70 else "Reprovado"
 
                 st.success(f"Nota: {nota:.1f}%")
                 st.write(f"⏱️ Tempo médio por questão: {tempo_medio:.1f}s")
+
+                # --- RADAR CHART REAL ---
+                if por_modulo:
+                    st.subheader("🎯 Radar de Performance")
+
+                    categorias = list(por_modulo.keys())
+                    valores = [(v[0]/v[1])*100 for v in por_modulo.values()]
+
+                    valores += valores[:1]
+                    categorias += categorias[:1]
+
+                    angulos = np.linspace(0, 2*np.pi, len(categorias), endpoint=True)
+
+                    fig, ax = plt.subplots(subplot_kw=dict(polar=True))
+                    ax.plot(angulos, valores)
+                    ax.fill(angulos, valores, alpha=0.1)
+
+                    ax.set_xticks(angulos)
+                    ax.set_xticklabels(categorias)
+
+                    ax.set_yticks([20,40,60,80,100])
+                    ax.set_yticklabels(["20","40","60","80","100"])
+
+                    st.pyplot(fig)
 
                 # --- SALVAR RESULTADO ---
                 try:
@@ -228,10 +261,7 @@ if menu == "Simulado":
 
                 df_final = pd.concat([df_res, novo], ignore_index=True)
 
-                conn.update(
-                    worksheet="Resultados",
-                    data=df_final
-                )
+                conn.update(worksheet="Resultados", data=df_final)
 
                 # progresso
                 novo_idx = progresso
