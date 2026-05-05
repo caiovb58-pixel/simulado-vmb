@@ -4,19 +4,16 @@ import pandas as pd
 from datetime import datetime, timedelta
 from streamlit_gsheets import GSheetsConnection
 import time
-
-# --- QUESTÕES ---
-try:
-    from questoes import BANCO_QUESTOES
-except ImportError:
-    st.error("Arquivo 'questoes.py' não encontrado.")
-    st.stop()
+import math
 
 # --- CONFIG ---
 st.set_page_config(page_title="Simulado ANCORD", layout="wide")
 
 # --- ADMINS ---
 ADMINS = ["Caio", "Admin"]
+
+# --- QUESTÕES ---
+from questoes import BANCO_QUESTOES
 
 # --- SIMULADOS ---
 DIC_SIMULADOS = {
@@ -34,10 +31,10 @@ SIMULADOS_ORDEM = list(DIC_SIMULADOS.keys())
 defaults = {
     "logado": False,
     "simulado_iniciado": False,
-    "mostrar_resultado": False,
     "tempo": None,
     "usuario": "",
-    "simulado_atual_indice": 0
+    "simulado_atual_indice": 0,
+    "inicio_prova": None
 }
 
 for k, v in defaults.items():
@@ -77,19 +74,10 @@ def salvar_progresso(usuario, indice, status):
     except:
         pass
 
-# --- LOGOUT ---
-def logout():
-    for k in list(st.session_state.keys()):
-        del st.session_state[k]
-    st.rerun()
-
 # --- LOGIN ---
 def login(u, p):
-    try:
-        df = conn.read(worksheet="Usuarios")
-        return not df[(df["Nome"] == u) & (df["Senha"] == p)].empty
-    except:
-        return False
+    df = conn.read(worksheet="Usuarios")
+    return not df[(df["Nome"] == u) & (df["Senha"] == p)].empty
 
 if not st.session_state.logado:
     with st.form("login"):
@@ -111,31 +99,37 @@ if not st.session_state.logado:
 with st.sidebar:
     st.write(f"👤 {st.session_state.usuario}")
 
-    menu_opcoes = ["Simulado", "Evolução"]
-    if st.session_state.usuario in ADMINS:
-        menu_opcoes.append("Admin")
-
-    menu = st.radio("Menu", menu_opcoes)
+    menu = st.radio("Menu", ["Simulado", "Evolução"] + (["Admin"] if st.session_state.usuario in ADMINS else []))
 
     if st.button("🚪 Sair"):
-        logout()
+        st.session_state.clear()
+        st.rerun()
 
 # --- BOAS VINDAS ---
 if "primeiro" not in st.session_state:
-    st.image("vmb_logo_fundo_preto.png", width=220)
+
+    st.image("vmb_logo_fundo_preto.png", use_container_width=True)
 
     st.title("Simulado ANCORD - VMB Invest")
 
     st.markdown("""
     ### 🎯 Objetivo
-    Simular a prova real ANCORD com nível profissional.
+    Simular a prova ANCORD em nível profissional.
 
     ### 📋 Estrutura
-    - Até 20 questões  
+    - 20 questões  
     - Tempo: 30 minutos  
 
+    ### ⚠️ Regras
+    - Não consultar material  
+    - Não atualizar a página  
+    - Foco total  
+
     ### 🏆 Aprovação
-    - 70% ou mais
+    - 70% ou mais  
+
+    ---
+    💬 **"Disciplina hoje, liberdade amanhã."**
     """)
 
     if st.button("🔥 Começar"):
@@ -154,7 +148,6 @@ if menu == "Simulado":
     st.write(f"Progresso: {progresso}/{total}")
 
     for i, nome in enumerate(SIMULADOS_ORDEM):
-
         if i <= progresso:
             if st.button(f"✅ {nome}", key=f"sim_{i}"):
                 st.session_state.simulado_escolhido = i
@@ -175,12 +168,10 @@ if menu == "Simulado":
                 materias = DIC_SIMULADOS[sim_atual]
                 pool = [q for q in BANCO_QUESTOES if q["modulo"] in materias]
 
-                qtd = min(20, len(pool))
-                st.session_state.questoes = random.sample(pool, qtd)
-
+                st.session_state.questoes = random.sample(pool, min(20, len(pool)))
                 st.session_state.respostas = {}
                 st.session_state.tempo = datetime.now() + timedelta(minutes=30)
-                st.session_state.simulado_nome = sim_atual
+                st.session_state.inicio_prova = datetime.now()
                 st.session_state.simulado_iniciado = True
                 st.rerun()
 
@@ -207,9 +198,12 @@ if menu == "Simulado":
                     if resp:
                         st.session_state.respostas[i] = opcoes_map[resp]
 
-                enviar = st.form_submit_button("Finalizar Simulado")
+                enviar = st.form_submit_button("Finalizar")
 
             if enviar or restante <= 0:
+
+                tempo_total = (datetime.now() - st.session_state.inicio_prova).total_seconds()
+                tempo_medio = tempo_total / len(st.session_state.questoes)
 
                 acertos = 0
                 por_modulo = {}
@@ -223,21 +217,28 @@ if menu == "Simulado":
                         acertos += 1
                         por_modulo[mod][0] += 1
 
-                total = len(st.session_state.questoes)
-                nota = (acertos / total) * 100 if total else 0
+                nota = (acertos / len(st.session_state.questoes)) * 100
                 status = "Aprovado" if nota >= 70 else "Reprovado"
 
                 st.success(f"Nota: {nota:.1f}%")
-                st.markdown(f"### Status: {status}")
+                st.write(f"⏱️ Tempo médio por questão: {tempo_medio:.1f}s")
 
-                # 🔥 GRÁFICO POR MÓDULO
-                df_mod = pd.DataFrame([
-                    {"Modulo": m, "Aproveitamento": (v[0]/v[1])*100}
-                    for m, v in por_modulo.items()
-                ])
+                # --- RADAR ---
+                st.subheader("🎯 Radar de Performance")
 
+                categorias = list(por_modulo.keys())
+                valores = [(v[0]/v[1])*100 for v in por_modulo.values()]
+
+                df_radar = pd.DataFrame({
+                    "Modulo": categorias,
+                    "Score": valores
+                })
+
+                st.line_chart(df_radar.set_index("Modulo"))
+
+                # --- BARRA ---
                 st.subheader("📊 Desempenho por módulo")
-                st.bar_chart(df_mod.set_index("Modulo"))
+                st.bar_chart(df_radar.set_index("Modulo"))
 
                 # progresso
                 novo = progresso
