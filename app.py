@@ -4,6 +4,9 @@ import pandas as pd
 from datetime import datetime, timedelta
 from streamlit_gsheets import GSheetsConnection
 
+# 🔁 AUTO REFRESH
+from streamlit_autorefresh import st_autorefresh
+
 # --- QUESTÕES ---
 try:
     from questoes import BANCO_QUESTOES
@@ -14,7 +17,7 @@ except ImportError:
 # --- CONFIG ---
 st.set_page_config(page_title="Simulado ANCORD", layout="wide")
 
-# --- SIMULADOS (12 SEMANAS) ---
+# --- SIMULADOS ---
 DIC_SIMULADOS = {
     "Simulado 1 (Semanas 1 e 2)": ["Atividade do AAI", "Lavagem de Dinheiro"],
     "Simulado 2 (Semanas 3 e 4)": ["Mercado de Capitais", "Securitização e Recebíveis", "Derivativos"],
@@ -32,10 +35,15 @@ defaults = {
     "tempo": None,
     "usuario": ""
 }
-
 for k,v in defaults.items():
     if k not in st.session_state:
         st.session_state[k] = v
+
+# --- LOGOUT ---
+def logout():
+    for k in list(st.session_state.keys()):
+        del st.session_state[k]
+    st.rerun()
 
 # --- LOGIN ---
 def login(u,p):
@@ -59,31 +67,29 @@ if not st.session_state.logado:
                 st.error("Credenciais inválidas")
     st.stop()
 
+# --- SIDEBAR ---
+with st.sidebar:
+    st.write(f"👤 {st.session_state.usuario}")
+    menu = st.radio("Menu", ["Simulado", "Evolução"])
+    if st.button("🚪 Sair"):
+        logout()
+
+conn = st.connection("gsheets", type=GSheetsConnection)
+
 # --- PRIMEIRO ACESSO ---
 if "primeiro" not in st.session_state:
     st.title("Simulado ANCORD - Preparação Profissional")
-
     st.markdown("""
-    ### Diretrizes Oficiais
-
-    • 20 questões por simulado  
-    • Tempo limite: 30 minutos  
-    • Ambiente controlado (sem consulta externa)  
-    • Não atualizar a página durante a execução  
-    • Aprovação: mínimo de 70% de acerto  
-
-    Este simulado replica as condições reais da certificação ANCORD.
+    • 20 questões  
+    • 30 minutos  
+    • Aprovação: 70%  
+    • Não trocar de aba  
     """)
 
-    if st.button("Iniciar Simulado"):
-        st.session_state.primeiro = False
+    if st.button("Iniciar"):
+        st.session_state.primeiro=False
         st.rerun()
-
     st.stop()
-
-# --- MENU ---
-menu = st.sidebar.radio("Menu", ["Simulado", "Evolução"])
-conn = st.connection("gsheets", type=GSheetsConnection)
 
 # --- SIMULADO ---
 if menu == "Simulado":
@@ -106,20 +112,28 @@ if menu == "Simulado":
             st.rerun()
 
     else:
-        # --- TIMER REAL ---
+        # 🔁 AUTO REFRESH A CADA 1s
+        st_autorefresh(interval=1000, key="timer")
+
         restante = int((st.session_state.tempo - datetime.now()).total_seconds())
 
         if restante <= 0:
-            st.warning("Tempo esgotado.")
             st.session_state.mostrar_resultado = True
             restante = 0
 
         minutos, segundos = divmod(restante, 60)
-
         st.info(f"⏱️ Tempo restante: {minutos:02d}:{segundos:02d}")
 
-        # Auto refresh a cada segundo
-        st.experimental_rerun if False else None
+        # 🚨 DETECÇÃO DE TROCA DE ABA
+        st.markdown("""
+        <script>
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                alert("⚠️ Atenção: troca de aba detectada.");
+            }
+        });
+        </script>
+        """, unsafe_allow_html=True)
 
         with st.form("form"):
             for i, q in enumerate(st.session_state.questoes):
@@ -140,26 +154,25 @@ if menu == "Simulado":
                 if resposta:
                     st.session_state.respostas[i] = opcoes_map[resposta]
 
-                # --- CORREÇÃO ---
                 if st.session_state.mostrar_resultado:
                     correta = q["resposta_correta"]
                     user = st.session_state.respostas.get(i)
 
-                    texto_correta = f"{correta}) {q['opcoes'][correta]}"
+                    texto = f"{correta}) {q['opcoes'][correta]}"
 
                     if user == correta:
-                        st.success(f"✅ Correto — {texto_correta}")
+                        st.success(f"✅ {texto}")
                     else:
-                        st.error(f"❌ Incorreto — {texto_correta}")
+                        st.error(f"❌ {texto}")
 
-                    # EXPLICAÇÃO REAL DO BANCO
-                    st.markdown(f"**Explicação:** {q.get('explicacao','Não disponível')}")
+                    st.markdown(f"**Explicação:** {q.get('explicacao','-')}")
 
                 st.markdown("---")
 
-            enviar = st.form_submit_button("Finalizar Simulado")
+            enviar = st.form_submit_button("Finalizar")
 
-        if enviar:
+        # FINALIZA AUTOMATICAMENTE
+        if enviar or restante == 0:
             acertos = 0
             por_materia = {}
 
@@ -168,23 +181,26 @@ if menu == "Simulado":
                 user = st.session_state.respostas.get(i)
                 mod = q["modulo"]
 
-                por_materia.setdefault(mod, [0,0])
-                por_materia[mod][1] += 1
+                por_materia.setdefault(mod,[0,0])
+                por_materia[mod][1]+=1
 
                 if user == correta:
-                    acertos += 1
-                    por_materia[mod][0] += 1
+                    acertos+=1
+                    por_materia[mod][0]+=1
 
-            total = len(st.session_state.questoes)
-            nota = (acertos / total) * 100
+            total=len(st.session_state.questoes)
+            nota=(acertos/total)*100
 
-            # salvar
+            status = "Aprovado" if nota >= 70 else "Reprovado"
+
             try:
                 df = conn.read(worksheet="Resultados")
 
                 novo = pd.DataFrame([{
                     "Usuario": st.session_state.usuario,
+                    "Simulado": st.session_state.simulado_nome,
                     "Nota": nota,
+                    "Status": status,
                     "Data": datetime.now().strftime("%d/%m/%Y %H:%M")
                 }])
 
@@ -195,17 +211,15 @@ if menu == "Simulado":
 
             st.session_state.mostrar_resultado = True
 
-            st.success(f"Resultado final: {nota:.1f}%")
+            st.markdown(f"## 🎯 Nota: {nota:.1f}%")
+            st.markdown(f"### Status: {status}")
 
-            # desempenho por matéria
             st.subheader("Desempenho por matéria")
             df_mat = pd.DataFrame([
                 {"Matéria": k, "Aproveitamento (%)": v[0]/v[1]*100}
                 for k,v in por_materia.items()
             ])
             st.bar_chart(df_mat.set_index("Matéria"))
-
-            st.rerun()
 
 # --- EVOLUÇÃO ---
 else:
@@ -219,4 +233,4 @@ else:
         st.line_chart(user["Nota"])
 
     except:
-        st.error("Erro ao carregar dados")
+        st.error("Erro ao carregar")
