@@ -1,183 +1,178 @@
 import streamlit as st
 import pandas as pd
 import time
+import os
 
-# Configurações de página para um visual profissional
-st.set_page_config(page_title="VMB Invest - Portal de Treinamento", layout="wide")
+# Configurações de página
+st.set_page_config(page_title="VMB Invest - High Performance", layout="wide")
 
 # =========================
-# ESTILIZAÇÃO E ASSETS
+# FUNÇÕES DE APOIO
 # =========================
-def aplicar_estilo():
-    st.markdown("""
-        <style>
-        .main { background-color: #0e1117; }
-        .stButton>button { width: 100%; border-radius: 5px; height: 3em; font-weight: bold; }
-        .stProgress > div > div > div > div { background-color: #1c83e1; }
-        </style>
-    """, unsafe_allow_html=True)
-
 @st.cache_data(ttl=600)
 def load_data():
-    # Link direto da sua planilha de questões
+    # Link direto CSV para evitar erros de conexão
     URL = "https://docs.google.com/spreadsheets/d/1l96APcdo8fX4GnR4kHqLskTjgU0UzdFehPp7bhhGP8k/gviz/tq?tqx=out:csv"
     try:
         return pd.read_csv(URL)
     except:
         return None
 
+def mostrar_logo():
+    # Tenta carregar a imagem com o nome exato do seu repositório
+    logo_path = "vmb_logo_fundo_preto (1).png"
+    if os.path.exists(logo_path):
+        st.image(logo_path, width=180)
+    else:
+        # Se a imagem falhar, mostra um título estilizado para não quebrar o app
+        st.markdown("## 🏛️ VMB INVEST")
+
 # =========================
-# INICIALIZAÇÃO DO ESTADO
+# INICIALIZAÇÃO DO ESTADO (Persistence)
 # =========================
 if "page" not in st.session_state:
     st.session_state.update({
         "page": "login",
-        "authenticated": False,
-        "unlocked_level_2": False,
+        "unlocked_advanced": False,
         "history": [],
         "current_q": 0,
         "answers": {},
         "quiz": None
     })
 
-aplicar_estilo()
-df = load_data()
-
 # =========================
-# LÓGICA DE NAVEGAÇÃO
+# 1. TELA DE LOGIN (Design Limpo)
 # =========================
-
-# 1. TELA DE LOGIN
 if st.session_state.page == "login":
-    col1, col2, col3 = st.columns([1, 2, 1])
+    _, col2, _ = st.columns([1, 1.5, 1])
     with col2:
-        st.image("vmb_logo_fundo_preto (1).png", width=200) # Se o arquivo existir no seu GitHub
-        st.title("Acesso ao Portal SDR")
-        with st.form("login_form"):
-            user = st.text_input("Usuário")
+        st.write("#") # Espaçamento
+        mostrar_logo()
+        st.title("Portal de Treinamento")
+        with st.form("login_vmb"):
+            user = st.text_input("Usuário").strip()
             password = st.text_input("Senha", type="password")
-            if st.form_submit_button("Entrar"):
+            if st.form_submit_button("Acessar Plataforma"):
                 if user.lower() == "vmb" and password == "ancord2026":
-                    st.session_state.authenticated = True
-                    st.session_state.page = "boas_vindas"
+                    st.session_state.page = "menu"
                     st.rerun()
                 else:
-                    st.error("Credenciais inválidas.")
+                    st.error("Credenciais inválidas para este terminal.")
 
-# 2. TELA DE BOAS-VINDAS E MENU
-elif st.session_state.page == "boas_vindas":
-    st.title("🚀 Bem-vindo ao Treinamento de Alta Performance")
-    st.subheader("Escolha seu desafio de hoje:")
+# =========================
+# 2. MENU PRINCIPAL & EVOLUÇÃO
+# =========================
+elif st.session_state.page == "menu":
+    st.title("🚀 Dashboard de Performance")
+    df = load_data()
     
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        with st.container(border=True):
-            st.markdown("### 📘 Nível 1: Certificação ANCORD")
-            st.write("Foco em legislação, módulos básicos e operacional.")
-            if st.button("Iniciar Simulado Nível 1"):
-                st.session_state.quiz = df.sample(10).reset_index(drop=True) # Exemplo de 10 questões
-                st.session_state.page = "simulado"
-                st.rerun()
-
-    with col2:
-        with st.container(border=True):
-            st.markdown("### 🏆 Nível 2: Especialista VMB")
-            if st.session_state.unlocked_level_2:
-                st.success("✅ Acesso Liberado!")
-                if st.button("Iniciar Simulado Nível 2"):
-                    st.session_state.quiz = df.sample(20).reset_index(drop=True)
+    if df is not None:
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            with st.container(border=True):
+                st.subheader("📌 Nível 1: Certificação")
+                st.write("Base técnica ANCORD e legislação.")
+                if st.button("Iniciar Simulado 01", type="primary"):
+                    st.session_state.quiz = df.sample(15).reset_index(drop=True)
                     st.session_state.page = "simulado"
                     st.rerun()
-            else:
-                st.markdown("🔒 **Bloqueado**")
-                st.info("Atinja 70% de acerto no Nível 1 para desbloquear.")
-                st.button("Iniciar Simulado Nível 2", disabled=True)
 
-    # Gráfico de Evolução
+        with col2:
+            with st.container(border=True):
+                st.subheader("🏆 Nível 2: Private Advisor")
+                if st.session_state.unlocked_advanced:
+                    st.success("Acesso Liberado!")
+                    if st.button("Iniciar Simulado Avançado"):
+                        st.session_state.quiz = df.sample(25).reset_index(drop=True)
+                        st.session_state.page = "simulado"
+                        st.rerun()
+                else:
+                    st.markdown("🔒 **Bloqueado**")
+                    st.caption("Alcance 70% no Nível 1 para desbloquear este módulo.")
+                    st.button("Módulo Bloqueado", disabled=True)
+
+    # Gráfico de Evolução (Mostra a melhora do SDR ao longo do tempo)
     if st.session_state.history:
         st.divider()
-        st.subheader("📈 Sua Evolução")
-        hist_df = pd.DataFrame(st.session_state.history)
-        st.line_chart(hist_df.set_index("Tentativa")["Nota"])
+        st.subheader("📈 Curva de Aprendizado")
+        h_df = pd.DataFrame(st.session_state.history)
+        st.line_chart(h_df, x="Tentativa", y="Nota")
 
-# 3. TELA DO SIMULADO
+# =========================
+# 3. TELA DE SIMULADO (Foco Total)
+# =========================
 elif st.session_state.page == "simulado":
     quiz = st.session_state.quiz
     i = st.session_state.current_q
     row = quiz.iloc[i]
     
-    st.sidebar.title("Progresso")
-    st.sidebar.progress((i + 1) / len(quiz))
-    st.sidebar.write(f"Questão {i+1} de {len(quiz)}")
-    
-    if st.sidebar.button("Abandonar Simulado"):
-        st.session_state.page = "boas_vindas"
-        st.session_state.current_q = 0
-        st.session_state.answers = {}
+    # Header do Simulado
+    c1, c2 = st.columns([3, 1])
+    c1.subheader(f"Questão {i+1} de {len(quiz)}")
+    if c2.button("Sair", help="Abandona o simulado atual"):
+        st.session_state.update({"page": "menu", "current_q": 0, "answers": {}})
         st.rerun()
 
+    st.progress((i + 1) / len(quiz))
+    
     with st.container(border=True):
-        st.caption(f"Módulo: {row['topic']}")
+        st.caption(f"Tópico: {row['topic']}")
         st.markdown(f"#### {row['question']}")
         
         options = [row["A"], row["B"], row["C"], row["D"]]
-        prev_ans = st.session_state.answers.get(i)
+        # KEY única é o segredo para não dar erro de Node no React
+        resp = st.radio("Escolha a alternativa:", options, 
+                        index=options.index(st.session_state.answers[i]) if i in st.session_state.answers else None,
+                        key=f"radio_q_{i}")
         
-        # KEY ÚNICA para evitar erro de renderização
-        escolha = st.radio("Selecione a alternativa correta:", options, 
-                          index=options.index(prev_ans) if prev_ans else None,
-                          key=f"radio_{i}")
-        
-        if escolha:
-            st.session_state.answers[i] = escolha
+        if resp:
+            st.session_state.answers[i] = resp
 
-    st.write("")
-    c1, c2, c3 = st.columns([1, 1, 1])
-    with c1:
+    st.write("#")
+    nav1, nav2, nav3 = st.columns([1, 1, 1])
+    with nav1:
         if i > 0 and st.button("⬅️ Anterior"):
             st.session_state.current_q -= 1
             st.rerun()
-    with c2:
+    with nav3:
         if i < len(quiz) - 1:
             if st.button("Próxima ➡️"):
                 st.session_state.current_q += 1
                 st.rerun()
-    with c3:
-        if st.button("✅ Finalizar"):
-            st.session_state.page = "resultados"
-            st.rerun()
+        else:
+            if st.button("🎯 Finalizar e Corrigir", type="primary"):
+                st.session_state.page = "resultado"
+                st.rerun()
 
-# 4. TELA DE RESULTADOS
-elif st.session_state.page == "resultados":
-    st.title("🎯 Resultado do Simulado")
+# =========================
+# 4. RESULTADOS
+# =========================
+elif st.session_state.page == "resultado":
+    st.title("🎯 Resultado da Operação")
     quiz = st.session_state.quiz
     ans = st.session_state.answers
     
     acertos = 0
     for idx, row in quiz.iterrows():
-        user_val = ans.get(idx)
-        letra = next((l for l in ["A", "B", "C", "D"] if row[l] == user_val), None)
-        if letra == row["correct"]:
+        # Compara se o texto da resposta escolhida corresponde à letra correta na planilha
+        if ans.get(idx) == row[row['correct']]:
             acertos += 1
             
-    nota = (acertos / len(quiz)) * 100
+    nota = round((acertos / len(quiz)) * 100, 1)
+    st.session_state.history.append({"Tentativa": len(st.session_state.history)+1, "Nota": nota})
     
-    col_n1, col_n2 = st.columns(2)
-    col_n1.metric("Sua Nota", f"{nota}%")
-    col_n2.metric("Acertos", f"{acertos}/{len(quiz)}")
+    col_r1, col_r2 = st.columns(2)
+    col_r1.metric("Aproveitamento", f"{nota}%")
+    col_r2.metric("Acertos", f"{acertos}/{len(quiz)}")
 
     if nota >= 70:
         st.balloons()
-        st.success("Parabéns! Você atingiu a meta.")
-        st.session_state.unlocked_level_2 = True
+        st.success("META ATINGIDA! Você demonstrou proficiência técnica.")
+        st.session_state.unlocked_advanced = True
     else:
-        st.warning("Continue estudando! Você precisa de 70% para o Nível 2.")
+        st.error("Abaixo da nota de corte. Revise os pontos fracos e tente novamente.")
 
-    # Registra no histórico
-    tentativa_num = len(st.session_state.history) + 1
-    st.session_state.history.append({"Tentativa": tentativa_num, "Nota": nota})
-    
-    if st.button("Voltar ao Menu Principal"):
-        st.session_state.update({"page": "boas_vindas", "current_q": 0, "answers": {}, "quiz": None})
+    if st.button("Voltar ao Painel Principal"):
+        st.session_state.update({"page": "menu", "current_q": 0, "answers": {}, "quiz": None})
         st.rerun()
