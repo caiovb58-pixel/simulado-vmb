@@ -2,159 +2,184 @@ import streamlit as st
 import pandas as pd
 import time
 
-st.set_page_config(layout="wide")
+# Configuração da página
+st.set_page_config(page_title="Simulado ANCORD - VMB Invest", layout="wide")
 
 # =========================
-# CONFIG
-# =========================
-st.title("📊 Simulado ANCORD")
-
-SHEET_URL = st.text_input("Cole o link CSV da planilha")
-
-# =========================
-# LOAD DATA
+# FUNÇÕES DE DADOS
 # =========================
 @st.cache_data
-def load_data(url):
-    return pd.read_csv(url)
+def load_data():
+    # Link da sua planilha formatado para exportação CSV
+    SHEET_ID = "1l96APcdo8fX4GnR4kHqLskTjgU0UzdFehPp7bhhGP8k"
+    URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=out:csv"
+    try:
+        df = pd.read_csv(URL)
+        return df
+    except Exception as e:
+        st.error(f"Erro ao carregar planilha: {e}")
+        return None
 
 # =========================
-# SESSION STATE
+# INICIALIZAÇÃO DO ESTADO
 # =========================
 if "started" not in st.session_state:
-    st.session_state.started = False
-
-if "finished" not in st.session_state:
-    st.session_state.finished = False
-
-if "current_q" not in st.session_state:
-    st.session_state.current_q = 0
-
-if "answers" not in st.session_state:
-    st.session_state.answers = {}
-
-if "start_time" not in st.session_state:
-    st.session_state.start_time = None
-
-if "quiz" not in st.session_state:
-    st.session_state.quiz = None
+    st.session_state.update({
+        "started": False,
+        "finished": False,
+        "current_q": 0,
+        "answers": {},
+        "start_time": None,
+        "quiz": None
+    })
 
 # =========================
-# START SCREEN
+# TELA INICIAL
 # =========================
-if SHEET_URL and not st.session_state.started:
+df = load_data()
 
-    df = load_data(SHEET_URL)
-
-    temas = df["topic"].unique()
-    tema = st.selectbox("Tema", temas)
-    qtd = st.slider("Quantidade de questões", 5, 20, 10)
+if df is not None and not st.session_state.started:
+    st.title("📊 Portal de Treinamento ANCORD")
+    st.markdown("---")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("Configurações do Simulado")
+        temas = ["Todos"] + sorted(df["topic"].unique().tolist())
+        tema_selecionado = st.selectbox("Selecione o Módulo:", temas)
+        
+        # Filtro dinâmico para quantidade máxima
+        max_questoes = len(df) if tema_selecionado == "Todos" else len(df[df["topic"] == tema_selecionado])
+        qtd = st.slider("Quantidade de questões:", 5, min(max_questoes, 50), min(10, max_questoes))
 
     if st.button("🚀 Iniciar Simulado"):
-
-        quiz = df[df["topic"] == tema].sample(n=qtd, random_state=42)
-
+        if tema_selecionado == "Todos":
+            quiz = df.sample(n=qtd)
+        else:
+            quiz = df[df["topic"] == tema_selecionado].sample(n=qtd)
+            
         st.session_state.quiz = quiz.reset_index(drop=True)
         st.session_state.started = True
         st.session_state.start_time = time.time()
-
         st.rerun()
 
 # =========================
-# QUIZ SCREEN
+# TELA DE QUESTÕES
 # =========================
 if st.session_state.started and not st.session_state.finished:
-
     quiz = st.session_state.quiz
-    total = len(quiz)
     i = st.session_state.current_q
-
-    st.progress((i + 1) / total)
-
+    total = len(quiz)
     row = quiz.iloc[i]
 
-    st.subheader(f"Pergunta {i+1} de {total}")
-    st.write(row["question"])
+    # Barra lateral de progresso
+    with st.sidebar:
+        st.header("Progresso")
+        st.progress((i + 1) / total)
+        st.write(f"Questão {i+1} de {total}")
+        
+        if st.button("❌ Abandonar Simulado"):
+            for key in list(st.session_state.keys()): del st.session_state[key]
+            st.rerun()
+
+    st.subheader(f"Módulo: {row['topic']}")
+    st.info(row["question"])
 
     options = [row["A"], row["B"], row["C"], row["D"]]
-
-    resposta = st.radio(
-        "Escolha:",
+    labels = ["A", "B", "C", "D"]
+    
+    # Mapeamento para salvar apenas a letra (A, B, C ou D)
+    current_ans = st.session_state.answers.get(i, None)
+    
+    selection = st.radio(
+        "Selecione a alternativa correta:",
         options,
-        index=options.index(st.session_state.answers.get(i, options[0]))
-        if i in st.session_state.answers else 0
+        index=options.index(current_ans) if current_ans in options else None,
+        key=f"q_{i}"
     )
 
-    st.session_state.answers[i] = resposta
+    if selection:
+        st.session_state.answers[i] = selection
 
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        if st.button("⬅️ Voltar") and i > 0:
+    st.markdown("---")
+    c1, c2, c3 = st.columns([1, 1, 1])
+    
+    with c1:
+        if i > 0 and st.button("⬅️ Anterior"):
             st.session_state.current_q -= 1
             st.rerun()
-
-    with col2:
-        if st.button("➡️ Próxima") and i < total - 1:
-            st.session_state.current_q += 1
-            st.rerun()
-
-    with col3:
-        if st.button("✅ Finalizar"):
-            st.session_state.finished = True
-            st.rerun()
+    
+    with c2:
+        if i < total - 1:
+            if st.button("Próxima ➡️"):
+                st.session_state.current_q += 1
+                st.rerun()
+    
+    with c3:
+        if st.button("✅ Finalizar Simulado"):
+            if len(st.session_state.answers) < total:
+                st.warning("Responda todas as questões antes de finalizar!")
+            else:
+                st.session_state.finished = True
+                st.rerun()
 
 # =========================
-# RESULT SCREEN
+# TELA DE RESULTADOS
 # =========================
 if st.session_state.finished:
-
+    st.title("🎯 Resultado Final")
+    
     quiz = st.session_state.quiz
-    answers = st.session_state.answers
-
-    results = []
-
-    for i, row in quiz.iterrows():
-
-        correto = answers.get(i) == row["correct"]
-
-        results.append({
+    ans = st.session_state.answers
+    
+    # Cálculo de Acertos
+    score = 0
+    detailed_results = []
+    for idx, row in quiz.iterrows():
+        user_val = ans.get(idx)
+        # Identifica a letra da resposta do usuário baseada no texto selecionado
+        user_letter = "A" if user_val == row["A"] else "B" if user_val == row["B"] else "C" if user_val == row["C"] else "D"
+        
+        is_correct = user_letter == row["correct"]
+        if is_correct: score += 1
+        
+        detailed_results.append({
             "topic": row["topic"],
-            "correct": correto
+            "status": is_correct
         })
 
-    result_df = pd.DataFrame(results)
+    percent = round((score / len(quiz)) * 100, 1)
+    
+    col_r1, col_r2 = st.columns(2)
+    col_r1.metric("Acertos", f"{score}/{len(quiz)}")
+    col_r2.metric("Aproveitamento", f"{percent}%")
 
-    score = round(result_df["correct"].mean() * 100, 2)
+    if percent >= 70:
+        st.success("Parabéns! Você atingiu a nota de corte da ANCORD (70%).")
+    else:
+        st.error("Atenção: Você precisa de no mínimo 70% de acertos para aprovação.")
 
-    tempo = round(time.time() - st.session_state.start_time, 2)
+    # Gráfico de Desempenho por Tema
+    st.subheader("📊 Desempenho por Módulo")
+    res_df = pd.DataFrame(detailed_results)
+    perf_tema = res_df.groupby("topic")["status"].mean() * 100
+    st.bar_chart(perf_tema)
 
-    st.success(f"🎯 Nota: {score}%")
-    st.info(f"⏱ Tempo: {tempo} segundos")
+    # Revisão das Questões
+    st.subheader("📋 Revisão Detalhada")
+    for idx, row in quiz.iterrows():
+        user_val = ans.get(idx)
+        correct_letter = row["correct"]
+        correct_text = row[correct_letter]
+        
+        with st.expander(f"Questão {idx+1} - {row['topic']} {'✔️' if user_val == correct_text else '❌'}"):
+            st.write(f"**Pergunta:** {row['question']}")
+            st.write(f"**Sua resposta:** {user_val}")
+            st.write(f"**Resposta correta:** ({correct_letter}) {correct_text}")
+            if "explanation" in row and pd.notna(row["explanation"]):
+                st.info(f"**Explicação:** {row['explanation']}")
 
-    st.subheader("📉 Pontos fracos")
-
-    weak = result_df.groupby("topic")["correct"].mean().sort_values()
-
-    st.bar_chart(weak)
-
-    st.subheader("📋 Revisão")
-
-    for i, row in quiz.iterrows():
-
-        user = answers.get(i)
-        correct = row["correct"]
-
-        if user == correct:
-            st.success(f"{i+1}. ✔️ {row['question']}")
-        else:
-            st.error(f"{i+1}. ❌ {row['question']}")
-            st.write(f"Sua resposta: {user}")
-            st.write(f"Correta: {correct}")
-
-    if st.button("🔄 Refazer Simulado"):
-
-        for key in list(st.session_state.keys()):
-            del st.session_state[key]
-
+    if st.button("🔄 Novo Simulado"):
+        for key in list(st.session_state.keys()): del st.session_state[key]
         st.rerun()
