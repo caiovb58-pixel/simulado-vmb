@@ -1,6 +1,4 @@
-streamlit==1.37.0
-pandas==2.2.2
-plotly==5.22.0
-streamlit-gsheets==0.0.5
-gspread
-oauth2client
+streamlit
+pandas
+streamlit-gsheets
+matplotlib
