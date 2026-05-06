@@ -2,165 +2,161 @@ import streamlit as st
 import pandas as pd
 import time
 
-st.set_page_config(page_title="Simulado ANCORD - VMB", layout="wide")
+# Configurações iniciais
+st.set_page_config(page_title="Portal VMB - Simulado ANCORD", layout="wide")
 
 # =========================
-# LOAD DATA
+# FUNÇÕES DE APOIO
 # =========================
 @st.cache_data(ttl=600)
 def load_data(url):
     try:
-        # Força a leitura como CSV do Google Sheets
         if "edit" in url:
             url = url.replace("edit", "export?format=csv")
         return pd.read_csv(url)
     except Exception as e:
-        st.error(f"Erro ao carregar planilha: {e}")
+        st.error(f"Erro ao conectar com a planilha: {e}")
         return None
 
 # =========================
-# SESSION STATE (Inicialização)
+# ESTADO DO SISTEMA
 # =========================
-if "started" not in st.session_state:
+if "page" not in st.session_state:
     st.session_state.update({
-        "started": False,
-        "finished": False,
-        "current_q": 0,
+        "page": "login",
+        "user_authenticated": False,
+        "history": [], # Para mostrar evolução
+        "unlocked_advanced": False, # Trava de segurança
         "answers": {},
-        "start_time": None,
+        "current_q": 0,
         "quiz": None
     })
 
 # =========================
-# TELA INICIAL
+# 1. TELA DE LOGIN
 # =========================
-st.title("📊 Simulado ANCORD")
+if st.session_state.page == "login":
+    st.title("🔐 Acesso Restrito - VMB Invest")
+    with st.container(border=True):
+        usuario = st.text_input("Usuário")
+        senha = st.text_input("Senha", type="password")
+        if st.button("Entrar"):
+            # Lógica simples de login para a equipe
+            if usuario.lower() == "vmb" and senha == "ancord2026":
+                st.session_state.user_authenticated = True
+                st.session_state.page = "boas_vindas"
+                st.rerun()
+            else:
+                st.error("Usuário ou senha incorretos.")
 
-SHEET_URL = st.text_input("Cole o link da sua planilha do Google Sheets", 
-                         placeholder="https://docs.google.com/spreadsheets/d/...")
+# =========================
+# 2. TELA DE BOAS-VINDAS
+# =========================
+elif st.session_state.page == "boas_vindas":
+    st.title("👋 Bem-vindo ao Treinamento ANCORD")
+    st.write("Selecione o nível do seu simulado abaixo.")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("📌 Nível 1: Fundamentos")
+        st.write("Módulos básicos para certificação.")
+        if st.button("Iniciar Nível 1"):
+            st.session_state.page = "config_simulado"
+            st.session_state.current_level = "Nível 1"
+            st.rerun()
+            
+    with col2:
+        st.subheader("🚀 Nível 2: Avançado")
+        if st.session_state.unlocked_advanced:
+            st.write("✅ Desbloqueado! Pronto para o próximo passo.")
+            if st.button("Iniciar Nível 2"):
+                st.session_state.page = "config_simulado"
+                st.session_state.current_level = "Nível 2"
+                st.rerun()
+        else:
+            st.warning("🔒 Bloqueado: Atinja 70% no Nível 1 para liberar.")
+            st.button("Iniciar Nível 2", disabled=True)
 
-if SHEET_URL and not st.session_state.started:
-    df = load_data(SHEET_URL)
+    if st.session_state.history:
+        st.divider()
+        st.subheader("📈 Sua Evolução")
+        hist_df = pd.DataFrame(st.session_state.history)
+        st.line_chart(hist_df.set_index("Data")["Nota"])
+
+# =========================
+# 3. CONFIGURAÇÃO E SIMULADO
+# =========================
+elif st.session_state.page == "config_simulado":
+    st.header(f"Configurando {st.session_state.current_level}")
+    url = "https://docs.google.com/spreadsheets/d/1l96APcdo8fX4GnR4kHqLskTjgU0UzdFehPp7bhhGP8k/export?format=csv"
+    df = load_data(url)
     
     if df is not None:
-        temas = ["Todos"] + sorted(df["topic"].unique().tolist())
-        tema_selecionado = st.selectbox("Selecione o Tema", temas)
-        
-        max_q = len(df) if tema_selecionado == "Todos" else len(df[df["topic"] == tema_selecionado])
-        qtd = st.slider("Quantidade de questões", 5, min(max_q, 50), min(10, max_q))
-
-        if st.button("🚀 Iniciar Simulado"):
-            if tema_selecionado == "Todos":
-                st.session_state.quiz = df.sample(n=qtd).reset_index(drop=True)
-            else:
-                st.session_state.quiz = df[df["topic"] == tema_selecionado].sample(n=qtd).reset_index(drop=True)
-            
-            st.session_state.started = True
+        qtd = st.slider("Quantidade de questões", 5, 20, 10)
+        if st.button("Começar Agora"):
+            st.session_state.quiz = df.sample(n=qtd).reset_index(drop=True)
+            st.session_state.page = "executando_simulado"
             st.session_state.start_time = time.time()
             st.rerun()
 
-# =========================
-# TELA DE QUESTÕES
-# =========================
-if st.session_state.started and not st.session_state.finished:
+elif st.session_state.page == "executando_simulado":
     quiz = st.session_state.quiz
     i = st.session_state.current_q
-    total = len(quiz)
     row = quiz.iloc[i]
-
-    # Barra Lateral de Progresso
-    st.sidebar.header(f"Questão {i+1} de {total}")
-    st.sidebar.progress((i + 1) / total)
     
-    if st.sidebar.button("❌ Abandonar"):
-        st.session_state.started = False
-        st.rerun()
-
-    st.info(f"**Módulo:** {row['topic']}")
+    st.caption(f"Questão {i+1} de {len(quiz)} | {st.session_state.current_level}")
+    st.progress((i + 1) / len(quiz))
+    
     st.write(f"### {row['question']}")
-
-    # Importante: O rádio precisa de uma KEY única baseada no índice i
+    
     options = [row["A"], row["B"], row["C"], row["D"]]
+    res_anterior = st.session_state.answers.get(i)
     
-    # Recupera resposta anterior se existir
-    current_answer = st.session_state.answers.get(i)
+    escolha = st.radio("Selecione:", options, 
+                      index=options.index(res_anterior) if res_anterior else None,
+                      key=f"q_{i}")
     
-    selected = st.radio(
-        "Selecione a alternativa:",
-        options,
-        index=options.index(current_answer) if current_answer in options else None,
-        key=f"radio_q_{i}" # CORREÇÃO PARA O ERRO DE REMOVECHILD
-    )
+    if escolha:
+        st.session_state.answers[i] = escolha
 
-    if selected:
-        st.session_state.answers[i] = selected
-
-    st.markdown("---")
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        if i > 0 and st.button("⬅️ Anterior"):
-            st.session_state.current_q -= 1
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        if i > 0 and st.button("⬅️"): st.session_state.current_q -= 1; st.rerun()
+    with c2:
+        if i < len(quiz) - 1 and st.button("➡️"): st.session_state.current_q += 1; st.rerun()
+    with c3:
+        if st.button("✅ Finalizar"):
+            st.session_state.page = "resultados"
             st.rerun()
 
-    with col2:
-        if i < total - 1:
-            if st.button("Próxima ➡️"):
-                st.session_state.current_q += 1
-                st.rerun()
-
-    with col3:
-        if st.button("✅ Finalizar"):
-            if len(st.session_state.answers) < total:
-                st.warning("Responda todas antes de finalizar.")
-            else:
-                st.session_state.finished = True
-                st.rerun()
-
 # =========================
-# TELA DE RESULTADOS
+# 4. RESULTADOS E EVOLUÇÃO
 # =========================
-if st.session_state.finished:
-    st.header("🎯 Resultado Final")
-    
+elif st.session_state.page == "resultados":
+    st.title("🎯 Resultados")
     quiz = st.session_state.quiz
     ans = st.session_state.answers
     
-    score = 0
-    results_list = []
-
+    acertos = 0
     for idx, row in quiz.iterrows():
-        user_choice = ans.get(idx)
-        # Mapeia o texto da opção de volta para a letra (A, B, C, D) para comparar
-        user_letter = next((l for l in ["A", "B", "C", "D"] if row[l] == user_choice), None)
+        user_val = ans.get(idx)
+        letra_user = next((l for l in ["A", "B", "C", "D"] if row[l] == user_val), None)
+        if letra_user == row["correct"]: acertos += 1
         
-        correto = user_letter == row["correct"]
-        if correto: score += 1
-        results_list.append({"topic": row["topic"], "correct": correto})
+    nota = round((acertos / len(quiz)) * 100, 1)
+    
+    # Lógica de Desbloqueio
+    if nota >= 70:
+        st.success(f"Excelente! Nota: {nota}%")
+        st.session_state.unlocked_advanced = True
+    else:
+        st.error(f"Nota: {nota}%. Você precisa de 70% para liberar o nível avançado.")
 
-    percent = round((score / len(quiz)) * 100, 2)
-    st.metric("Aproveitamento", f"{percent}%", delta=f"{score}/{len(quiz)} acertos")
-
-    # Gráfico
-    res_df = pd.DataFrame(results_list)
-    performance = res_df.groupby("topic")["correct"].mean() * 100
-    st.subheader("📉 Desempenho por Módulo")
-    st.bar_chart(performance)
-
-    # Revisão
-    with st.expander("Ver Revisão Detalhada"):
-        for idx, row in quiz.iterrows():
-            user_choice = ans.get(idx)
-            is_correct = next((l for l in ["A", "B", "C", "D"] if row[l] == user_choice), None) == row["correct"]
-            
-            st.write(f"**{idx+1}. {row['question']}**")
-            if is_correct:
-                st.success(f"Sua resposta: {user_choice}")
-            else:
-                st.error(f"Sua resposta: {user_choice}")
-                st.info(f"Correta: ({row['correct']}) {row[row['correct']]}")
-            st.markdown("---")
-
-    if st.button("🔄 Reiniciar"):
-        st.session_state.clear()
+    # Salva no histórico para o gráfico de evolução
+    st.session_state.history.append({"Data": time.strftime("%H:%M:%S"), "Nota": nota})
+    
+    if st.button("Voltar ao Início"):
+        # Reseta dados do simulado atual, mas mantém histórico e desbloqueio
+        st.session_state.update({"page": "boas_vindas", "answers": {}, "current_q": 0, "quiz": None})
         st.rerun()
