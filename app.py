@@ -28,7 +28,7 @@ if "logado" not in st.session_state:
     st.session_state.usuario = ""
     st.session_state.simulado_iniciado = False
     st.session_state.resultado_final = False
-    st.session_state.resultado_salvo = False  # 🔥 evita duplicação
+    st.session_state.resultado_salvo = False
 
 # --- CONEXÃO ---
 conn = st.connection("gsheets", type=GSheetsConnection)
@@ -41,6 +41,7 @@ def login(u, p):
     except:
         return False
 
+# --- LOGIN UI ---
 if not st.session_state.logado:
     with st.form("login_form"):
         st.title("🔐 Login")
@@ -96,11 +97,9 @@ if menu == "Simulado":
 
                 st.markdown(f"**{i+1}. {q['pergunta']}**")
 
-                opcoes = list(q["opcoes"].keys())
-
                 resp = st.radio(
                     "Escolha:",
-                    opcoes,
+                    list(q["opcoes"].keys()),
                     key=f"q_{i}",
                     index=None
                 )
@@ -138,6 +137,7 @@ if menu == "Simulado":
         valores = [(v[0]/v[1])*100 for v in por_modulo.values()]
 
         fig = go.Figure()
+
         fig.add_trace(go.Scatterpolar(
             r=valores,
             theta=categorias,
@@ -145,13 +145,13 @@ if menu == "Simulado":
         ))
 
         fig.update_layout(
-            polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
+            polar=dict(radialaxis=dict(range=[0, 100])),
             showlegend=False
         )
 
         st.plotly_chart(fig, use_container_width=True)
 
-        # --- SALVAR (ANTI BUG) ---
+        # --- SALVAR RESULTADO (SAFE) ---
         if not st.session_state.resultado_salvo:
 
             try:
@@ -178,10 +178,7 @@ if menu == "Simulado":
             df_final = pd.concat([df, novo], ignore_index=True)
 
             try:
-                conn.update(
-                    worksheet="Resultados",
-                    data=df_final
-                )
+                conn.update(worksheet="Resultados", data=df_final)
                 st.session_state.resultado_salvo = True
             except:
                 st.error("Erro ao salvar na planilha")
