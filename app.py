@@ -580,7 +580,7 @@ else:
     with st.sidebar:
         import base64
         foto_html = "👤"
-        if st.session_state.foto_perfil:
+        if "foto_perfil" in st.session_state and st.session_state.foto_perfil:
             try:
                 foto_base64 = base64.b64encode(st.session_state.foto_perfil).decode()
                 foto_html = f'<img src="data:image/png;base64,{foto_base64}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #3B82F6;">'
