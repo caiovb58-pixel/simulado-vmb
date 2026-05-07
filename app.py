@@ -23,7 +23,7 @@ DIC_SIMULADOS = {
     "Simulado 3 (Semanas 5 e 6)":["Fundos de Investimentos", "Outros Fundos de Investimentos", "Clubes de Investimentos"],
     "Simulado 4 (Semanas 7 e 8)":["Mercado Financeiro", "Sistema Financeiro Nacional"],
     "Simulado 5 (Semanas 9 e 10)":["Instituições e Intermediadores Financeiros", "Economia"],
-    "Simulado 6 (Semanas 11 e 12)": ["Matemática Financeira", "Administração de Risco"]
+    "Simulado 6 (Semanas 11 e 12)":["Matemática Financeira", "Administração de Risco"]
 }
 SIMULADOS_ORDEM = list(DIC_SIMULADOS.keys())
 
@@ -39,17 +39,17 @@ if "logado" not in st.session_state:
         "quiz_atual": None,
         "inicio_time": None,
         "fim_time": None,
-        "respostas_usuario": {}
+        "respostas_usuario": {},
+        "historico_resultados":[], # <--- Histórico real salvo aqui
+        "resultado_salvo": False
     })
 
 # --- FUNÇÕES ---
 def mostrar_logo(tamanho_maximo=False):
     if os.path.exists("vmb_logo_fundo_preto.png"):
         if tamanho_maximo:
-            # Imagem tela inteira no login
             st.image("vmb_logo_fundo_preto.png", use_container_width=True)
         else:
-            # Imagem menor para barra lateral
             st.image("vmb_logo_fundo_preto.png", width=200)
     else:
         st.markdown("<h1 style='text-align: center; color: #1D3557;'>🏛️ VMB INVEST</h1>", unsafe_allow_html=True)
@@ -61,7 +61,6 @@ if not st.session_state.logado:
     col1, col2, col3 = st.columns([1, 2, 1])
     
     with col2:
-        # Imagem grande ocupando a largura da coluna
         mostrar_logo(tamanho_maximo=True)
         
         st.markdown("<h3 style='text-align: center; color: #457B9D;'>Portal SDR - Acesso Restrito</h3>", unsafe_allow_html=True)
@@ -73,7 +72,7 @@ if not st.session_state.logado:
             
             st.markdown("<br>", unsafe_allow_html=True)
             if st.button("ENTRAR NO PORTAL 🚀", use_container_width=True, type="primary"):
-                if user.lower() in ["caio", "vmb", "aluno"] and pw == "ancord2026":
+                if user.lower() in["caio", "vmb", "aluno"] and pw == "ancord2026":
                     st.session_state.logado = True
                     st.session_state.usuario = user.capitalize()
                     st.session_state.page = "Home"
@@ -87,7 +86,6 @@ else:
     st.sidebar.markdown("---")
     menu = st.sidebar.radio("📍 Navegação",["Home", "Evolução", "Sair"])
     
-    # Controle do menu lateral
     if menu == "Sair":
         st.session_state.clear()
         st.rerun()
@@ -104,7 +102,6 @@ else:
         st.markdown("Escolha o módulo que deseja treinar. Lembre-se: a consistência é a chave da aprovação.")
         st.divider()
         
-        # Exibição dos Simulados
         for i, nome_sim in enumerate(SIMULADOS_ORDEM):
             with st.container(border=True):
                 col_txt, col_btn = st.columns([4, 1])
@@ -146,13 +143,13 @@ else:
                 st.rerun()
         with col2:
             if st.button("ACEITO AS REGRAS - INICIAR AGORA 🚀", type="primary", use_container_width=True):
-                # Filtra questões e garante exatamente 20
-                questoes_filtradas = [q for q in BANCO_QUESTOES if q["modulo"] in st.session_state.modulos_selecionados]
-                qtd_questoes = min(len(questoes_filtradas), 20) # Pega 20 ou o máximo que tiver
+                questoes_filtradas =[q for q in BANCO_QUESTOES if q["modulo"] in st.session_state.modulos_selecionados]
+                qtd_questoes = min(len(questoes_filtradas), 20)
                 
                 if qtd_questoes > 0:
                     st.session_state.quiz_atual = random.sample(questoes_filtradas, qtd_questoes)
                     st.session_state.inicio_time = time.time()
+                    st.session_state.resultado_salvo = False # Reseta a trava de salvamento
                     st.session_state.page = "Simulado"
                     st.rerun()
                 else:
@@ -160,8 +157,6 @@ else:
 
     # --- EXECUÇÃO DO SIMULADO ---
     elif st.session_state.page == "Simulado" and st.session_state.quiz_atual:
-        
-        # --- CRONÔMETRO VISUAL EM TEMPO REAL (Javascript) ---
         js_timer = """
         <script>
         var countDownDate = new Date().getTime() + (30 * 60 * 1000); 
@@ -194,7 +189,6 @@ else:
         st.title(f"📝 {st.session_state.simulado_nome}")
         st.info("Responda todas as questões e clique no botão verde 'Finalizar Simulado' no final da página.")
         
-        # Usar st.form impede a tela de atualizar/piscar a cada clique na alternativa
         with st.form("form_simulado"):
             respostas_locais = {}
             
@@ -204,7 +198,6 @@ else:
                 st.write(q['pergunta'])
                 
                 opcoes =[f"{k}) {v}" for k, v in q.get("opcoes", {}).items()]
-                # Usamos o indice do loop (idx) para evitar duplicidade de chaves
                 respostas_locais[idx] = st.radio("Sua resposta:", opcoes, key=f"q_{idx}", index=None)
                 st.divider()
             
@@ -224,7 +217,7 @@ else:
         tempo_total_segundos = st.session_state.fim_time - st.session_state.inicio_time
         minutos = int(tempo_total_segundos // 60)
         segundos = int(tempo_total_segundos % 60)
-        estourou_tempo = tempo_total_segundos > 1800 # 30 mins
+        estourou_tempo = tempo_total_segundos > 1800 
         
         # Cálculos de Nota
         acertos = 0
@@ -241,12 +234,21 @@ else:
             desempenho_modulos[mod]["total"] += 1
             
             resp = st.session_state.respostas_usuario.get(idx)
-            # Verifica se a letra (Ex: "A) ...") bate com a resposta_correta
             if resp and resp.startswith(q['resposta_correta']):
                 acertos += 1
                 desempenho_modulos[mod]["acertos"] += 1
 
         percentual = (acertos / total_questoes) * 100 if total_questoes > 0 else 0
+
+        # --- SALVAR PROGRESSO NO HISTÓRICO (Roda apenas uma vez) ---
+        if not st.session_state.resultado_salvo:
+            st.session_state.historico_resultados.append({
+                "Data": datetime.now().strftime("%d/%m/%Y %H:%M"),
+                "Simulado": st.session_state.simulado_nome,
+                "Nota (%)": round(percentual, 1),
+                "Tempo": f"{minutos}m {segundos}s"
+            })
+            st.session_state.resultado_salvo = True
 
         # Exibição do Tempo
         if estourou_tempo:
@@ -272,18 +274,41 @@ else:
 
         for mod, dados in desempenho_modulos.items():
             perc_mod = (dados['acertos'] / dados['total']) * 100
-            
             if perc_mod < 70:
-                st.error(f"📉 **{mod}**: {perc_mod:.0f}% ({dados['acertos']}/{dados['total']}) — **Você precisa melhorar urgentemente.**")
+                st.error(f"📉 **{mod}**: {perc_mod:.0f}% ({dados['acertos']}/{dados['total']}) — **Você precisa melhorar.**")
             elif perc_mod < 85:
                 st.warning(f"🟡 **{mod}**: {perc_mod:.0f}% ({dados['acertos']}/{dados['total']}) — **Bom, mas dá pra lapidar os erros.**")
             else:
                 st.success(f"🏆 **{mod}**: {perc_mod:.0f}% ({dados['acertos']}/{dados['total']}) — **Ponto forte! Excelente.**")
 
         st.divider()
-        
+
+        # --- NOVO: GABARITO E CORREÇÃO DETALHADA ---
+        st.header("📋 Correção Detalhada (Gabarito)")
+        st.markdown("Revisar seus erros é a melhor forma de aprender. Veja as explicações abaixo:")
+
+        for idx, q in enumerate(st.session_state.quiz_atual):
+            resp_usuario = st.session_state.respostas_usuario.get(idx)
+            acertou = resp_usuario and resp_usuario.startswith(q['resposta_correta'])
+            
+            # Pega o texto da resposta correta do dicionário
+            letra_correta = q['resposta_correta']
+            texto_correto = q['opcoes'].get(letra_correta, "")
+
+            # Container visual (Verde se acertou, Vermelho se errou)
+            with st.expander(f"Questão {idx+1} - {q['modulo']} {'(✅ Acertou)' if acertou else '(❌ Errou)'}"):
+                st.write(f"**Pergunta:** {q['pergunta']}")
+                
+                if not acertou:
+                    st.write(f"**Sua resposta:** {resp_usuario if resp_usuario else 'Não respondida'}")
+                    st.success(f"**Resposta Correta:** {letra_correta}) {texto_correto}")
+                else:
+                    st.write(f"**Sua resposta:** {resp_usuario}")
+
+                st.info(f"**Explicação / Dica:** {q.get('explicacao', 'Explicação não disponível para esta questão.')}")
+
+        st.divider()
         if st.button("🏠 Concluir e Voltar para a Home", use_container_width=True, type="primary"):
-            # Lógica para liberar a próxima fase
             if percentual >= 70 and st.session_state.simulado_nome == SIMULADOS_ORDEM[st.session_state.simulado_atual_indice]:
                 if st.session_state.simulado_atual_indice < len(SIMULADOS_ORDEM) - 1:
                     st.session_state.simulado_atual_indice += 1
@@ -294,13 +319,21 @@ else:
     # --- TELA EVOLUÇÃO ---
     elif st.session_state.page == "Evolução":
         st.title("📈 O seu Desempenho Histórico")
-        st.markdown("Acompanhe o seu progresso nos simulados para chegar pronto no dia da certificação!")
+        st.markdown("Acompanhe o seu progresso nos simulados. O histórico é salvo automaticamente a cada tentativa finalizada!")
         
-        # Gráfico estático demonstrativo (Substituir por banco de dados futuro)
-        data = pd.DataFrame({
-            "Simulado":["Sim 1", "Sim 2", "Sim 3", "Sim 4"], 
-            "Nota (%)":[60, 75, 65, 85]
-        })
-        st.bar_chart(data.set_index("Simulado"), color="#457B9D")
-        
-        st.info("💡 Dica: O sistema de notas em breve será totalmente integrado à nossa nuvem de dados. Continue treinando!")
+        if len(st.session_state.historico_resultados) > 0:
+            # Transforma a lista de dicionários salva na sessão em um DataFrame do Pandas
+            df_historico = pd.DataFrame(st.session_state.historico_resultados)
+            
+            # Exibe Gráfico (Usando a data ou o número da tentativa como eixo X)
+            st.subheader("Gráfico de Notas (%)")
+            # Adiciona uma coluna de 'Tentativa' para o gráfico ficar bonito
+            df_historico['Tentativa'] =[f"{i+1}ª T. ({row['Simulado']})" for i, row in df_historico.iterrows()]
+            st.line_chart(df_historico.set_index("Tentativa")["Nota (%)"])
+            
+            # Exibe Tabela de Dados reais
+            st.subheader("Registros Detalhados")
+            st.dataframe(df_historico.drop(columns=['Tentativa']), use_container_width=True)
+            
+        else:
+            st.info("📊 Nenhum simulado finalizado ainda. Vá até a Home e faça seu primeiro simulado para ver sua evolução aqui!")
