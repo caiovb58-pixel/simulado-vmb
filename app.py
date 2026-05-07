@@ -25,83 +25,394 @@ st.set_page_config(page_title="VMB - Simulado de Elite", layout="wide", page_ico
 def inject_custom_css():
     st.markdown("""
     <style>
-        /* Fundo geral mais sofisticado */
-        .stApp {
-            background-color: #0E1117;
-            color: #FAFAFA;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        :root {
+            --vmb-black: #050812;
+            --vmb-black-2: #0A1020;
+            --vmb-card: rgba(10, 16, 32, 0.72);
+            --vmb-card-strong: rgba(12, 18, 35, 0.92);
+            --vmb-blue: #2563EB;
+            --vmb-blue-2: #3B82F6;
+            --vmb-blue-3: #60A5FA;
+            --vmb-white: #F8FAFC;
+            --vmb-muted: #9AA8BD;
+            --vmb-border: rgba(148, 163, 184, 0.18);
+            --vmb-glow: rgba(37, 99, 235, 0.32);
         }
-        
-        /* Ocultar elementos padrão do Streamlit (Menos o Header para não sumir o botão da sidebar) */
+
+        html, body, [class*="css"] {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+        }
+
+        .stApp {
+            color: var(--vmb-white);
+            background:
+                radial-gradient(circle at 12% 8%, rgba(37, 99, 235, 0.28) 0, transparent 30%),
+                radial-gradient(circle at 88% 18%, rgba(96, 165, 250, 0.18) 0, transparent 26%),
+                radial-gradient(circle at 50% 100%, rgba(30, 64, 175, 0.22) 0, transparent 34%),
+                linear-gradient(135deg, #020617 0%, #07111F 42%, #0B1220 100%) !important;
+            background-attachment: fixed !important;
+        }
+
+        .stApp::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
+                radial-gradient(circle at 30% 30%, rgba(59,130,246,0.13), transparent 22%),
+                radial-gradient(circle at 75% 62%, rgba(255,255,255,0.06), transparent 18%);
+            background-size: 56px 56px, 56px 56px, 100% 100%, 100% 100%;
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.2));
+        }
+
+        .stApp::after {
+            content: "";
+            position: fixed;
+            width: 520px;
+            height: 520px;
+            right: -190px;
+            top: 160px;
+            pointer-events: none;
+            z-index: 0;
+            background: conic-gradient(from 180deg, transparent, rgba(37,99,235,0.24), transparent, rgba(255,255,255,0.08), transparent);
+            filter: blur(34px);
+            opacity: 0.78;
+        }
+
+        .block-container {
+            position: relative;
+            z-index: 1;
+            padding-top: 2.2rem !important;
+            padding-bottom: 4rem !important;
+            max-width: 1220px !important;
+        }
+
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
         header {background-color: transparent !important;}
 
-        /* Cards Premium com Glassmorphism e Hover */
-        div[data-testid="stVerticalBlock"] div[style*="border"] {
-            background: linear-gradient(145deg, rgba(22,27,34,0.95), rgba(14,17,23,0.98)) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            border-radius: 16px !important;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
-            padding: 20px !important;
-            transition: all 0.3s ease !important;
+        h1, h2, h3, h4 {
+            color: var(--vmb-white) !important;
+            font-family: 'Inter', sans-serif !important;
+            letter-spacing: -0.045em !important;
         }
+
+        p, li, label, span, div { font-family: 'Inter', sans-serif !important; }
+
+        .vmb-hero {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 30px;
+            padding: 30px;
+            background:
+                linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(2, 6, 23, 0.76)),
+                radial-gradient(circle at 85% 12%, rgba(59, 130, 246, 0.35), transparent 34%);
+            box-shadow: 0 26px 80px rgba(2, 6, 23, 0.55), inset 0 1px 0 rgba(255,255,255,0.08);
+            backdrop-filter: blur(22px);
+            margin-bottom: 22px;
+        }
+
+        .vmb-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(255,255,255,0.13), transparent 24%, transparent 74%, rgba(96,165,250,0.12));
+            pointer-events: none;
+        }
+
+        .vmb-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid rgba(96, 165, 250, 0.28);
+            border-radius: 999px;
+            background: rgba(37, 99, 235, 0.12);
+            color: #BFDBFE;
+            font-weight: 800;
+            font-size: 12px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .vmb-title {
+            font-size: clamp(34px, 5vw, 64px);
+            line-height: 0.95;
+            margin: 16px 0 10px;
+            font-weight: 900;
+            background: linear-gradient(95deg, #FFFFFF 0%, #DBEAFE 38%, #60A5FA 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .vmb-subtitle {
+            color: #AAB8CF;
+            font-size: 16px;
+            line-height: 1.65;
+            max-width: 680px;
+            margin: 0;
+        }
+
+        .vmb-hero-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
+            gap: 22px;
+            align-items: center;
+        }
+
+        .vmb-illustration {
+            position: relative;
+            min-height: 230px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .vmb-illustration svg {
+            width: min(100%, 360px);
+            height: auto;
+            filter: drop-shadow(0 28px 60px rgba(37,99,235,0.28));
+        }
+
+        section[data-testid="stSidebar"] .vmb-illustration {
+            min-height: 120px;
+            margin: 4px 0 12px;
+        }
+
+        section[data-testid="stSidebar"] .vmb-illustration svg {
+            width: min(100%, 210px);
+        }
+
+        .vmb-premium-card,
+        div[data-testid="stVerticalBlock"] div[style*="border"] {
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.82), rgba(2, 6, 23, 0.74)) !important;
+            border: 1px solid var(--vmb-border) !important;
+            border-radius: 22px !important;
+            box-shadow: 0 20px 60px rgba(2,6,23,0.42), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+            padding: 22px !important;
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease !important;
+            backdrop-filter: blur(18px) !important;
+        }
+
         div[data-testid="stVerticalBlock"] div[style*="border"]:hover {
             transform: translateY(-4px) !important;
-            border: 1px solid #3B82F6 !important;
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2) !important;
+            border-color: rgba(96, 165, 250, 0.56) !important;
+            box-shadow: 0 26px 78px rgba(37, 99, 235, 0.20), inset 0 1px 0 rgba(255,255,255,0.08) !important;
         }
 
-        /* Botões com Glow */
+        .vmb-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+            margin: 18px 0 28px;
+        }
+
+        .vmb-metric-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 22px;
+            padding: 20px;
+            background: linear-gradient(145deg, rgba(15,23,42,0.86), rgba(2,6,23,0.76));
+            border: 1px solid rgba(148,163,184,0.16);
+            box-shadow: 0 18px 48px rgba(0,0,0,0.35);
+        }
+
+        .vmb-metric-card::after {
+            content: "";
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            right: -55px;
+            top: -50px;
+            background: radial-gradient(circle, rgba(59,130,246,0.38), transparent 68%);
+        }
+
+        .vmb-metric-label { color: #94A3B8; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+        .vmb-metric-value { color: #FFFFFF; font-size: 30px; font-weight: 900; margin-top: 8px; letter-spacing: -0.04em; }
+        .vmb-metric-hint { color: #60A5FA; font-size: 12px; font-weight: 700; margin-top: 5px; }
+
+        .vmb-section-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 18px 20px;
+            margin: 18px 0 16px;
+            border-radius: 22px;
+            background: linear-gradient(90deg, rgba(37,99,235,0.20), rgba(15,23,42,0.64));
+            border: 1px solid rgba(96,165,250,0.20);
+        }
+
+        .vmb-section-banner h3 { margin: 0 !important; font-size: 22px; }
+        .vmb-section-banner p { margin: 4px 0 0; color: #9AA8BD; }
+
         .stButton>button {
-            border-radius: 8px !important;
-            font-weight: 600 !important;
-            transition: all 0.3s ease !important;
-            border: none !important;
+            border-radius: 12px !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.01em !important;
+            transition: all 0.25s ease !important;
+            min-height: 44px !important;
+            border: 1px solid rgba(148,163,184,0.18) !important;
+            background: rgba(15,23,42,0.78) !important;
+            color: #F8FAFC !important;
         }
+
         .stButton>button[kind="primary"] {
-            background: linear-gradient(90deg, #2563EB, #1D4ED8) !important;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4) !important;
+            background: linear-gradient(92deg, #1D4ED8, #2563EB 48%, #60A5FA) !important;
+            border: 1px solid rgba(191,219,254,0.25) !important;
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.42) !important;
         }
-        .stButton>button[kind="primary"]:hover {
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6) !important;
-            transform: scale(1.02);
+
+        .stButton>button:hover {
+            transform: translateY(-2px) scale(1.01) !important;
+            border-color: rgba(96,165,250,0.62) !important;
+            box-shadow: 0 16px 40px rgba(37,99,235,0.28) !important;
         }
-        
-        /* Botão de Sair Vermelho */
-        button[kind="secondary"] {
-            transition: all 0.3s ease !important;
-        }
+
         button[kind="secondary"]:hover {
             border-color: #EF4444 !important;
-            color: #EF4444 !important;
+            color: #FCA5A5 !important;
         }
 
-        /* Inputs de Texto Modernos */
         .stTextInput input {
-            border-radius: 8px !important;
-            background-color: rgba(255, 255, 255, 0.05) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 14px !important;
+            background-color: rgba(2, 6, 23, 0.58) !important;
+            border: 1px solid rgba(148, 163, 184, 0.18) !important;
             color: white !important;
-        }
-        .stTextInput input:focus {
-            border-color: #3B82F6 !important;
-            box-shadow: 0 0 0 1px #3B82F6 !important;
+            min-height: 46px !important;
         }
 
-        /* Títulos */
-        h1, h2, h3 {
-            font-family: 'Inter', sans-serif;
-            font-weight: 700 !important;
-            letter-spacing: -0.5px;
+        .stTextInput input:focus {
+            border-color: #60A5FA !important;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.18) !important;
         }
-        
-        /* Barra Lateral */
+
+        .stRadio [role="radiogroup"] {
+            gap: 8px;
+        }
+
+        .stRadio label {
+            border-radius: 14px !important;
+            padding: 10px 12px !important;
+            background: rgba(15,23,42,0.42) !important;
+            border: 1px solid rgba(148,163,184,0.12) !important;
+        }
+
+        [data-testid="stMetric"] {
+            border-radius: 22px;
+            padding: 18px;
+            background: linear-gradient(145deg, rgba(15,23,42,0.86), rgba(2,6,23,0.74));
+            border: 1px solid rgba(148,163,184,0.16);
+            box-shadow: 0 18px 48px rgba(0,0,0,0.30);
+        }
+
         section[data-testid="stSidebar"] {
-            background-color: #161B22 !important;
-            border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+            background:
+                radial-gradient(circle at 50% 0%, rgba(37,99,235,0.24), transparent 32%),
+                linear-gradient(180deg, rgba(2,6,23,0.96), rgba(8,13,28,0.96)) !important;
+            border-right: 1px solid rgba(148,163,184,0.14) !important;
+            backdrop-filter: blur(20px) !important;
+        }
+
+        [data-testid="stDataFrame"], .stAlert, .stExpander {
+            border-radius: 18px !important;
+            overflow: hidden !important;
+        }
+
+        hr { border-color: rgba(148,163,184,0.14) !important; }
+
+        @media (max-width: 900px) {
+            .vmb-hero-grid, .vmb-metrics-grid { grid-template-columns: 1fr; }
+            .vmb-illustration { min-height: 160px; }
         }
     </style>
     """, unsafe_allow_html=True)
+
+
+def premium_illustration(kind="rocket"):
+    illustrations = {
+        "rocket": """
+        <svg viewBox='0 0 420 300' fill='none' xmlns='http://www.w3.org/2000/svg'>
+          <defs><linearGradient id='g1' x1='80' y1='240' x2='310' y2='35' gradientUnits='userSpaceOnUse'><stop stop-color='#1D4ED8'/><stop offset='.55' stop-color='#60A5FA'/><stop offset='1' stop-color='#FFFFFF'/></linearGradient><filter id='blur1'><feGaussianBlur stdDeviation='18'/></filter></defs>
+          <circle cx='296' cy='68' r='42' fill='#2563EB' opacity='.18'/><circle cx='110' cy='220' r='64' fill='#60A5FA' opacity='.10'/>
+          <path d='M62 222C130 172 192 156 306 154' stroke='#60A5FA' stroke-opacity='.35' stroke-width='2' stroke-dasharray='8 10'/>
+          <path d='M232 74C276 56 324 66 350 86C346 126 319 169 282 194L232 74Z' fill='url(#g1)'/>
+          <path d='M217 92L161 116L202 135L217 92Z' fill='#1E40AF'/><path d='M265 207L250 252L226 205L265 207Z' fill='#1E40AF'/>
+          <path d='M187 128L274 215L220 222L153 155L187 128Z' fill='#EAF2FF'/><circle cx='273' cy='125' r='21' fill='#0B1220' stroke='#BFDBFE' stroke-width='7'/>
+          <path d='M161 173C130 184 105 207 89 240C123 224 148 221 174 226L161 173Z' fill='#2563EB'/><path d='M155 184C134 198 120 215 109 234' stroke='#FFFFFF' stroke-opacity='.42' stroke-width='5' stroke-linecap='round'/>
+          <path d='M153 156L221 224' stroke='#0F172A' stroke-opacity='.22' stroke-width='4'/>
+        </svg>""",
+        "growth": """
+        <svg viewBox='0 0 420 300' fill='none' xmlns='http://www.w3.org/2000/svg'>
+          <defs><linearGradient id='g2' x1='66' y1='238' x2='338' y2='72'><stop stop-color='#1D4ED8'/><stop offset='1' stop-color='#93C5FD'/></linearGradient></defs>
+          <rect x='54' y='205' width='44' height='48' rx='12' fill='#1D4ED8'/><rect x='124' y='170' width='44' height='83' rx='12' fill='#2563EB'/><rect x='194' y='128' width='44' height='125' rx='12' fill='#3B82F6'/><rect x='264' y='82' width='44' height='171' rx='12' fill='#60A5FA'/>
+          <path d='M70 172C122 156 154 133 194 108C232 84 266 68 335 54' stroke='url(#g2)' stroke-width='10' stroke-linecap='round'/><path d='M310 43L344 52L318 77' stroke='#EAF2FF' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/>
+          <circle cx='83' cy='76' r='32' fill='#60A5FA' opacity='.14'/><circle cx='338' cy='211' r='48' fill='#2563EB' opacity='.10'/><path d='M56 254H346' stroke='#94A3B8' stroke-opacity='.25' stroke-width='2'/>
+        </svg>""",
+        "dashboard": """
+        <svg viewBox='0 0 420 300' fill='none' xmlns='http://www.w3.org/2000/svg'>
+          <rect x='54' y='45' width='312' height='210' rx='26' fill='rgba(15,23,42,.9)' stroke='rgba(147,197,253,.35)' stroke-width='2'/><rect x='78' y='72' width='118' height='76' rx='18' fill='rgba(37,99,235,.28)'/><rect x='214' y='72' width='128' height='76' rx='18' fill='rgba(255,255,255,.06)'/>
+          <path d='M94 130L119 106L145 119L176 88' stroke='#93C5FD' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/><circle cx='292' cy='110' r='32' stroke='#60A5FA' stroke-width='12'/><path d='M292 78A32 32 0 0 1 324 110' stroke='#FFFFFF' stroke-width='12' stroke-linecap='round'/>
+          <rect x='78' y='169' width='264' height='14' rx='7' fill='rgba(148,163,184,.16)'/><rect x='78' y='169' width='184' height='14' rx='7' fill='#2563EB'/><rect x='78' y='200' width='264' height='14' rx='7' fill='rgba(148,163,184,.16)'/><rect x='78' y='200' width='222' height='14' rx='7' fill='#60A5FA'/>
+          <circle cx='354' cy='54' r='32' fill='#2563EB' opacity='.20'/><circle cx='62' cy='244' r='40' fill='#60A5FA' opacity='.10'/>
+        </svg>""",
+        "ai": """
+        <svg viewBox='0 0 420 300' fill='none' xmlns='http://www.w3.org/2000/svg'>
+          <rect x='134' y='58' width='152' height='152' rx='38' fill='rgba(37,99,235,.22)' stroke='rgba(147,197,253,.45)' stroke-width='3'/><circle cx='184' cy='129' r='13' fill='#EAF2FF'/><circle cx='236' cy='129' r='13' fill='#EAF2FF'/><path d='M178 166C194 181 226 181 242 166' stroke='#60A5FA' stroke-width='7' stroke-linecap='round'/>
+          <path d='M210 33V58M210 210V238M109 134H134M286 134H314M130 72L148 90M290 72L272 90M130 196L148 178M290 196L272 178' stroke='#60A5FA' stroke-width='7' stroke-linecap='round'/>
+          <path d='M76 226C135 246 217 254 343 225' stroke='#2563EB' stroke-opacity='.35' stroke-width='3' stroke-dasharray='7 9'/><circle cx='79' cy='225' r='8' fill='#60A5FA'/><circle cx='343' cy='225' r='8' fill='#60A5FA'/><circle cx='210' cy='33' r='7' fill='#93C5FD'/>
+        </svg>""",
+        "performance": """
+        <svg viewBox='0 0 420 300' fill='none' xmlns='http://www.w3.org/2000/svg'>
+          <circle cx='210' cy='150' r='94' fill='rgba(37,99,235,.12)' stroke='rgba(147,197,253,.26)' stroke-width='3'/><path d='M210 72V150L266 106' stroke='#60A5FA' stroke-width='10' stroke-linecap='round' stroke-linejoin='round'/><path d='M128 150A82 82 0 0 1 293 150' stroke='#2563EB' stroke-width='16' stroke-linecap='round'/><path d='M152 209C183 238 236 238 268 209' stroke='#EAF2FF' stroke-width='10' stroke-linecap='round'/>
+          <rect x='54' y='196' width='70' height='38' rx='15' fill='rgba(255,255,255,.08)' stroke='rgba(147,197,253,.25)'/><rect x='296' y='196' width='70' height='38' rx='15' fill='rgba(37,99,235,.26)' stroke='rgba(147,197,253,.25)'/><circle cx='76' cy='214' r='8' fill='#60A5FA'/><circle cx='318' cy='214' r='8' fill='#EAF2FF'/>
+          <path d='M83 84C121 55 154 45 199 44' stroke='#60A5FA' stroke-opacity='.28' stroke-width='3' stroke-dasharray='8 10'/><path d='M220 45C264 50 298 67 331 100' stroke='#60A5FA' stroke-opacity='.28' stroke-width='3' stroke-dasharray='8 10'/>
+        </svg>"""
+    }
+    return f"<div class='vmb-illustration'>{illustrations.get(kind, illustrations['rocket'])}</div>"
+
+
+def premium_page_header(title, subtitle, kind="dashboard", eyebrow="VMB INVEST | PERFORMANCE SYSTEM"):
+    return f"""
+    <div class='vmb-hero'>
+        <div class='vmb-hero-grid'>
+            <div>
+                <div class='vmb-eyebrow'>{eyebrow}</div>
+                <div class='vmb-title'>{title}</div>
+                <p class='vmb-subtitle'>{subtitle}</p>
+            </div>
+            {premium_illustration(kind)}
+        </div>
+    </div>
+    """
+
+
+def premium_section_banner(title, subtitle):
+    return f"""
+    <div class='vmb-section-banner'>
+        <div>
+            <h3>{title}</h3>
+            <p>{subtitle}</p>
+        </div>
+        <div style='font-weight:900;color:#BFDBFE;'>PREMIUM</div>
+    </div>
+    """
+
+
+def premium_metric_card(label, value, hint=""):
+    return f"""
+    <div class='vmb-metric-card'>
+        <div class='vmb-metric-label'>{label}</div>
+        <div class='vmb-metric-value'>{value}</div>
+        <div class='vmb-metric-hint'>{hint}</div>
+    </div>
+    """
 
 inject_custom_css()
 
@@ -196,16 +507,16 @@ def selecionar_questoes_balanceadas(banco, modulos, total_desejado=20):
 # --- INTERFACE ---
 if not st.session_state.logado:
     # --- TELA DE LOGIN PREMIUM ---
-    st.markdown("<br><br><br>", unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([1.5, 2, 1.5])
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    col1, col2, col3 = st.columns([0.8, 2.4, 0.8])
     
     with col2:
-        st.markdown("""
-        <div style='text-align: center;'>
-            <h1 style='color: #FAFAFA; margin-bottom: 0px;'>VMB INVEST</h1>
-            <p style='color: #8B949E; font-size: 18px; margin-top: 0px;'>Treinamento de Alta Performance</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown(premium_page_header(
+            "VMB INVEST",
+            "Treinamento de alta performance para assessores que querem evoluir com método, dados e mentalidade de elite.",
+            "rocket",
+            "SIMULADO DE ELITE"
+        ), unsafe_allow_html=True)
         
         with st.container(border=True):
             user = st.text_input("Usuário", placeholder="ID do Agente")
@@ -274,7 +585,8 @@ else:
         </div>
         """, unsafe_allow_html=True)
         
-        menu = st.radio("📍 Módulos da Plataforma", ["Dashboard Principal", "Evolução e IA"])
+        st.markdown(premium_illustration("growth"), unsafe_allow_html=True)
+        menu = st.radio("Módulos da Plataforma", ["Dashboard Principal", "Evolução e IA"])
         
         # Botão de SAIR no final da Sidebar
         st.markdown("<br><br><br><br><br><br>", unsafe_allow_html=True)
@@ -293,7 +605,12 @@ else:
 
     # --- HOME / DASHBOARD ---
     if st.session_state.page == "Home":
-        st.title("🎯 Central de Treinamento")
+        st.markdown(premium_page_header(
+            "Central de Treinamento",
+            "Escolha sua próxima missão, acompanhe seu progresso e avance por uma jornada de evolução orientada por performance.",
+            "dashboard",
+            "DASHBOARD PRINCIPAL"
+        ), unsafe_allow_html=True)
         
         # BURACO PARA AS MÉTRICAS INICIAIS
         try:
@@ -306,25 +623,16 @@ else:
             qtd_sim = len(df_user_hist)
             
             st.markdown(f"""
-            <div style="display: flex; gap: 15px; margin-bottom: 25px;">
-                <div style="flex: 1; background: #161B22; padding: 15px; border-radius: 12px; border: 1px solid #30363D;">
-                    <div style="color: #8B949E; font-size: 13px;">Aproveitamento Geral</div>
-                    <div style="color: white; font-size: 24px; font-weight: bold;">{avg_score:.1f}%</div>
-                </div>
-                <div style="flex: 1; background: #161B22; padding: 15px; border-radius: 12px; border: 1px solid #30363D;">
-                    <div style="color: #8B949E; font-size: 13px;">Melhor Nota</div>
-                    <div style="color: #4ADE80; font-size: 24px; font-weight: bold;">🏆 {max_score:.1f}%</div>
-                </div>
-                <div style="flex: 1; background: #161B22; padding: 15px; border-radius: 12px; border: 1px solid #30363D;">
-                    <div style="color: #8B949E; font-size: 13px;">Simulados Concluídos</div>
-                    <div style="color: white; font-size: 24px; font-weight: bold;">⚡ {qtd_sim}</div>
-                </div>
+            <div class='vmb-metrics-grid'>
+                {premium_metric_card("Aproveitamento Geral", f"{avg_score:.1f}%", "média acumulada")}
+                {premium_metric_card("Melhor Nota", f"{max_score:.1f}%", "recorde pessoal")}
+                {premium_metric_card("Simulados Concluídos", f"{qtd_sim}", "missões finalizadas")}
             </div>
             """, unsafe_allow_html=True)
         except:
             pass 
 
-        st.markdown("### Selecione sua missão")
+        st.markdown(premium_section_banner("Selecione sua missão", "Cada simulado desbloqueia uma nova etapa da trilha de evolução comercial e técnica."), unsafe_allow_html=True)
         for i, nome_sim in enumerate(SIMULADOS_ORDEM):
             with st.container(border=True):
                 col_txt, col_btn = st.columns([4, 1])
@@ -346,7 +654,12 @@ else:
 
     # --- TELA DE INSTRUÇÕES ---
     elif st.session_state.page == "Instrucoes":
-        st.title(f"Operação: {st.session_state.simulado_nome}")
+        st.markdown(premium_page_header(
+            f"Operação: {st.session_state.simulado_nome}",
+            "Leia o protocolo, entre em modo foco e execute a missão com precisão de prova oficial.",
+            "performance",
+            "PROTOCOLO DE AVALIAÇÃO"
+        ), unsafe_allow_html=True)
         
         st.markdown("""
         <div style="background: rgba(234, 179, 8, 0.1); border-left: 4px solid #EAB308; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
@@ -439,7 +752,12 @@ else:
 
     # --- RESULTADOS ---
     elif st.session_state.page == "Resultado":
-        st.title("Relatório de Missão")
+        st.markdown(premium_page_header(
+            "Relatório de Missão",
+            "Veja sua nota, seu ritmo, seus acertos e os pontos que precisam de reforço para a próxima tentativa.",
+            "growth",
+            "ANÁLISE DE PERFORMANCE"
+        ), unsafe_allow_html=True)
         
         tempo_total_segundos = st.session_state.fim_time - st.session_state.inicio_time
         minutos = int(tempo_total_segundos // 60)
@@ -489,7 +807,7 @@ else:
         col1, col2, col3 = st.columns(3)
         col1.metric("Nota Final", f"{percentual:.1f}%", f"{acertos}/{total_questoes}")
         col2.metric("Pace (Tempo Médio)", f"{int(tempo_medio // 60)}m {int(tempo_medio % 60)}s")
-        col3.metric("Status", "APROVADO ✅" if percentual >= 70 else "REPROVADO ❌")
+        col3.metric("Status", "APROVADO" if percentual >= 70 else "REPROVADO")
 
         st.divider()
         st.markdown("### Correção Analítica")
@@ -519,7 +837,12 @@ else:
 
     # --- TELA EVOLUÇÃO E IA ---
     elif st.session_state.page == "Evolução":
-        st.title("🧠 Inteligência de Dados e Evolução")
+        st.markdown(premium_page_header(
+            "Inteligência de Dados e Evolução",
+            "Transforme histórico, radar de competências e diagnóstico do mentor em um plano objetivo de melhoria.",
+            "ai",
+            "MENTOR ANALÍTICO"
+        ), unsafe_allow_html=True)
         
         with st.spinner("Processando heurística..."):
             try:
