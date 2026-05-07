@@ -48,10 +48,9 @@ def inject_custom_css():
         .stApp {
             color: var(--vmb-white);
             background:
-                radial-gradient(circle at 12% 8%, rgba(37, 99, 235, 0.28) 0, transparent 30%),
-                radial-gradient(circle at 88% 18%, rgba(96, 165, 250, 0.18) 0, transparent 26%),
-                radial-gradient(circle at 50% 100%, rgba(30, 64, 175, 0.22) 0, transparent 34%),
-                linear-gradient(135deg, #020617 0%, #07111F 42%, #0B1220 100%) !important;
+                radial-gradient(circle at 12% 8%, rgba(37, 99, 235, 0.12) 0, transparent 40%),
+                radial-gradient(circle at 88% 18%, rgba(96, 165, 250, 0.08) 0, transparent 30%),
+                linear-gradient(135deg, #020617 0%, #050B14 100%) !important;
             background-attachment: fixed !important;
         }
 
@@ -73,15 +72,15 @@ def inject_custom_css():
         .stApp::after {
             content: "";
             position: fixed;
-            width: 520px;
-            height: 520px;
-            right: -190px;
-            top: 160px;
+            width: 420px;
+            height: 420px;
+            right: -100px;
+            top: 100px;
             pointer-events: none;
             z-index: 0;
-            background: conic-gradient(from 180deg, transparent, rgba(37,99,235,0.24), transparent, rgba(255,255,255,0.08), transparent);
-            filter: blur(34px);
-            opacity: 0.78;
+            background: radial-gradient(circle, rgba(37,99,235,0.08), transparent 70%);
+            filter: blur(60px);
+            opacity: 0.5;
         }
 
         .block-container {
@@ -99,7 +98,8 @@ def inject_custom_css():
         h1, h2, h3, h4 {
             color: var(--vmb-white) !important;
             font-family: 'Inter', sans-serif !important;
-            letter-spacing: -0.045em !important;
+            letter-spacing: -0.02em !important;
+            text-shadow: none !important;
         }
 
         p, li, label, span, div { font-family: 'Inter', sans-serif !important; }
@@ -107,15 +107,13 @@ def inject_custom_css():
         .vmb-hero {
             position: relative;
             overflow: hidden;
-            border: 1px solid rgba(148, 163, 184, 0.18);
-            border-radius: 30px;
-            padding: 30px;
-            background:
-                linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(2, 6, 23, 0.76)),
-                radial-gradient(circle at 85% 12%, rgba(59, 130, 246, 0.35), transparent 34%);
-            box-shadow: 0 26px 80px rgba(2, 6, 23, 0.55), inset 0 1px 0 rgba(255,255,255,0.08);
-            backdrop-filter: blur(22px);
-            margin-bottom: 22px;
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            border-radius: 24px;
+            padding: 32px;
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.98));
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(12px);
+            margin-bottom: 24px;
         }
 
         .vmb-hero::before {
@@ -142,13 +140,13 @@ def inject_custom_css():
         }
 
         .vmb-title {
-            font-size: clamp(34px, 5vw, 64px);
-            line-height: 0.95;
-            margin: 16px 0 10px;
-            font-weight: 900;
-            background: linear-gradient(95deg, #FFFFFF 0%, #DBEAFE 38%, #60A5FA 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: clamp(32px, 4.5vw, 56px);
+            line-height: 1.05;
+            margin: 12px 0 8px;
+            font-weight: 800;
+            color: #FFFFFF !important;
+            background: none;
+            -webkit-text-fill-color: initial;
         }
 
         .vmb-subtitle {
@@ -175,9 +173,10 @@ def inject_custom_css():
         }
 
         .vmb-illustration svg {
-            width: min(100%, 360px);
+            width: min(100%, 320px);
             height: auto;
-            filter: drop-shadow(0 28px 60px rgba(37,99,235,0.28));
+            filter: drop-shadow(0 15px 30px rgba(0,0,0,0.3));
+            opacity: 0.9;
         }
 
         section[data-testid="stSidebar"] .vmb-illustration {
@@ -216,21 +215,22 @@ def inject_custom_css():
         .vmb-metric-card {
             position: relative;
             overflow: hidden;
-            border-radius: 22px;
-            padding: 20px;
-            background: linear-gradient(145deg, rgba(15,23,42,0.86), rgba(2,6,23,0.76));
-            border: 1px solid rgba(148,163,184,0.16);
-            box-shadow: 0 18px 48px rgba(0,0,0,0.35);
+            border-radius: 20px;
+            padding: 24px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
         }
 
         .vmb-metric-card::after {
             content: "";
             position: absolute;
-            width: 120px;
-            height: 120px;
-            right: -55px;
-            top: -50px;
-            background: radial-gradient(circle, rgba(59,130,246,0.38), transparent 68%);
+            width: 100px;
+            height: 100px;
+            right: -40px;
+            top: -40px;
+            background: radial-gradient(circle, rgba(59,130,246,0.15), transparent 70%);
         }
 
         .vmb-metric-label { color: #94A3B8; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
@@ -513,9 +513,9 @@ if not st.session_state.logado:
     with col2:
         st.markdown(premium_page_header(
             "VMB INVEST",
-            "Simulado da Ancord para SDRs que querem evoluir com método, dados e mentalidade de vencedor.",
+            "Treinamento de alta performance para assessores que querem evoluir com método, dados e mentalidade de elite.",
             "rocket",
-            "SIMULADO DA ANCORD"
+            "SIMULADO DE ELITE"
         ), unsafe_allow_html=True)
         
         with st.container(border=True):
