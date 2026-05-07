@@ -124,7 +124,7 @@ if not st.session_state.logado:
 
 else:
     # --- BARRA LATERAL ---
-    st.sidebar.title(f"🎓 Olá, {st.session_state.usuario}!")
+    st.sidebar.title(f"🚀 Olá, {st.session_state.usuario}!")
     st.sidebar.markdown("---")
     menu = st.sidebar.radio("📍 Navegação",["Home", "Evolução", "Sair"])
     
