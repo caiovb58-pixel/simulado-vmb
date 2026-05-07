@@ -513,9 +513,9 @@ if not st.session_state.logado:
     with col2:
         st.markdown(premium_page_header(
             "VMB INVEST",
-            "Treinamento de alta performance para assessores que querem evoluir com método, dados e mentalidade de elite.",
+            "Simulado da Ancord para SDRs que querem evoluir com método, dados e mentalidade de vencedor.",
             "rocket",
-            "SIMULADO DE ELITE"
+            "SIMULADO DA ANCORD"
         ), unsafe_allow_html=True)
         
         with st.container(border=True):
