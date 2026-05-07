@@ -31,10 +31,10 @@ def inject_custom_css():
             color: #FAFAFA;
         }
         
-        /* Ocultar elementos padrão do Streamlit */
+        /* Ocultar elementos padrão do Streamlit (Menos o Header para não sumir o botão da sidebar) */
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
-        header {visibility: hidden;}
+        header {background-color: transparent !important;}
 
         /* Cards Premium com Glassmorphism e Hover */
         div[data-testid="stVerticalBlock"] div[style*="border"] {
@@ -65,6 +65,15 @@ def inject_custom_css():
         .stButton>button[kind="primary"]:hover {
             box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6) !important;
             transform: scale(1.02);
+        }
+        
+        /* Botão de Sair Vermelho */
+        button[kind="secondary"] {
+            transition: all 0.3s ease !important;
+        }
+        button[kind="secondary"]:hover {
+            border-color: #EF4444 !important;
+            color: #EF4444 !important;
         }
 
         /* Inputs de Texto Modernos */
@@ -204,7 +213,7 @@ if not st.session_state.logado:
             
             st.markdown("<br>", unsafe_allow_html=True)
             if st.button("ACESSAR PLATAFORMA ⚡", use_container_width=True, type="primary"):
-                with st.spinner("Autenticando credenciais..."):
+                with st.spinner("Autenticando e sincronizando progresso..."):
                     try:
                         conn = st.connection("gsheets", type=GSheetsConnection)
                         df_usuarios = conn.read(worksheet="Usuarios", ttl=0) 
@@ -265,15 +274,20 @@ else:
         </div>
         """, unsafe_allow_html=True)
         
-        menu = st.radio("Navegação",["Dashboard Principal", "Evolução e IA", "Sair do Sistema"])
-    
-    if menu == "Sair do Sistema":
-        st.session_state.clear()
-        st.rerun()
-    elif menu == "Evolução e IA" and st.session_state.page != "Evolução":
+        menu = st.radio("📍 Módulos da Plataforma", ["Dashboard Principal", "Evolução e IA"])
+        
+        # Botão de SAIR no final da Sidebar
+        st.markdown("<br><br><br><br><br><br>", unsafe_allow_html=True)
+        st.divider()
+        if st.button("🚪 Sair do Sistema", use_container_width=True):
+            st.session_state.clear()
+            st.rerun()
+
+    # Redirecionamento lógico do menu
+    if menu == "Evolução e IA" and st.session_state.page != "Evolução":
         st.session_state.page = "Evolução"
         st.rerun()
-    elif menu == "Dashboard Principal" and st.session_state.page not in ["Home", "Instrucoes", "Simulado", "Resultado"]:
+    elif menu == "Dashboard Principal" and st.session_state.page not in["Home", "Instrucoes", "Simulado", "Resultado"]:
         st.session_state.page = "Home"
         st.rerun()
 
@@ -281,7 +295,7 @@ else:
     if st.session_state.page == "Home":
         st.title("🎯 Central de Treinamento")
         
-        # BURACO PARA AS MÉTRICAS INICIAIS (Buscando rápido no BD)
+        # BURACO PARA AS MÉTRICAS INICIAIS
         try:
             conn = st.connection("gsheets", type=GSheetsConnection)
             df_historico = conn.read(worksheet="Historico", ttl=0)
@@ -291,7 +305,6 @@ else:
             max_score = df_user_hist['Nota (%)'].max() if not df_user_hist.empty else 0
             qtd_sim = len(df_user_hist)
             
-            # HTML CARDS (Top Level)
             st.markdown(f"""
             <div style="display: flex; gap: 15px; margin-bottom: 25px;">
                 <div style="flex: 1; background: #161B22; padding: 15px; border-radius: 12px; border: 1px solid #30363D;">
@@ -309,7 +322,7 @@ else:
             </div>
             """, unsafe_allow_html=True)
         except:
-            pass # Falha silenciosa nas métricas para não travar a home
+            pass 
 
         st.markdown("### Selecione sua missão")
         for i, nome_sim in enumerate(SIMULADOS_ORDEM):
@@ -385,7 +398,6 @@ else:
               
               timerDiv.innerHTML = "⏳ " + minutes + ":" + seconds;
               
-              // EFEITO VERMELHO NEON NOS ÚLTIMOS 5 MINUTOS
               if (minutes < 5) {
                   timerDiv.style.color = "#FF4B4B";
                   glowDiv.style.boxShadow = "0 0 20px rgba(255, 75, 75, 0.6)";
@@ -404,7 +416,7 @@ else:
             """
             components.html(js_timer, height=80)
         
-        st.write("") # Espaçamento
+        st.write("") 
         with st.form("form_simulado"):
             respostas_locais = {}
             for idx, q in enumerate(st.session_state.quiz_atual):
@@ -626,7 +638,6 @@ else:
                     st.divider()
                     st.subheader("Data Grid (Registros Brutos)")
                     
-                    # DataFrame Premium com Barra de Progresso nativa do Streamlit
                     df_display = df_user[['Data', 'Simulado', 'Nota (%)', 'Tempo']].copy()
                     
                     st.dataframe(
