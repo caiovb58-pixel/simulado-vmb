@@ -822,32 +822,6 @@ BANCO_QUESTOES =[
         "opcoes": {"A": "a. Repassar ordens de compra e venda de ativos a pedido do cliente", "B": "b. Aplicação de recursos próprios e recebimento de qualquer remuneração ou benefício indireto", "C": "c. Aplicação de recursos de clientes e recebimento de comissionamento por parte da instituição contratante", "D": "d. Aplicação de recursos de terceiros"},
         "resposta_correta": "B",
         "explicacao": "Situações que envolvam ganhos indiretos não transparentes ou misturar recursos próprios com os do cliente geram notório conflito de interesse (ex. churn, comissões ocultas)."
-    }
-BANCO_QUESTOES =[
-    # ---- Módulo: A Atividade do Assessor de Investimentos (AI) ----
-    {
-        "id": 101,
-        "modulo": "A Atividade do Assessor de Investimentos (AI)",
-        "pergunta": "São requisitos mínimos para ser cadastrado como Assessor de Investimentos, exceto:",
-        "opcoes": {"A": "Efetuar o recolhimento da taxa mensal de Assessor", "B": "Aderir ao Código de Conduta Profissional", "C": "Ter sido aprovado em exame de qualificação técnica", "D": "Ter ensino médio completo no país ou equivalente no exterior"},
-        "resposta_correta": "A",
-        "explicacao": "A taxa para a CVM é trimestral (taxa de fiscalização), não existe uma taxa 'mensal' exigida como requisito mínimo na norma."
-    },
-    {
-        "id": 102,
-        "modulo": "A Atividade do Assessor de Investimentos (AI)",
-        "pergunta": "Prazo para que a instituição contratante avise à Ancord sobre a extinção de contrato com o AI:",
-        "opcoes": {"A": "10 dias", "B": "Imediatamente", "C": "1 dia", "D": "30 dias"},
-        "resposta_correta": "B",
-        "explicacao": "A instituição contratante deve comunicar imediatamente a entidade credenciadora (ANCORD) sobre a extinção do contrato."
-    },
-    {
-        "id": 103,
-        "modulo": "A Atividade do Assessor de Investimentos (AI)",
-        "pergunta": "O escritório de AI deve ser exclusivo a apenas uma Corretora/Distribuidora?",
-        "opcoes": {"A": "Pode se vincular a diversas", "B": "Deve ser exclusivo a apenas uma", "C": "Pode ser vinculado a mais de uma para produtos diferentes", "D": "Apenas se tiver mais de 10 milhões em custódia"},
-        "resposta_correta": "A",
-        "explicacao": "A Resolução CVM 178 quebrou a exclusividade. O AI e seu escritório agora podem atuar prestando serviços para mais de uma instituição integrante do sistema de distribuição."
     },
     {
         "id": 104,
