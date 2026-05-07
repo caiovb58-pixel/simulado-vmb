@@ -57,6 +57,55 @@ def mostrar_logo(tamanho_maximo=False):
     else:
         st.markdown("<h1 style='text-align: center; color: #1D3557;'>🏛️ VMB INVEST</h1>", unsafe_allow_html=True)
 
+def selecionar_questoes_balanceadas(banco, modulos, total_desejado=20):
+    """
+    Distribui as 20 questões de forma IGUALITÁRIA entre os módulos do simulado.
+    Se faltar questão em um módulo, compensa pegando do outro.
+    """
+    questoes_por_modulo = {mod:[] for mod in modulos}
+    for q in banco:
+        if q["modulo"] in modulos:
+            questoes_por_modulo[q["modulo"]].append(q)
+            
+    total_disponivel = sum(len(qs) for qs in questoes_por_modulo.values())
+    if total_disponivel <= total_desejado:
+        todas =[q for qs in questoes_por_modulo.values() for q in qs]
+        random.shuffle(todas)
+        return todas
+        
+    selecionadas =[]
+    modulos_restantes =[mod for mod in modulos if len(questoes_por_modulo[mod]) > 0]
+    vagas = total_desejado
+    
+    while vagas > 0 and modulos_restantes:
+        cota = vagas // len(modulos_restantes)
+        resto = vagas % len(modulos_restantes)
+        
+        novos_modulos_restantes =[]
+        for i, mod in enumerate(modulos_restantes):
+            cota_atual = cota + (1 if i < resto else 0)
+            disponivel = len(questoes_por_modulo[mod])
+            
+            if disponivel <= cota_atual:
+                selecionadas.extend(questoes_por_modulo[mod])
+                vagas -= disponivel
+                questoes_por_modulo[mod] =[]
+            else:
+                novos_modulos_restantes.append(mod)
+                
+        if len(novos_modulos_restantes) == len(modulos_restantes):
+            for i, mod in enumerate(novos_modulos_restantes):
+                cota_atual = cota + (1 if i < resto else 0)
+                escolhidas = random.sample(questoes_por_modulo[mod], cota_atual)
+                selecionadas.extend(escolhidas)
+                vagas -= cota_atual
+            break
+            
+        modulos_restantes = novos_modulos_restantes
+        
+    random.shuffle(selecionadas)
+    return selecionadas
+
 # --- INTERFACE ---
 if not st.session_state.logado:
     # --- TELA DE LOGIN ---
@@ -124,7 +173,7 @@ if not st.session_state.logado:
 
 else:
     # --- BARRA LATERAL ---
-    st.sidebar.title(f"🚀 Olá, {st.session_state.usuario}!")
+    st.sidebar.title(f"🎓 Olá, {st.session_state.usuario}!")
     st.sidebar.markdown("---")
     menu = st.sidebar.radio("📍 Navegação",["Home", "Evolução", "Sair"])
     
@@ -170,9 +219,9 @@ else:
         st.markdown("""
         ### Condições do Simulado:
         1. ⏱️ **Duração Limitada:** Você terá **EXATOS 30 MINUTOS** para concluir e enviar o teste.
-        2. 🎯 **Formato da Prova:** O simulado possui **20 questões** escolhidas de forma aleatória da sua trilha.
+        2. 🎯 **Formato da Prova:** O simulado possui **20 questões balanceadas**. As questões são divididas uniformemente entre os módulos.
         3. 🚫 **Sem Consultas:** Simule o ambiente real de prova. Feche abas de pesquisa e guarde seu material.
-        4. 🤫 **Foco Total:** Não converse e faça com seriedade.
+        4. 🤫 **Foco Total:** Não converse e procure um ambiente silencioso.
         5. 🔄 **Cuidado com a página:** **NÃO atualize ou recarregue a página (F5)** durante a prova.
         """)
         st.divider()
@@ -183,11 +232,11 @@ else:
                 st.rerun()
         with col2:
             if st.button("ACEITO AS REGRAS - INICIAR AGORA 🚀", type="primary", use_container_width=True):
-                questoes_filtradas =[q for q in BANCO_QUESTOES if q["modulo"] in st.session_state.modulos_selecionados]
-                qtd_questoes = min(len(questoes_filtradas), 20)
+                # UTILIZAÇÃO DO ALGORITMO DE BALANCEAMENTO (EXATAS 20 QUESTÕES, UNIFORMEMENTE)
+                quiz = selecionar_questoes_balanceadas(BANCO_QUESTOES, st.session_state.modulos_selecionados, 20)
                 
-                if qtd_questoes > 0:
-                    st.session_state.quiz_atual = random.sample(questoes_filtradas, qtd_questoes)
+                if len(quiz) > 0:
+                    st.session_state.quiz_atual = quiz
                     st.session_state.inicio_time = time.time()
                     st.session_state.resultado_salvo = False
                     st.session_state.page = "Simulado"
@@ -197,31 +246,32 @@ else:
 
     # --- EXECUÇÃO DO SIMULADO ---
     elif st.session_state.page == "Simulado" and st.session_state.quiz_atual:
-        # CRONÔMETRO VISUAL (Javascript)
-        js_timer = """
-        <script>
-        var countDownDate = new Date().getTime() + (30 * 60 * 1000); 
-        var x = setInterval(function() {
-          var now = new Date().getTime();
-          var distance = countDownDate - now;
-          var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-          var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-          minutes = minutes < 10 ? "0" + minutes : minutes;
-          seconds = seconds < 10 ? "0" + seconds : seconds;
-          document.getElementById("timer").innerHTML = "⏱️ Tempo Restante: " + minutes + ":" + seconds;
-          if (distance < 0) {
-            clearInterval(x);
-            document.getElementById("timer").innerHTML = "🚨 TEMPO ESGOTADO!";
-            document.getElementById("timer").style.color = "white";
-            document.getElementById("timer").style.backgroundColor = "#D90429";
-          }
-        }, 1000);
-        </script>
-        <div id="timer" style="font-size:24px; font-weight:bold; color:#1D3557; text-align:center; padding:15px; border:3px solid #457B9D; border-radius:10px; background-color:#F1FAEE; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
-            ⏱️ Calculando tempo...
-        </div>
-        """
-        components.html(js_timer, height=85)
+        timer_container = st.empty()
+        with timer_container:
+            js_timer = """
+            <script>
+            var countDownDate = new Date().getTime() + (30 * 60 * 1000); 
+            var x = setInterval(function() {
+              var now = new Date().getTime();
+              var distance = countDownDate - now;
+              var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+              var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+              minutes = minutes < 10 ? "0" + minutes : minutes;
+              seconds = seconds < 10 ? "0" + seconds : seconds;
+              document.getElementById("timer").innerHTML = "⏱️ Tempo Restante: " + minutes + ":" + seconds;
+              if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("timer").innerHTML = "🚨 TEMPO ESGOTADO!";
+                document.getElementById("timer").style.color = "white";
+                document.getElementById("timer").style.backgroundColor = "#D90429";
+              }
+            }, 1000);
+            </script>
+            <div id="timer" style="font-size:24px; font-weight:bold; color:#1D3557; text-align:center; padding:15px; border:3px solid #457B9D; border-radius:10px; background-color:#F1FAEE; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+                ⏱️ Calculando tempo...
+            </div>
+            """
+            components.html(js_timer, height=85)
         
         st.title(f"📝 {st.session_state.simulado_nome}")
         st.info("Responda todas as questões e clique no botão verde 'Finalizar Simulado' no final da página.")
@@ -233,7 +283,9 @@ else:
                 st.caption(f"**Módulo:** {q['modulo']}")
                 st.write(q['pergunta'])
                 opcoes =[f"{k}) {v}" for k, v in q.get("opcoes", {}).items()]
-                respostas_locais[idx] = st.radio("Sua resposta:", opcoes, key=f"q_{idx}", index=None)
+                
+                chave_unica = f"radio_sim_{st.session_state.simulado_atual_indice}_q_{q['id']}_{idx}"
+                respostas_locais[idx] = st.radio("Sua resposta:", opcoes, key=chave_unica, index=None)
                 st.divider()
             
             submitted = st.form_submit_button("🏁 Finalizar Simulado", use_container_width=True)
@@ -241,6 +293,7 @@ else:
                 st.session_state.fim_time = time.time()
                 st.session_state.respostas_usuario = respostas_locais
                 st.session_state.page = "Resultado"
+                time.sleep(0.2)
                 st.rerun()
 
     # --- RESULTADOS ---
@@ -277,7 +330,6 @@ else:
                     conn = st.connection("gsheets", type=GSheetsConnection)
                     df_historico = conn.read(worksheet="Historico", ttl=0)
                     
-                    # Cria um dicionário com os percentuais por módulo para salvar de forma oculta
                     detalhes_mod = {mod: round((dados['acertos'] / dados['total']) * 100, 1) for mod, dados in desempenho_modulos.items()}
                     detalhes_json = json.dumps(detalhes_mod)
                     
@@ -287,7 +339,7 @@ else:
                         "Simulado": st.session_state.simulado_nome,
                         "Nota (%)": round(percentual, 1),
                         "Tempo": f"{minutos}m {segundos}s",
-                        "Detalhes_Modulos": detalhes_json # Adiciona os dados para o Gráfico Radar
+                        "Detalhes_Modulos": detalhes_json
                     }])
                     
                     df_atualizado = pd.concat([df_historico, novo_registro], ignore_index=True)
@@ -296,7 +348,6 @@ else:
                 except Exception as e:
                     st.error(f"Erro ao salvar na planilha. Erro: {e}")
 
-        # Exibição do Tempo
         if estourou_tempo:
             st.error(f"⚠️ Você estourou o tempo limite de 30 minutos! Tempo total decorrido: **{minutos}m e {segundos}s**.")
         else:
@@ -338,7 +389,7 @@ else:
                     st.success(f"**Resposta Correta:** {letra_correta}) {texto_correto}")
                 else:
                     st.write(f"**Sua resposta:** {resp_usuario}")
-                st.info(f"**Explicação / Dica:** {q.get('explicacao', 'Explicação não disponível.')}")
+                st.info(f"**Explicação / Dica:** {q.get('explicacao', 'A alternativa correta atende às normas vigentes.')}")
 
         st.divider()
         if st.button("🏠 Concluir e Voltar para a Home", use_container_width=True, type="primary"):
@@ -363,7 +414,6 @@ else:
                 if not df_user.empty:
                     df_user.reset_index(drop=True, inplace=True)
                     
-                    # 1. CÁLCULO GERAL E DE TEMPO
                     total_secs = 0
                     valid_times = 0
                     for t_str in df_user['Tempo']:
@@ -376,7 +426,6 @@ else:
                     avg_time_str = f"{media_secs // 60}m {media_secs % 60}s" if valid_times > 0 else "N/A"
                     avg_score = df_user['Nota (%)'].mean()
 
-                    # Métricas de Cabeçalho
                     col1, col2, col3 = st.columns(3)
                     col1.metric("Média Geral de Acertos", f"{avg_score:.1f}%")
                     col2.metric("Simulados Realizados", len(df_user))
@@ -384,32 +433,27 @@ else:
                     
                     st.divider()
 
-                    # 2. PROCESSAMENTO DAS NOTAS POR MATÉRIA (Para o Radar)
                     module_scores = {}
                     for _, row in df_user.iterrows():
-                        # Se a coluna 'Detalhes_Modulos' existir na planilha, lemos os dados detalhados salvos
                         if 'Detalhes_Modulos' in df_user.columns and pd.notna(row['Detalhes_Modulos']):
                             try:
                                 detalhes = json.loads(row['Detalhes_Modulos'])
                                 for mod, score in detalhes.items():
-                                    if mod not in module_scores: module_scores[mod] = []
+                                    if mod not in module_scores: module_scores[mod] =[]
                                     module_scores[mod].append(score)
                                 continue 
                             except: pass
                         
-                        # Se for um registro antigo (sem a nova coluna), fazemos uma média genérica
                         sim_name = row['Simulado']
                         if sim_name in DIC_SIMULADOS:
                             for mod in DIC_SIMULADOS[sim_name]:
                                 if mod not in module_scores: module_scores[mod] = []
                                 module_scores[mod].append(row['Nota (%)'])
                                 
-                    # Tira a média por módulo
                     avg_module_scores = {mod: sum(scores)/len(scores) for mod, scores in module_scores.items()}
 
                     col_radar, col_ia = st.columns([1.2, 1])
 
-                    # 3. GRÁFICO DE RADAR
                     with col_radar:
                         st.markdown("### 🕸️ Seu Radar de Forças")
                         if avg_module_scores:
@@ -417,7 +461,6 @@ else:
                                 Força=list(avg_module_scores.values()),
                                 Modulo=list(avg_module_scores.keys())
                             ))
-                            # Fecha a linha do radar para ficar uma teia circular
                             df_radar = pd.concat([df_radar, df_radar.iloc[[0]]]) 
                             
                             fig = px.line_polar(df_radar, r='Força', theta='Modulo', line_close=True, range_r=[0, 100], markers=True)
@@ -427,37 +470,34 @@ else:
                         else:
                             st.info("Faça mais simulados para desenhar seu radar de forças.")
 
-                    # 4. AVALIAÇÃO DA INTELIGÊNCIA ARTIFICIAL (Heurística)
                     with col_ia:
                         st.markdown("### 🧠 Diagnóstico do Mentor")
                         
                         sorted_mods = sorted(avg_module_scores.items(), key=lambda item: item[1])
                         weak_mods =[mod for mod, score in sorted_mods if score < 70]
                         med_mods =[mod for mod, score in sorted_mods if 70 <= score < 85]
-                        strong_mods = [mod for mod, score in sorted_mods if score >= 85]
+                        strong_mods =[mod for mod, score in sorted_mods if score >= 85]
                         
                         if weak_mods:
-                            st.error(f"**🚨 Alerta Vermelho:** Suas maiores fraquezas estão em **{', '.join(weak_mods[:2])}**. Esses módulos estão puxando sua média para baixo. Dedique 80% do seu tempo revisando a teoria e refazendo as questões erradas dessas matérias.")
+                            st.error(f"**🚨 Alerta Vermelho:** Suas maiores fraquezas estão em **{', '.join(weak_mods[:2])}**. Dedique 80% do seu tempo revisando a teoria e refazendo as questões dessas matérias.")
                         elif med_mods:
-                            st.warning(f"**⚠️ Atenção aos Detalhes:** Você já tem a base, mas **{', '.join(med_mods[:2])}** estão segurando você de tirar uma nota de excelência. Revise as 'pegadinhas' e conceitos decorebas dessas matérias.")
+                            st.warning(f"**⚠️ Atenção aos Detalhes:** Você já tem a base, mas **{', '.join(med_mods[:2])}** estão segurando sua nota. Revise as 'pegadinhas' e conceitos decorebas.")
                         elif strong_mods:
-                            st.success(f"**🏆 Performance de Elite:** Seu desempenho em **{', '.join(strong_mods[:2])}** está digno de aprovação garantida. Faça apenas revisões leves para manter os conceitos frescos.")
+                            st.success(f"**🏆 Performance de Elite:** Seu desempenho em **{', '.join(strong_mods[:2])}** está excelente. Faça apenas revisões leves para manter.")
                         else:
-                            st.info("Continue fazendo simulados para que o Mentor possa analisar seus dados com precisão.")
+                            st.info("Continue fazendo simulados para que o Mentor possa analisar seus dados.")
 
-                        # Avaliação de Tempo
                         st.markdown("**Gestão de Tempo na Prova:**")
-                        if media_secs > 1500: # Maior que 25 min (Prova de 30)
-                            st.warning("⏳ Você está esgotando quase todo o tempo. Na hora da prova, se travar em uma questão, pule e volte depois para não correr o risco de chutar as fáceis no final.")
-                        elif media_secs > 0 and media_secs < 600: # Menor que 10 min
-                            st.warning("⚡ Você está respondendo numa velocidade perigosa! Cuidado com palavras como 'EXCETO' ou 'INCORRETA'. A ANCORD adora essas pegadinhas. Leia até o final.")
+                        if media_secs > 1500: 
+                            st.warning("⏳ Você está esgotando quase todo o tempo. Na hora da prova, se travar em uma questão, pule e volte depois.")
+                        elif media_secs > 0 and media_secs < 600: 
+                            st.warning("⚡ Você está respondendo numa velocidade perigosa! Cuidado com palavras como 'EXCETO' ou 'INCORRETA'. Leia até o final.")
                         elif media_secs > 0:
                             st.success("✅ Seu ritmo de leitura e resolução está impecável! Você tem o equilíbrio perfeito entre agilidade e atenção.")
                     
                     st.divider()
                     st.subheader("📚 Tabela Histórica")
                     df_user['Tentativa'] =[f"{i+1}ª Vez" for i in range(len(df_user))]
-                    # Exclui a nova coluna complexa do JSON para não poluir a tabela de visualização
                     cols_to_show =['Tentativa', 'Data', 'Simulado', 'Nota (%)', 'Tempo']
                     st.dataframe(df_user[cols_to_show], use_container_width=True)
 
