@@ -172,7 +172,7 @@ else:
         1. ⏱️ **Duração Limitada:** Você terá **EXATOS 30 MINUTOS** para concluir e enviar o teste.
         2. 🎯 **Formato da Prova:** O simulado possui **20 questões** escolhidas de forma aleatória da sua trilha.
         3. 🚫 **Sem Consultas:** Simule o ambiente real de prova. Feche abas de pesquisa e guarde seu material.
-        4. 🤫 **Foco Total:** Não converse e procure um ambiente silencioso.
+        4. 🤫 **Foco Total:** Não converse e faça com seriedade.
         5. 🔄 **Cuidado com a página:** **NÃO atualize ou recarregue a página (F5)** durante a prova.
         """)
         st.divider()
