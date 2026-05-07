@@ -7,6 +7,7 @@ import os
 import json
 import re
 import plotly.express as px
+import plotly.graph_objects as go
 import streamlit.components.v1 as components
 from streamlit_gsheets import GSheetsConnection
 
@@ -17,8 +18,83 @@ except ImportError:
     st.error("Arquivo 'questoes.py' não encontrado no repositório.")
     st.stop()
 
-# --- CONFIGURAÇÃO ---
-st.set_page_config(page_title="VMB - Simulado de Elite", layout="wide", page_icon="🎓")
+# --- CONFIGURAÇÃO DA PÁGINA ---
+st.set_page_config(page_title="VMB - Simulado de Elite", layout="wide", page_icon="⚡")
+
+# --- CSS PREMIUM (Injeção de Estilo) ---
+def inject_custom_css():
+    st.markdown("""
+    <style>
+        /* Fundo geral mais sofisticado */
+        .stApp {
+            background-color: #0E1117;
+            color: #FAFAFA;
+        }
+        
+        /* Ocultar elementos padrão do Streamlit */
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
+
+        /* Cards Premium com Glassmorphism e Hover */
+        div[data-testid="stVerticalBlock"] div[style*="border"] {
+            background: linear-gradient(145deg, rgba(22,27,34,0.95), rgba(14,17,23,0.98)) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 16px !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
+            padding: 20px !important;
+            transition: all 0.3s ease !important;
+        }
+        div[data-testid="stVerticalBlock"] div[style*="border"]:hover {
+            transform: translateY(-4px) !important;
+            border: 1px solid #3B82F6 !important;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2) !important;
+        }
+
+        /* Botões com Glow */
+        .stButton>button {
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+            border: none !important;
+        }
+        .stButton>button[kind="primary"] {
+            background: linear-gradient(90deg, #2563EB, #1D4ED8) !important;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4) !important;
+        }
+        .stButton>button[kind="primary"]:hover {
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6) !important;
+            transform: scale(1.02);
+        }
+
+        /* Inputs de Texto Modernos */
+        .stTextInput input {
+            border-radius: 8px !important;
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+        }
+        .stTextInput input:focus {
+            border-color: #3B82F6 !important;
+            box-shadow: 0 0 0 1px #3B82F6 !important;
+        }
+
+        /* Títulos */
+        h1, h2, h3 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700 !important;
+            letter-spacing: -0.5px;
+        }
+        
+        /* Barra Lateral */
+        section[data-testid="stSidebar"] {
+            background-color: #161B22 !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+inject_custom_css()
 
 # Módulos por simulado
 DIC_SIMULADOS = {
@@ -44,24 +120,26 @@ if "logado" not in st.session_state:
         "inicio_time": None,
         "fim_time": None,
         "respostas_usuario": {},
-        "resultado_salvo": False
+        "resultado_salvo": False,
+        "xp_usuario": 0,
+        "nivel_usuario": "Trainee"
     })
 
-# --- FUNÇÕES ---
-def mostrar_logo(tamanho_maximo=False):
-    if os.path.exists("vmb_logo_fundo_preto.png"):
-        if tamanho_maximo:
-            st.image("vmb_logo_fundo_preto.png", use_container_width=True)
-        else:
-            st.image("vmb_logo_fundo_preto.png", width=200)
-    else:
-        st.markdown("<h1 style='text-align: center; color: #1D3557;'>🏛️ VMB INVEST</h1>", unsafe_allow_html=True)
+# --- FUNÇÕES CORE ---
+def calcular_gamificacao(df_user):
+    """Calcula XP e Nível baseado no histórico"""
+    simulados_feitos = len(df_user)
+    xp = simulados_feitos * 150  # 150 XP por simulado concluído
+    
+    if xp < 300: nivel = "SDR Trainee"
+    elif xp < 750: nivel = "SDR Júnior"
+    elif xp < 1200: nivel = "SDR Pleno"
+    elif xp < 2000: nivel = "SDR Sênior"
+    else: nivel = "SDR Elite 🏆"
+    
+    return xp, nivel
 
 def selecionar_questoes_balanceadas(banco, modulos, total_desejado=20):
-    """
-    Distribui as 20 questões de forma IGUALITÁRIA entre os módulos do simulado.
-    Se faltar questão em um módulo, compensa pegando do outro.
-    """
     questoes_por_modulo = {mod:[] for mod in modulos}
     for q in banco:
         if q["modulo"] in modulos:
@@ -80,8 +158,8 @@ def selecionar_questoes_balanceadas(banco, modulos, total_desejado=20):
     while vagas > 0 and modulos_restantes:
         cota = vagas // len(modulos_restantes)
         resto = vagas % len(modulos_restantes)
-        
         novos_modulos_restantes =[]
+        
         for i, mod in enumerate(modulos_restantes):
             cota_atual = cota + (1 if i < resto else 0)
             disponivel = len(questoes_por_modulo[mod])
@@ -108,26 +186,28 @@ def selecionar_questoes_balanceadas(banco, modulos, total_desejado=20):
 
 # --- INTERFACE ---
 if not st.session_state.logado:
-    # --- TELA DE LOGIN ---
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([1, 2, 1])
+    # --- TELA DE LOGIN PREMIUM ---
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    col1, col2, col3 = st.columns([1.5, 2, 1.5])
     
     with col2:
-        mostrar_logo(tamanho_maximo=True)
-        st.markdown("<h3 style='text-align: center; color: #457B9D;'>Portal SDR - Acesso Restrito</h3>", unsafe_allow_html=True)
-        st.markdown("---")
+        st.markdown("""
+        <div style='text-align: center;'>
+            <h1 style='color: #FAFAFA; margin-bottom: 0px;'>VMB INVEST</h1>
+            <p style='color: #8B949E; font-size: 18px; margin-top: 0px;'>Treinamento de Alta Performance</p>
+        </div>
+        """, unsafe_allow_html=True)
         
         with st.container(border=True):
-            user = st.text_input("Usuário", placeholder="Digite seu usuário")
-            pw = st.text_input("Senha", type="password", placeholder="Digite sua senha")
+            user = st.text_input("Usuário", placeholder="ID do Agente")
+            pw = st.text_input("Senha", type="password", placeholder="••••••••")
             
             st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("ENTRAR NO PORTAL 🚀", use_container_width=True, type="primary"):
-                with st.spinner("Autenticando e sincronizando progresso..."):
+            if st.button("ACESSAR PLATAFORMA ⚡", use_container_width=True, type="primary"):
+                with st.spinner("Autenticando credenciais..."):
                     try:
                         conn = st.connection("gsheets", type=GSheetsConnection)
                         df_usuarios = conn.read(worksheet="Usuarios", ttl=0) 
-                        
                         user_match = df_usuarios[
                             (df_usuarios['Usuario'].astype(str).str.lower() == user.lower()) & 
                             (df_usuarios['Senha'].astype(str) == pw)
@@ -143,23 +223,22 @@ if not st.session_state.logado:
                                 df_historico = conn.read(worksheet="Historico", ttl=0)
                                 df_user_hist = df_historico[df_historico['Usuario'] == usuario_formatado]
                                 
+                                # Gamificação
+                                xp, nivel = calcular_gamificacao(df_user_hist)
+                                st.session_state.xp_usuario = xp
+                                st.session_state.nivel_usuario = nivel
+
                                 max_passed = -1
                                 if not df_user_hist.empty:
                                     for _, row in df_user_hist.iterrows():
-                                        nota_str = str(row['Nota (%)']).replace(',', '.')
-                                        nota = pd.to_numeric(nota_str, errors='coerce')
-                                        
+                                        nota = pd.to_numeric(str(row['Nota (%)']).replace(',', '.'), errors='coerce')
                                         if pd.notna(nota) and nota >= 70.0:
                                             sim_name = row['Simulado']
                                             if sim_name in SIMULADOS_ORDEM:
                                                 idx = SIMULADOS_ORDEM.index(sim_name)
-                                                if idx > max_passed:
-                                                    max_passed = idx
+                                                if idx > max_passed: max_passed = idx
                                 
-                                prox_indice = max_passed + 1
-                                if prox_indice >= len(SIMULADOS_ORDEM):
-                                    prox_indice = len(SIMULADOS_ORDEM) - 1
-                                    
+                                prox_indice = min(max_passed + 1, len(SIMULADOS_ORDEM) - 1)
                                 st.session_state.simulado_atual_indice = prox_indice
                             except Exception:
                                 st.session_state.simulado_atual_indice = 0
@@ -167,74 +246,115 @@ if not st.session_state.logado:
                             st.session_state.page = "Home"
                             st.rerun()
                         else:
-                            st.error("⚠️ Usuário ou senha incorretos. Acesso negado.")
+                            st.error("Acesso negado. Credenciais inválidas.")
                     except Exception as e:
-                        st.error(f"⚠️ Erro ao conectar na planilha de usuários. Erro: {e}")
+                        st.error("Falha de conexão com os servidores.")
 
 else:
-    # --- BARRA LATERAL ---
-    st.sidebar.title(f"🎓 Olá, {st.session_state.usuario}!")
-    st.sidebar.markdown("---")
-    menu = st.sidebar.radio("📍 Navegação",["Home", "Evolução", "Sair"])
+    # --- BARRA LATERAL GAMIFICADA ---
+    with st.sidebar:
+        st.markdown(f"""
+        <div style="background: rgba(37, 99, 235, 0.1); padding: 15px; border-radius: 12px; border: 1px solid rgba(37, 99, 235, 0.2); margin-bottom: 20px;">
+            <div style="font-size: 14px; color: #8B949E;">Agente Conectado</div>
+            <div style="font-size: 20px; font-weight: bold; color: white;">👤 {st.session_state.usuario}</div>
+            <div style="margin-top: 10px; font-size: 13px; font-weight: bold; color: #3B82F6;">{st.session_state.nivel_usuario}</div>
+            <div style="background: #0E1117; border-radius: 10px; height: 8px; margin-top: 5px; overflow: hidden;">
+                <div style="background: linear-gradient(90deg, #3B82F6, #60A5FA); width: {(st.session_state.xp_usuario % 1000) / 10}%; height: 100%;"></div>
+            </div>
+            <div style="font-size: 11px; color: #8B949E; margin-top: 4px; text-align: right;">{st.session_state.xp_usuario} XP</div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        menu = st.radio("Navegação",["Dashboard Principal", "Evolução e IA", "Sair do Sistema"])
     
-    if menu == "Sair":
+    if menu == "Sair do Sistema":
         st.session_state.clear()
         st.rerun()
-    elif menu == "Evolução" and st.session_state.page != "Evolução":
+    elif menu == "Evolução e IA" and st.session_state.page != "Evolução":
         st.session_state.page = "Evolução"
         st.rerun()
-    elif menu == "Home" and st.session_state.page not in["Home", "Instrucoes", "Simulado", "Resultado"]:
+    elif menu == "Dashboard Principal" and st.session_state.page not in ["Home", "Instrucoes", "Simulado", "Resultado"]:
         st.session_state.page = "Home"
         st.rerun()
 
     # --- HOME / DASHBOARD ---
     if st.session_state.page == "Home":
-        st.title("🚀 Jornada de Certificação de Elite")
-        st.markdown("Escolha o módulo que deseja treinar. Seu progresso é salvo e sincronizado na nuvem! ☁️")
-        st.divider()
+        st.title("🎯 Central de Treinamento")
         
+        # BURACO PARA AS MÉTRICAS INICIAIS (Buscando rápido no BD)
+        try:
+            conn = st.connection("gsheets", type=GSheetsConnection)
+            df_historico = conn.read(worksheet="Historico", ttl=0)
+            df_user_hist = df_historico[df_historico['Usuario'] == st.session_state.usuario]
+            
+            avg_score = df_user_hist['Nota (%)'].mean() if not df_user_hist.empty else 0
+            max_score = df_user_hist['Nota (%)'].max() if not df_user_hist.empty else 0
+            qtd_sim = len(df_user_hist)
+            
+            # HTML CARDS (Top Level)
+            st.markdown(f"""
+            <div style="display: flex; gap: 15px; margin-bottom: 25px;">
+                <div style="flex: 1; background: #161B22; padding: 15px; border-radius: 12px; border: 1px solid #30363D;">
+                    <div style="color: #8B949E; font-size: 13px;">Aproveitamento Geral</div>
+                    <div style="color: white; font-size: 24px; font-weight: bold;">{avg_score:.1f}%</div>
+                </div>
+                <div style="flex: 1; background: #161B22; padding: 15px; border-radius: 12px; border: 1px solid #30363D;">
+                    <div style="color: #8B949E; font-size: 13px;">Melhor Nota</div>
+                    <div style="color: #4ADE80; font-size: 24px; font-weight: bold;">🏆 {max_score:.1f}%</div>
+                </div>
+                <div style="flex: 1; background: #161B22; padding: 15px; border-radius: 12px; border: 1px solid #30363D;">
+                    <div style="color: #8B949E; font-size: 13px;">Simulados Concluídos</div>
+                    <div style="color: white; font-size: 24px; font-weight: bold;">⚡ {qtd_sim}</div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+        except:
+            pass # Falha silenciosa nas métricas para não travar a home
+
+        st.markdown("### Selecione sua missão")
         for i, nome_sim in enumerate(SIMULADOS_ORDEM):
             with st.container(border=True):
                 col_txt, col_btn = st.columns([4, 1])
                 with col_txt:
-                    st.markdown(f"#### 📚 {nome_sim}")
-                    st.caption(f"**Módulos avaliados:** {', '.join(DIC_SIMULADOS[nome_sim])}")
+                    st.markdown(f"<h4 style='margin:0; padding:0;'>{nome_sim}</h4>", unsafe_allow_html=True)
+                    st.caption(f"{', '.join(DIC_SIMULADOS[nome_sim])}")
                 
                 with col_btn:
-                    st.markdown("<br>", unsafe_allow_html=True)
+                    st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
                     liberado = i <= st.session_state.simulado_atual_indice
                     if liberado:
-                        if st.button("Acessar", key=f"btn_{i}", use_container_width=True, type="primary"):
+                        if st.button("Iniciar", key=f"btn_{i}", use_container_width=True, type="primary"):
                             st.session_state.simulado_nome = nome_sim
                             st.session_state.modulos_selecionados = DIC_SIMULADOS[nome_sim]
                             st.session_state.page = "Instrucoes"
                             st.rerun()
                     else:
-                        st.button("🔒 Bloqueado", key=f"btn_{i}", disabled=True, use_container_width=True)
+                        st.button("Bloqueado", key=f"btn_{i}", disabled=True, use_container_width=True)
 
     # --- TELA DE INSTRUÇÕES ---
     elif st.session_state.page == "Instrucoes":
-        st.title(f"📖 Regras: {st.session_state.simulado_nome}")
-        st.warning("⚠️ **ATENÇÃO: LEIA AS REGRAS ANTES DE COMEÇAR!**")
+        st.title(f"Operação: {st.session_state.simulado_nome}")
+        
         st.markdown("""
-        ### Condições do Simulado:
-        1. ⏱️ **Duração Limitada:** Você terá **EXATOS 30 MINUTOS** para concluir e enviar o teste.
-        2. 🎯 **Formato da Prova:** O simulado possui **20 questões balanceadas**. As questões são divididas uniformemente entre os módulos.
-        3. 🚫 **Sem Consultas:** Simule o ambiente real de prova. Feche abas de pesquisa e guarde seu material.
-        4. 🤫 **Foco Total:** Não converse e procure um ambiente silencioso.
-        5. 🔄 **Cuidado com a página:** **NÃO atualize ou recarregue a página (F5)** durante a prova.
-        """)
-        st.divider()
+        <div style="background: rgba(234, 179, 8, 0.1); border-left: 4px solid #EAB308; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h4 style="margin-top: 0; color: #EAB308;">Protocolo de Avaliação</h4>
+            <ul style="color: #D1D5DB; margin-bottom: 0;">
+                <li><b>Tempo restrito:</b> Exatos 30 minutos. O cronômetro entrará em modo crítico nos últimos 5 minutos.</li>
+                <li><b>Estrutura:</b> 20 questões táticas, distribuídas uniformemente.</li>
+                <li><b>Integridade:</b> Simule o ambiente oficial. Sem consultas, sem interrupções.</li>
+                <li><b>Alerta do Sistema:</b> Não atualize a página (F5), ou a missão será abortada com perda total de dados.</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+        
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("⬅️ Voltar aos Simulados", use_container_width=True):
+            if st.button("Cancelar Missão", use_container_width=True):
                 st.session_state.page = "Home"
                 st.rerun()
         with col2:
-            if st.button("ACEITO AS REGRAS - INICIAR AGORA 🚀", type="primary", use_container_width=True):
-                # UTILIZAÇÃO DO ALGORITMO DE BALANCEAMENTO (EXATAS 20 QUESTÕES, UNIFORMEMENTE)
+            if st.button("ACEITO OS TERMOS - INICIAR ⚡", type="primary", use_container_width=True):
                 quiz = selecionar_questoes_balanceadas(BANCO_QUESTOES, st.session_state.modulos_selecionados, 20)
-                
                 if len(quiz) > 0:
                     st.session_state.quiz_atual = quiz
                     st.session_state.inicio_time = time.time()
@@ -242,9 +362,9 @@ else:
                     st.session_state.page = "Simulado"
                     st.rerun()
                 else:
-                    st.error("Nenhuma questão cadastrada para os módulos deste simulado.")
+                    st.error("Banco de dados insuficiente.")
 
-    # --- EXECUÇÃO DO SIMULADO ---
+    # --- EXECUÇÃO DO SIMULADO (TIMER PREMIUM) ---
     elif st.session_state.page == "Simulado" and st.session_state.quiz_atual:
         timer_container = st.empty()
         with timer_container:
@@ -254,41 +374,50 @@ else:
             var x = setInterval(function() {
               var now = new Date().getTime();
               var distance = countDownDate - now;
+              
               var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
               var seconds = Math.floor((distance % (1000 * 60)) / 1000);
               minutes = minutes < 10 ? "0" + minutes : minutes;
               seconds = seconds < 10 ? "0" + seconds : seconds;
-              document.getElementById("timer").innerHTML = "⏱️ Tempo Restante: " + minutes + ":" + seconds;
+              
+              var timerDiv = document.getElementById("timer");
+              var glowDiv = document.getElementById("timer-glow");
+              
+              timerDiv.innerHTML = "⏳ " + minutes + ":" + seconds;
+              
+              // EFEITO VERMELHO NEON NOS ÚLTIMOS 5 MINUTOS
+              if (minutes < 5) {
+                  timerDiv.style.color = "#FF4B4B";
+                  glowDiv.style.boxShadow = "0 0 20px rgba(255, 75, 75, 0.6)";
+                  glowDiv.style.border = "1px solid #FF4B4B";
+              }
+              
               if (distance < 0) {
                 clearInterval(x);
-                document.getElementById("timer").innerHTML = "🚨 TEMPO ESGOTADO!";
-                document.getElementById("timer").style.color = "white";
-                document.getElementById("timer").style.backgroundColor = "#D90429";
+                timerDiv.innerHTML = "🚨 TEMPO ESGOTADO";
               }
             }, 1000);
             </script>
-            <div id="timer" style="font-size:24px; font-weight:bold; color:#1D3557; text-align:center; padding:15px; border:3px solid #457B9D; border-radius:10px; background-color:#F1FAEE; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
-                ⏱️ Calculando tempo...
+            <div id="timer-glow" style="position: sticky; top: 10px; z-index: 999; background: rgba(14, 17, 23, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); padding: 10px 30px; border-radius: 50px; width: fit-content; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: all 0.3s ease;">
+                <h2 id="timer" style="color: #60A5FA; margin: 0; font-family: monospace; font-size: 26px;">Carregando...</h2>
             </div>
             """
-            components.html(js_timer, height=85)
+            components.html(js_timer, height=80)
         
-        st.title(f"📝 {st.session_state.simulado_nome}")
-        st.info("Responda todas as questões e clique no botão verde 'Finalizar Simulado' no final da página.")
-        
+        st.write("") # Espaçamento
         with st.form("form_simulado"):
             respostas_locais = {}
             for idx, q in enumerate(st.session_state.quiz_atual):
-                st.markdown(f"### Questão {idx+1}")
-                st.caption(f"**Módulo:** {q['modulo']}")
+                st.markdown(f"#### Questão {idx+1}")
+                st.markdown(f"<span style='color: #8B949E; font-size: 12px;'>MÓDULO: {q['modulo'].upper()}</span>", unsafe_allow_html=True)
                 st.write(q['pergunta'])
                 opcoes =[f"{k}) {v}" for k, v in q.get("opcoes", {}).items()]
                 
-                chave_unica = f"radio_sim_{st.session_state.simulado_atual_indice}_q_{q['id']}_{idx}"
-                respostas_locais[idx] = st.radio("Sua resposta:", opcoes, key=chave_unica, index=None)
-                st.divider()
+                chave_unica = f"rad_{st.session_state.simulado_atual_indice}_{q['id']}_{idx}"
+                respostas_locais[idx] = st.radio("Selecione:", opcoes, key=chave_unica, index=None, label_visibility="collapsed")
+                st.markdown("<hr style='opacity: 0.2;'>", unsafe_allow_html=True)
             
-            submitted = st.form_submit_button("🏁 Finalizar Simulado", use_container_width=True)
+            submitted = st.form_submit_button("ENVIAR RESPOSTAS", use_container_width=True, type="primary")
             if submitted:
                 st.session_state.fim_time = time.time()
                 st.session_state.respostas_usuario = respostas_locais
@@ -298,12 +427,11 @@ else:
 
     # --- RESULTADOS ---
     elif st.session_state.page == "Resultado":
-        st.title("📊 Relatório de Desempenho")
+        st.title("Relatório de Missão")
         
         tempo_total_segundos = st.session_state.fim_time - st.session_state.inicio_time
         minutos = int(tempo_total_segundos // 60)
         segundos = int(tempo_total_segundos % 60)
-        estourou_tempo = tempo_total_segundos > 1800 
         
         acertos = 0
         total_questoes = len(st.session_state.quiz_atual)
@@ -323,15 +451,13 @@ else:
 
         percentual = (acertos / total_questoes) * 100 if total_questoes > 0 else 0
 
-        # --- SALVAR PROGRESSO NO GOOGLE SHEETS COM DADOS EXTRAS PARA A IA ---
+        # SALVAMENTO
         if not st.session_state.resultado_salvo:
-            with st.spinner("☁️ Salvando seu resultado no banco de dados..."):
+            with st.spinner("Salvando telemetria..."):
                 try:
                     conn = st.connection("gsheets", type=GSheetsConnection)
                     df_historico = conn.read(worksheet="Historico", ttl=0)
-                    
                     detalhes_mod = {mod: round((dados['acertos'] / dados['total']) * 100, 1) for mod, dados in desempenho_modulos.items()}
-                    detalhes_json = json.dumps(detalhes_mod)
                     
                     novo_registro = pd.DataFrame([{
                         "Data": datetime.now().strftime("%d/%m/%Y %H:%M"),
@@ -339,73 +465,51 @@ else:
                         "Simulado": st.session_state.simulado_nome,
                         "Nota (%)": round(percentual, 1),
                         "Tempo": f"{minutos}m {segundos}s",
-                        "Detalhes_Modulos": detalhes_json
+                        "Detalhes_Modulos": json.dumps(detalhes_mod)
                     }])
                     
                     df_atualizado = pd.concat([df_historico, novo_registro], ignore_index=True)
                     conn.update(worksheet="Historico", data=df_atualizado)
                     st.session_state.resultado_salvo = True
                 except Exception as e:
-                    st.error(f"Erro ao salvar na planilha. Erro: {e}")
-
-        if estourou_tempo:
-            st.error(f"⚠️ Você estourou o tempo limite de 30 minutos! Tempo total decorrido: **{minutos}m e {segundos}s**.")
-        else:
-            st.success(f"⏱️ Tempo total da prova: **{minutos}m e {segundos}s**.")
+                    pass
 
         col1, col2, col3 = st.columns(3)
-        col1.metric("Nota Final", f"{percentual:.1f}%", f"{acertos} de {total_questoes} corretas")
-        col2.metric("Tempo Médio / Questão", f"{int(tempo_medio // 60)}m {int(tempo_medio % 60)}s")
-        if percentual >= 70:
-            col3.metric("Status", "APROVADO", "✅ Mandou bem!")
-        else:
-            col3.metric("Status", "REPROVADO", "❌ Precisa revisar")
+        col1.metric("Nota Final", f"{percentual:.1f}%", f"{acertos}/{total_questoes}")
+        col2.metric("Pace (Tempo Médio)", f"{int(tempo_medio // 60)}m {int(tempo_medio % 60)}s")
+        col3.metric("Status", "APROVADO ✅" if percentual >= 70 else "REPROVADO ❌")
 
         st.divider()
-
-        st.header("🎯 Diagnóstico por Módulo")
-        for mod, dados in desempenho_modulos.items():
-            perc_mod = (dados['acertos'] / dados['total']) * 100
-            if perc_mod < 70:
-                st.error(f"📉 **{mod}**: {perc_mod:.0f}% ({dados['acertos']}/{dados['total']}) — **Você precisa melhorar.**")
-            elif perc_mod < 85:
-                st.warning(f"🟡 **{mod}**: {perc_mod:.0f}% ({dados['acertos']}/{dados['total']}) — **Bom, mas dá pra lapidar os erros.**")
-            else:
-                st.success(f"🏆 **{mod}**: {perc_mod:.0f}% ({dados['acertos']}/{dados['total']}) — **Ponto forte! Excelente.**")
-
-        st.divider()
-
-        st.header("📋 Correção Detalhada (Gabarito)")
+        st.markdown("### Correção Analítica")
         for idx, q in enumerate(st.session_state.quiz_atual):
             resp_usuario = st.session_state.respostas_usuario.get(idx)
             acertou = resp_usuario and resp_usuario.startswith(q['resposta_correta'])
             letra_correta = q['resposta_correta']
             texto_correto = q['opcoes'].get(letra_correta, "")
 
-            with st.expander(f"Questão {idx+1} - {q['modulo']} {'(✅ Acertou)' if acertou else '(❌ Errou)'}"):
-                st.write(f"**Pergunta:** {q['pergunta']}")
+            status_color = "#10B981" if acertou else "#EF4444"
+            status_text = "Acertou" if acertou else "Errou"
+            
+            with st.expander(f"Q{idx+1} - {status_text} | {q['modulo']}"):
+                st.write(f"**{q['pergunta']}**")
+                st.markdown(f"<span style='color:{status_color}; font-weight:bold;'>Sua marcação:</span> {resp_usuario if resp_usuario else 'Em branco'}", unsafe_allow_html=True)
                 if not acertou:
-                    st.write(f"**Sua resposta:** {resp_usuario if resp_usuario else 'Não respondida'}")
-                    st.success(f"**Resposta Correta:** {letra_correta}) {texto_correto}")
-                else:
-                    st.write(f"**Sua resposta:** {resp_usuario}")
-                st.info(f"**Explicação / Dica:** {q.get('explicacao', 'A alternativa correta atende às normas vigentes.')}")
+                    st.markdown(f"<span style='color:#10B981; font-weight:bold;'>Correta:</span> {letra_correta}) {texto_correto}", unsafe_allow_html=True)
+                st.info(f"💡 **Insights:** {q.get('explicacao', '')}")
 
-        st.divider()
-        if st.button("🏠 Concluir e Voltar para a Home", use_container_width=True, type="primary"):
+        st.write("")
+        if st.button("Finalizar Análise e Voltar", type="primary", use_container_width=True):
             if percentual >= 70 and st.session_state.simulado_nome == SIMULADOS_ORDEM[st.session_state.simulado_atual_indice]:
                 if st.session_state.simulado_atual_indice < len(SIMULADOS_ORDEM) - 1:
                     st.session_state.simulado_atual_indice += 1
             st.session_state.page = "Home"
             st.rerun()
 
-    # --- TELA EVOLUÇÃO (DASHBOARD ANALÍTICA) ---
+    # --- TELA EVOLUÇÃO E IA ---
     elif st.session_state.page == "Evolução":
-        st.title("📈 Central de Inteligência e Evolução")
-        st.markdown("Análise profunda do seu histórico de provas com diagnóstico de IA para maximizar sua aprovação.")
-        st.divider()
+        st.title("🧠 Inteligência de Dados e Evolução")
         
-        with st.spinner("Analisando seus dados..."):
+        with st.spinner("Processando heurística..."):
             try:
                 conn = st.connection("gsheets", type=GSheetsConnection)
                 df_historico_geral = conn.read(worksheet="Historico", ttl=0)
@@ -414,6 +518,7 @@ else:
                 if not df_user.empty:
                     df_user.reset_index(drop=True, inplace=True)
                     
+                    # Cálculo de Tempo
                     total_secs = 0
                     valid_times = 0
                     for t_str in df_user['Tempo']:
@@ -423,16 +528,8 @@ else:
                             valid_times += 1
                     
                     media_secs = total_secs // valid_times if valid_times > 0 else 0
-                    avg_time_str = f"{media_secs // 60}m {media_secs % 60}s" if valid_times > 0 else "N/A"
-                    avg_score = df_user['Nota (%)'].mean()
-
-                    col1, col2, col3 = st.columns(3)
-                    col1.metric("Média Geral de Acertos", f"{avg_score:.1f}%")
-                    col2.metric("Simulados Realizados", len(df_user))
-                    col3.metric("Tempo Médio por Prova", avg_time_str)
                     
-                    st.divider()
-
+                    # Processamento JSON
                     module_scores = {}
                     for _, row in df_user.iterrows():
                         if 'Detalhes_Modulos' in df_user.columns and pd.notna(row['Detalhes_Modulos']):
@@ -455,7 +552,7 @@ else:
                     col_radar, col_ia = st.columns([1.2, 1])
 
                     with col_radar:
-                        st.markdown("### 🕸️ Seu Radar de Forças")
+                        st.markdown("<h3 style='text-align:center;'>Radar de Competências</h3>", unsafe_allow_html=True)
                         if avg_module_scores:
                             df_radar = pd.DataFrame(dict(
                                 Força=list(avg_module_scores.values()),
@@ -463,45 +560,93 @@ else:
                             ))
                             df_radar = pd.concat([df_radar, df_radar.iloc[[0]]]) 
                             
-                            fig = px.line_polar(df_radar, r='Força', theta='Modulo', line_close=True, range_r=[0, 100], markers=True)
-                            fig.update_traces(fill='toself', line_color='#457B9D', fillcolor='rgba(69, 123, 157, 0.4)')
-                            fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 100])), showlegend=False, margin=dict(l=40, r=40, t=20, b=20))
+                            fig = go.Figure()
+                            
+                            # O Seu radar
+                            fig.add_trace(go.Scatterpolar(
+                                r=df_radar['Força'],
+                                theta=df_radar['Modulo'],
+                                fill='toself',
+                                name='Sua Força',
+                                line_color='#3B82F6',
+                                fillcolor='rgba(59, 130, 246, 0.4)'
+                            ))
+                            
+                            # Radar Elite (Top 10% Fictício de meta)
+                            fig.add_trace(go.Scatterpolar(
+                                r=[85]*len(df_radar),
+                                theta=df_radar['Modulo'],
+                                fill='none',
+                                name='Top 10% Elite',
+                                line_color='rgba(16, 185, 129, 0.5)',
+                                line_dash='dash'
+                            ))
+
+                            fig.update_layout(
+                                polar=dict(
+                                    bgcolor='rgba(0,0,0,0)',
+                                    radialaxis=dict(visible=True, range=[0, 100], gridcolor='#30363D', color='#8B949E'),
+                                    angularaxis=dict(gridcolor='#30363D', color='#FAFAFA')
+                                ),
+                                showlegend=True,
+                                legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5),
+                                paper_bgcolor='rgba(0,0,0,0)',
+                                plot_bgcolor='rgba(0,0,0,0)',
+                                margin=dict(l=40, r=40, t=20, b=20)
+                            )
                             st.plotly_chart(fig, use_container_width=True)
-                        else:
-                            st.info("Faça mais simulados para desenhar seu radar de forças.")
 
                     with col_ia:
                         st.markdown("### 🧠 Diagnóstico do Mentor")
                         
                         sorted_mods = sorted(avg_module_scores.items(), key=lambda item: item[1])
                         weak_mods =[mod for mod, score in sorted_mods if score < 70]
-                        med_mods =[mod for mod, score in sorted_mods if 70 <= score < 85]
                         strong_mods =[mod for mod, score in sorted_mods if score >= 85]
                         
+                        st.markdown("""
+                        <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                            <p style="color:#8B949E; font-size:14px; margin-bottom:5px;">ANÁLISE HEURÍSTICA CONCLUÍDA</p>
+                        """, unsafe_allow_html=True)
+                        
                         if weak_mods:
-                            st.error(f"**🚨 Alerta Vermelho:** Suas maiores fraquezas estão em **{', '.join(weak_mods[:2])}**. Dedique 80% do seu tempo revisando a teoria e refazendo as questões dessas matérias.")
-                        elif med_mods:
-                            st.warning(f"**⚠️ Atenção aos Detalhes:** Você já tem a base, mas **{', '.join(med_mods[:2])}** estão segurando sua nota. Revise as 'pegadinhas' e conceitos decorebas.")
-                        elif strong_mods:
-                            st.success(f"**🏆 Performance de Elite:** Seu desempenho em **{', '.join(strong_mods[:2])}** está excelente. Faça apenas revisões leves para manter.")
-                        else:
-                            st.info("Continue fazendo simulados para que o Mentor possa analisar seus dados.")
+                            st.markdown(f"**🚨 Atenção Crítica:**<br>Detectei falhas estruturais em **{weak_mods[0]}**. Redirecione 80% do seu próximo ciclo de estudos para a teoria base deste módulo.", unsafe_allow_html=True)
+                        if strong_mods:
+                            st.markdown(f"<br>**🏆 Dominância:**<br>O módulo de **{strong_mods[-1]}** atingiu padrão de excelência. Modo manutenção ativado.", unsafe_allow_html=True)
 
-                        st.markdown("**Gestão de Tempo na Prova:**")
+                        st.markdown("<br>**⏱️ Pacing de Prova:**", unsafe_allow_html=True)
                         if media_secs > 1500: 
-                            st.warning("⏳ Você está esgotando quase todo o tempo. Na hora da prova, se travar em uma questão, pule e volte depois.")
+                            st.markdown("⚠️ *Velocidade de risco:* Você está usando quase todo o tempo limite. Em prova oficial, você não terá fôlego para revisar. Pratique leitura dinâmica.")
                         elif media_secs > 0 and media_secs < 600: 
-                            st.warning("⚡ Você está respondendo numa velocidade perigosa! Cuidado com palavras como 'EXCETO' ou 'INCORRETA'. Leia até o final.")
+                            st.markdown("⚡ *Impulsividade:* Seu tempo de resposta está muito rápido. Isso levanta suspeita de desatenção a palavras como 'EXCETO' ou dupla negação.")
                         elif media_secs > 0:
-                            st.success("✅ Seu ritmo de leitura e resolução está impecável! Você tem o equilíbrio perfeito entre agilidade e atenção.")
+                            st.markdown("✅ *Ritmo Cadenciado:* Seu controle de tempo está perfeitamente alinhado com candidatos aprovados.")
+                        
+                        st.markdown("</div>", unsafe_allow_html=True)
                     
                     st.divider()
-                    st.subheader("📚 Tabela Histórica")
-                    df_user['Tentativa'] =[f"{i+1}ª Vez" for i in range(len(df_user))]
-                    cols_to_show =['Tentativa', 'Data', 'Simulado', 'Nota (%)', 'Tempo']
-                    st.dataframe(df_user[cols_to_show], use_container_width=True)
+                    st.subheader("Data Grid (Registros Brutos)")
+                    
+                    # DataFrame Premium com Barra de Progresso nativa do Streamlit
+                    df_display = df_user[['Data', 'Simulado', 'Nota (%)', 'Tempo']].copy()
+                    
+                    st.dataframe(
+                        df_display,
+                        column_config={
+                            "Nota (%)": st.column_config.ProgressColumn(
+                                "Desempenho",
+                                help="Sua nota percentual",
+                                format="%f%%",
+                                min_value=0,
+                                max_value=100,
+                            ),
+                            "Data": st.column_config.TextColumn("Data da Execução"),
+                            "Simulado": st.column_config.TextColumn("Missão")
+                        },
+                        hide_index=True,
+                        use_container_width=True
+                    )
 
                 else:
-                    st.info("📊 Nenhum simulado finalizado ainda. Vá até a Home e faça seu primeiro simulado!")
+                    st.info("Aguardando telemetria inicial. Faça seu primeiro simulado.")
             except Exception as e:
-                st.error(f"⚠️ Erro ao carregar dados. {e}")
+                st.error("Falha ao processar banco de dados da IA.")
