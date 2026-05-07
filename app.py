@@ -5,24 +5,25 @@ from datetime import datetime
 import time
 import os
 import streamlit.components.v1 as components
+from streamlit_gsheets import GSheetsConnection
 
 # --- QUESTÕES ---
 try:
     from questoes import BANCO_QUESTOES
 except ImportError:
-    st.error("Arquivo 'questoes.py' não encontrado no repositório. Crie o arquivo com a variável BANCO_QUESTOES.")
+    st.error("Arquivo 'questoes.py' não encontrado no repositório.")
     st.stop()
 
 # --- CONFIGURAÇÃO ---
 st.set_page_config(page_title="VMB - Simulado de Elite", layout="wide", page_icon="🎓")
 
-# Módulos por simulado (Trava Lógica)
+# Módulos por simulado
 DIC_SIMULADOS = {
-    "Simulado 1 (Semanas 1 e 2)":["A Atividade do Assessor de Investimentos (AI)", "Lavagem de Dinheiro"],
+    "Simulado 1 (Semanas 1 e 2)": ["A Atividade do Assessor de Investimentos (AI)", "Lavagem de Dinheiro"],
     "Simulado 2 (Semanas 3 e 4)":["Mercado de Capitais", "Securitização de Recebíveis", "Derivativos"],
     "Simulado 3 (Semanas 5 e 6)":["Fundos de Investimentos", "Outros Fundos de Investimentos", "Clubes de Investimentos"],
     "Simulado 4 (Semanas 7 e 8)":["Mercado Financeiro", "Sistema Financeiro Nacional"],
-    "Simulado 5 (Semanas 9 e 10)":["Instituições e Intermediadores Financeiros", "Economia"],
+    "Simulado 5 (Semanas 9 e 10)": ["Instituições e Intermediadores Financeiros", "Economia"],
     "Simulado 6 (Semanas 11 e 12)":["Matemática Financeira", "Administração de Risco"]
 }
 SIMULADOS_ORDEM = list(DIC_SIMULADOS.keys())
@@ -40,7 +41,6 @@ if "logado" not in st.session_state:
         "inicio_time": None,
         "fim_time": None,
         "respostas_usuario": {},
-        "historico_resultados":[], # <--- Histórico real salvo aqui
         "resultado_salvo": False
     })
 
@@ -62,7 +62,6 @@ if not st.session_state.logado:
     
     with col2:
         mostrar_logo(tamanho_maximo=True)
-        
         st.markdown("<h3 style='text-align: center; color: #457B9D;'>Portal SDR - Acesso Restrito</h3>", unsafe_allow_html=True)
         st.markdown("---")
         
@@ -72,13 +71,28 @@ if not st.session_state.logado:
             
             st.markdown("<br>", unsafe_allow_html=True)
             if st.button("ENTRAR NO PORTAL 🚀", use_container_width=True, type="primary"):
-                if user.lower() in["caio", "vmb", "aluno"] and pw == "ancord2026":
-                    st.session_state.logado = True
-                    st.session_state.usuario = user.capitalize()
-                    st.session_state.page = "Home"
-                    st.rerun()
-                else:
-                    st.error("⚠️ Usuário ou senha incorretos. Acesso negado.")
+                with st.spinner("Autenticando..."):
+                    try:
+                        # Conecta com a aba "Usuarios" do Google Sheets
+                        conn = st.connection("gsheets", type=GSheetsConnection)
+                        df_usuarios = conn.read(worksheet="Usuarios", ttl=0) 
+                        
+                        # Verifica se o usuário e senha existem no dataframe
+                        user_match = df_usuarios[
+                            (df_usuarios['Usuario'].astype(str).str.lower() == user.lower()) & 
+                            (df_usuarios['Senha'].astype(str) == pw)
+                        ]
+                        
+                        # "admin" fixo no código por garantia, ou valida na planilha
+                        if not user_match.empty or (user.lower() == "admin" and pw == "admin"):
+                            st.session_state.logado = True
+                            st.session_state.usuario = user.capitalize()
+                            st.session_state.page = "Home"
+                            st.rerun()
+                        else:
+                            st.error("⚠️ Usuário ou senha incorretos. Acesso negado.")
+                    except Exception as e:
+                        st.error(f"⚠️ Erro ao conectar na planilha de usuários. Certifique-se de que a aba 'Usuarios' existe. Erro: {e}")
 
 else:
     # --- BARRA LATERAL ---
@@ -92,7 +106,7 @@ else:
     elif menu == "Evolução" and st.session_state.page != "Evolução":
         st.session_state.page = "Evolução"
         st.rerun()
-    elif menu == "Home" and st.session_state.page not in["Home", "Instrucoes", "Simulado", "Resultado"]:
+    elif menu == "Home" and st.session_state.page not in ["Home", "Instrucoes", "Simulado", "Resultado"]:
         st.session_state.page = "Home"
         st.rerun()
 
@@ -121,7 +135,7 @@ else:
                     else:
                         st.button("🔒 Bloqueado", key=f"btn_{i}", disabled=True, use_container_width=True)
 
-    # --- TELA DE INSTRUÇÕES (BOAS-VINDAS) ---
+    # --- TELA DE INSTRUÇÕES ---
     elif st.session_state.page == "Instrucoes":
         st.title(f"📖 Regras: {st.session_state.simulado_nome}")
         
@@ -149,7 +163,7 @@ else:
                 if qtd_questoes > 0:
                     st.session_state.quiz_atual = random.sample(questoes_filtradas, qtd_questoes)
                     st.session_state.inicio_time = time.time()
-                    st.session_state.resultado_salvo = False # Reseta a trava de salvamento
+                    st.session_state.resultado_salvo = False # Reseta a trava do salvamento
                     st.session_state.page = "Simulado"
                     st.rerun()
                 else:
@@ -157,6 +171,8 @@ else:
 
     # --- EXECUÇÃO DO SIMULADO ---
     elif st.session_state.page == "Simulado" and st.session_state.quiz_atual:
+        
+        # --- CRONÔMETRO VISUAL (Javascript) ---
         js_timer = """
         <script>
         var countDownDate = new Date().getTime() + (30 * 60 * 1000); 
@@ -213,13 +229,11 @@ else:
     elif st.session_state.page == "Resultado":
         st.title("📊 Relatório de Desempenho")
         
-        # Cálculos de Tempo
         tempo_total_segundos = st.session_state.fim_time - st.session_state.inicio_time
         minutos = int(tempo_total_segundos // 60)
         segundos = int(tempo_total_segundos % 60)
         estourou_tempo = tempo_total_segundos > 1800 
         
-        # Cálculos de Nota
         acertos = 0
         total_questoes = len(st.session_state.quiz_atual)
         tempo_medio = tempo_total_segundos / total_questoes if total_questoes > 0 else 0
@@ -240,15 +254,30 @@ else:
 
         percentual = (acertos / total_questoes) * 100 if total_questoes > 0 else 0
 
-        # --- SALVAR PROGRESSO NO HISTÓRICO (Roda apenas uma vez) ---
+        # --- SALVAR PROGRESSO NO GOOGLE SHEETS ---
         if not st.session_state.resultado_salvo:
-            st.session_state.historico_resultados.append({
-                "Data": datetime.now().strftime("%d/%m/%Y %H:%M"),
-                "Simulado": st.session_state.simulado_nome,
-                "Nota (%)": round(percentual, 1),
-                "Tempo": f"{minutos}m {segundos}s"
-            })
-            st.session_state.resultado_salvo = True
+            with st.spinner("☁️ Salvando seu resultado no banco de dados..."):
+                try:
+                    conn = st.connection("gsheets", type=GSheetsConnection)
+                    # Lê a aba de Histórico
+                    df_historico = conn.read(worksheet="Historico", ttl=0)
+                    
+                    # Cria o novo registro
+                    novo_registro = pd.DataFrame([{
+                        "Data": datetime.now().strftime("%d/%m/%Y %H:%M"),
+                        "Usuario": st.session_state.usuario,
+                        "Simulado": st.session_state.simulado_nome,
+                        "Nota (%)": round(percentual, 1),
+                        "Tempo": f"{minutos}m {segundos}s"
+                    }])
+                    
+                    # Concatena e Atualiza a planilha
+                    df_atualizado = pd.concat([df_historico, novo_registro], ignore_index=True)
+                    conn.update(worksheet="Historico", data=df_atualizado)
+                    
+                    st.session_state.resultado_salvo = True
+                except Exception as e:
+                    st.error(f"Erro ao salvar na planilha (Verifique se a aba 'Historico' existe). Erro: {e}")
 
         # Exibição do Tempo
         if estourou_tempo:
@@ -256,7 +285,6 @@ else:
         else:
             st.success(f"⏱️ Tempo total da prova: **{minutos}m e {segundos}s**.")
 
-        # Indicadores em cima (Métricas)
         col1, col2, col3 = st.columns(3)
         col1.metric("Nota Final", f"{percentual:.1f}%", f"{acertos} de {total_questoes} corretas")
         col2.metric("Tempo Médio / Questão", f"{int(tempo_medio // 60)}m {int(tempo_medio % 60)}s")
@@ -268,7 +296,6 @@ else:
 
         st.divider()
 
-        # Diagnóstico de Onde Melhorar
         st.header("🎯 Diagnóstico por Módulo")
         st.markdown("Verifique abaixo os seus pontos fortes e as áreas onde você precisa focar seus estudos:")
 
@@ -283,19 +310,14 @@ else:
 
         st.divider()
 
-        # --- NOVO: GABARITO E CORREÇÃO DETALHADA ---
         st.header("📋 Correção Detalhada (Gabarito)")
-        st.markdown("Revisar seus erros é a melhor forma de aprender. Veja as explicações abaixo:")
-
         for idx, q in enumerate(st.session_state.quiz_atual):
             resp_usuario = st.session_state.respostas_usuario.get(idx)
             acertou = resp_usuario and resp_usuario.startswith(q['resposta_correta'])
             
-            # Pega o texto da resposta correta do dicionário
             letra_correta = q['resposta_correta']
             texto_correto = q['opcoes'].get(letra_correta, "")
 
-            # Container visual (Verde se acertou, Vermelho se errou)
             with st.expander(f"Questão {idx+1} - {q['modulo']} {'(✅ Acertou)' if acertou else '(❌ Errou)'}"):
                 st.write(f"**Pergunta:** {q['pergunta']}")
                 
@@ -316,24 +338,32 @@ else:
             st.session_state.page = "Home"
             st.rerun()
 
-    # --- TELA EVOLUÇÃO ---
+    # --- TELA EVOLUÇÃO (PUXANDO DO GOOGLE SHEETS) ---
     elif st.session_state.page == "Evolução":
         st.title("📈 O seu Desempenho Histórico")
-        st.markdown("Acompanhe o seu progresso nos simulados. O histórico é salvo automaticamente a cada tentativa finalizada!")
+        st.markdown("Acompanhe o seu progresso nos simulados puxado diretamente do banco de dados oficial.")
         
-        if len(st.session_state.historico_resultados) > 0:
-            # Transforma a lista de dicionários salva na sessão em um DataFrame do Pandas
-            df_historico = pd.DataFrame(st.session_state.historico_resultados)
-            
-            # Exibe Gráfico (Usando a data ou o número da tentativa como eixo X)
-            st.subheader("Gráfico de Notas (%)")
-            # Adiciona uma coluna de 'Tentativa' para o gráfico ficar bonito
-            df_historico['Tentativa'] =[f"{i+1}ª T. ({row['Simulado']})" for i, row in df_historico.iterrows()]
-            st.line_chart(df_historico.set_index("Tentativa")["Nota (%)"])
-            
-            # Exibe Tabela de Dados reais
-            st.subheader("Registros Detalhados")
-            st.dataframe(df_historico.drop(columns=['Tentativa']), use_container_width=True)
-            
-        else:
-            st.info("📊 Nenhum simulado finalizado ainda. Vá até a Home e faça seu primeiro simulado para ver sua evolução aqui!")
+        with st.spinner("Carregando dados da nuvem..."):
+            try:
+                conn = st.connection("gsheets", type=GSheetsConnection)
+                df_historico_geral = conn.read(worksheet="Historico", ttl=0)
+                
+                # Filtra o dataframe para mostrar apenas as notas do usuário logado
+                df_user = df_historico_geral[df_historico_geral["Usuario"] == st.session_state.usuario]
+                
+                if not df_user.empty:
+                    st.subheader("Gráfico de Notas (%)")
+                    # Adiciona uma coluna de 'Tentativa' formatada
+                    df_user = df_user.copy()
+                    df_user.reset_index(drop=True, inplace=True)
+                    df_user['Tentativa'] = [f"{i+1}ª T. ({row['Simulado']})" for i, row in df_user.iterrows()]
+                    
+                    st.line_chart(df_user.set_index("Tentativa")["Nota (%)"])
+                    
+                    st.subheader("Registros Detalhados")
+                    # Mostra a tabela limpa sem a coluna de tentativa extra
+                    st.dataframe(df_user.drop(columns=['Tentativa', 'Usuario']), use_container_width=True)
+                else:
+                    st.info("📊 Nenhum simulado finalizado ainda. Vá até a Home e faça seu primeiro simulado!")
+            except Exception as e:
+                st.error("⚠️ Ainda não há registros na planilha ou ela não está configurada corretamente.")
