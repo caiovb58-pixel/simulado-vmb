@@ -27,6 +27,10 @@ def inject_custom_css():
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
+        /* Esconder ícones e textos residuais do Streamlit */
+        button[title="View fullscreen"] { display: none !important; }
+        .stDeployButton { display: none !important; }
+        
         :root {
             --vmb-black: #050812;
             --vmb-black-2: #0A1020;
@@ -442,7 +446,8 @@ if "logado" not in st.session_state:
         "respostas_usuario": {},
         "resultado_salvo": False,
         "xp_usuario": 0,
-        "nivel_usuario": "Trainee"
+        "nivel_usuario": "Trainee",
+        "foto_perfil": None
     })
 
 # --- FUNÇÕES CORE ---
@@ -513,7 +518,7 @@ if not st.session_state.logado:
     with col2:
         st.markdown(premium_page_header(
             "VMB INVEST",
-            "Simulado da Ancord para SDRs que querem evoluir com método, dados e mentalidade de vencedor.",
+            "Simulado de alta performance para SDRs que querem evoluir com método, dados e mentalidade de elite.",
             "rocket",
             "SIMULADO DA ANCORD"
         ), unsafe_allow_html=True)
@@ -573,20 +578,32 @@ if not st.session_state.logado:
 else:
     # --- BARRA LATERAL GAMIFICADA ---
     with st.sidebar:
+        import base64
+        foto_html = "👤"
+        if st.session_state.foto_perfil:
+            try:
+                foto_base64 = base64.b64encode(st.session_state.foto_perfil).decode()
+                foto_html = f'<img src="data:image/png;base64,{foto_base64}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #3B82F6;">'
+            except: pass
+
         st.markdown(f"""
-        <div style="background: rgba(37, 99, 235, 0.1); padding: 15px; border-radius: 12px; border: 1px solid rgba(37, 99, 235, 0.2); margin-bottom: 20px;">
-            <div style="font-size: 14px; color: #8B949E;">Agente Conectado</div>
-            <div style="font-size: 20px; font-weight: bold; color: white;">👤 {st.session_state.usuario}</div>
-            <div style="margin-top: 10px; font-size: 13px; font-weight: bold; color: #3B82F6;">{st.session_state.nivel_usuario}</div>
-            <div style="background: #0E1117; border-radius: 10px; height: 8px; margin-top: 5px; overflow: hidden;">
+        <div style="background: rgba(37, 99, 235, 0.08); padding: 20px; border-radius: 20px; border: 1px solid rgba(37, 99, 235, 0.15); margin-bottom: 20px; display: flex; align-items: center; gap: 15px;">
+            <div style="flex-shrink: 0;">{foto_html}</div>
+            <div style="overflow: hidden;">
+                <div style="font-size: 12px; color: #8B949E; text-transform: uppercase; letter-spacing: 0.05em;">Agente</div>
+                <div style="font-size: 18px; font-weight: 800; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{st.session_state.usuario}</div>
+                <div style="font-size: 12px; font-weight: 700; color: #3B82F6; margin-top: 2px;">{st.session_state.nivel_usuario}</div>
+            </div>
+        </div>
+        <div style="padding: 0 10px 20px;">
+            <div style="background: rgba(255,255,255,0.05); border-radius: 10px; height: 6px; overflow: hidden;">
                 <div style="background: linear-gradient(90deg, #3B82F6, #60A5FA); width: {(st.session_state.xp_usuario % 1000) / 10}%; height: 100%;"></div>
             </div>
-            <div style="font-size: 11px; color: #8B949E; margin-top: 4px; text-align: right;">{st.session_state.xp_usuario} XP</div>
+            <div style="font-size: 10px; color: #8B949E; margin-top: 6px; text-align: right; font-weight: 600;">{st.session_state.xp_usuario} XP</div>
         </div>
         """, unsafe_allow_html=True)
         
-        st.markdown(premium_illustration("growth"), unsafe_allow_html=True)
-        menu = st.radio("Módulos da Plataforma", ["Dashboard Principal", "Evolução e IA"])
+        menu = st.radio("Módulos da Plataforma", ["Dashboard Principal", "Evolução e IA", "Meu Perfil"])
         
         # Botão de SAIR no final da Sidebar
         st.markdown("<br><br><br><br><br><br>", unsafe_allow_html=True)
@@ -598,6 +615,9 @@ else:
     # Redirecionamento lógico do menu
     if menu == "Evolução e IA" and st.session_state.page != "Evolução":
         st.session_state.page = "Evolução"
+        st.rerun()
+    elif menu == "Meu Perfil" and st.session_state.page != "Perfil":
+        st.session_state.page = "Perfil"
         st.rerun()
     elif menu == "Dashboard Principal" and st.session_state.page not in["Home", "Instrucoes", "Simulado", "Resultado"]:
         st.session_state.page = "Home"
@@ -984,3 +1004,44 @@ else:
                     st.info("Aguardando telemetria inicial. Faça seu primeiro simulado.")
             except Exception as e:
                 st.error("Falha ao processar banco de dados da IA.")
+
+    # --- TELA DE PERFIL ---
+    elif st.session_state.page == "Perfil":
+        st.markdown(premium_page_header(
+            "Meu Perfil",
+            "Gerencie suas informações, personalize seu avatar e acompanhe suas conquistas na plataforma.",
+            "performance",
+            "CONFIGURAÇÕES DE AGENTE"
+        ), unsafe_allow_html=True)
+
+        col_foto, col_info = st.columns([1, 2])
+        
+        with col_foto:
+            with st.container(border=True):
+                st.markdown("### Foto de Perfil")
+                if st.session_state.foto_perfil:
+                    st.image(st.session_state.foto_perfil, use_container_width=True)
+                else:
+                    st.info("Nenhuma foto carregada.")
+                
+                uploaded_file = st.file_uploader("Alterar foto", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
+                if uploaded_file is not None:
+                    st.session_state.foto_perfil = uploaded_file.getvalue()
+                    st.success("Foto atualizada com sucesso!")
+                    time.sleep(1)
+                    st.rerun()
+
+        with col_info:
+            with st.container(border=True):
+                st.markdown("### Informações da Conta")
+                st.write(f"**Usuário:** {st.session_state.usuario}")
+                st.write(f"**Nível Atual:** {st.session_state.nivel_usuario}")
+                st.write(f"**XP Total:** {st.session_state.xp_usuario}")
+                st.divider()
+                st.markdown("#### Conquistas")
+                if st.session_state.xp_usuario >= 2000:
+                    st.markdown("🏆 **Agente Elite:** Você atingiu o topo da performance.")
+                elif st.session_state.xp_usuario >= 1200:
+                    st.markdown("🥇 **Agente Sênior:** Experiência comprovada em simulados.")
+                else:
+                    st.markdown("🎯 **Em Evolução:** Continue completando missões para desbloquear insígnias.")
