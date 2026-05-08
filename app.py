@@ -132,7 +132,6 @@ def inject_custom_css():
         }
         .stTextInput input:focus { border-color: #3B82F6 !important; }
         
-        /* Top Navigation Bar Customizada */
         .top-nav {
             display: flex;
             justify-content: flex-end;
@@ -222,7 +221,6 @@ if not st.session_state.logado:
     col1, col2, col3 = st.columns([1, 2, 1])
     
     with col2:
-        # TELA DE LOGIN MAIS LIMPA (Evitando caixas extras)
         try:
             with open("Logo_VMB_V.png", "rb") as f:
                 data = base64.b64encode(f.read()).decode()
@@ -246,6 +244,9 @@ if not st.session_state.logado:
                     try:
                         conn = st.connection("gsheets", type=GSheetsConnection)
                         df_usuarios = conn.read(worksheet="Usuarios", ttl=0) 
+                        # Limpeza preventiva de NaNs para evitar crash nas checagens
+                        df_usuarios = df_usuarios.fillna("") 
+                        
                         user_match = df_usuarios[(df_usuarios['Usuario'].astype(str).str.lower() == user.lower()) & (df_usuarios['Senha'].astype(str) == pw)]
                         
                         if not user_match.empty or (user.lower() == "admin" and pw == "admin"):
@@ -253,7 +254,6 @@ if not st.session_state.logado:
                             st.session_state.logado = True
                             st.session_state.usuario = usuario_formatado
                             
-                            # Recarrega a foto do GSheets
                             if 'Foto' in df_usuarios.columns:
                                 foto_b64 = user_match['Foto'].values[0] if not user_match.empty else ""
                                 if pd.notna(foto_b64) and foto_b64 != "":
@@ -261,6 +261,7 @@ if not st.session_state.logado:
                             
                             try:
                                 df_historico = conn.read(worksheet="Historico", ttl=0)
+                                df_historico = df_historico.fillna("")
                                 df_user_hist = df_historico[df_historico['Usuario'] == usuario_formatado]
                                 xp, nivel = calcular_gamificacao(df_user_hist)
                                 st.session_state.xp_usuario = xp
@@ -288,7 +289,7 @@ if not st.session_state.logado:
                         st.error(f"Falha de conexão com os servidores. {e}")
 
 else:
-    # --- TOP NAVIGATION BAR (Canto Superior Direito) ---
+    # --- TOP NAVIGATION BAR ---
     col_vazio, col_perfil, col_sair = st.columns([8, 1.2, 1])
     with col_perfil:
         if st.button("⚙️ Meu Perfil", use_container_width=True):
@@ -300,7 +301,7 @@ else:
             st.rerun()
     st.markdown("<div style='border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px;'></div>", unsafe_allow_html=True)
 
-    # --- BARRA LATERAL (Agora focada apenas nos Módulos e Info Rápida) ---
+    # --- BARRA LATERAL ---
     with st.sidebar:
         try:
             with open("VMB_logo_solo.png", "rb") as f:
@@ -311,7 +312,7 @@ else:
 
         foto_html = "👤"
         if st.session_state.foto_perfil:
-            foto_html = f'<img src="data:image/png;base64,{st.session_state.foto_perfil}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #3B82F6;">'
+            foto_html = f'<img src="data:image/jpeg;base64,{st.session_state.foto_perfil}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #3B82F6;">'
 
         sidebar_html = f"""
         <div style="background: rgba(37, 99, 235, 0.08); padding: 20px; border-radius: 16px; border: 1px solid rgba(37, 99, 235, 0.15); margin-bottom: 20px; display: flex; align-items: center; gap: 15px;">
@@ -327,7 +328,6 @@ else:
         
         menu = st.radio("Módulos de Avaliação", ["Dashboard Principal", "Evolução e IA"])
 
-    # Controle de Roteamento da Sidebar
     if menu == "Evolução e IA" and st.session_state.page != "Evolução":
         st.session_state.page = "Evolução"
         st.rerun()
@@ -355,9 +355,9 @@ else:
             
             st.markdown(f"""
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
-                <div class='vmb-metric-card'><div class='vmb-metric-label'>Aproveitamento Geral</div><div class='vmb-metric-value'>{avg_score:.1f}%</div><div class='vmb-metric-hint'>média acumulada</div></div>
-                <div class='vmb-metric-card'><div class='vmb-metric-label'>Melhor Nota</div><div class='vmb-metric-value' style='color:#4ADE80;'>🏆 {max_score:.1f}%</div><div class='vmb-metric-hint'>recorde pessoal</div></div>
-                <div class='vmb-metric-card'><div class='vmb-metric-label'>Simulados Concluídos</div><div class='vmb-metric-value'>⚡ {qtd_sim}</div><div class='vmb-metric-hint'>missões finalizadas</div></div>
+                <div class='vmb-metric-card'><div class='vmb-metric-label'>Aproveitamento Geral</div><div class='vmb-metric-value'>{avg_score:.1f}%</div></div>
+                <div class='vmb-metric-card'><div class='vmb-metric-label'>Melhor Nota</div><div class='vmb-metric-value' style='color:#4ADE80;'>🏆 {max_score:.1f}%</div></div>
+                <div class='vmb-metric-card'><div class='vmb-metric-label'>Simulados Concluídos</div><div class='vmb-metric-value'>⚡ {qtd_sim}</div></div>
             </div>
             """, unsafe_allow_html=True)
         except:
@@ -383,13 +383,13 @@ else:
                     else:
                         st.button("Bloqueado", key=f"btn_{i}", disabled=True, use_container_width=True)
 
-    # --- TELA DE PERFIL (FOTO SALVA NA PLANILHA) ---
+    # --- TELA DE PERFIL (FOTO SALVA NA PLANILHA COM TRATAMENTO DE TAMANHO) ---
     elif st.session_state.page == "Perfil":
         st.markdown("""
         <div class='vmb-hero'>
             <div class='vmb-eyebrow'>CONFIGURAÇÕES</div>
             <h1 class='vmb-title'>Meu Perfil</h1>
-            <p class='vmb-subtitle'>Personalize seu avatar. Ele ficará salvo e aparecerá em todos os seus acessos.</p>
+            <p class='vmb-subtitle'>Personalize seu avatar. A imagem é otimizada e salva na nuvem corporativa.</p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -399,7 +399,7 @@ else:
             with st.container(border=True):
                 st.markdown("### Foto de Perfil")
                 if st.session_state.foto_perfil:
-                    st.markdown(f'<div style="text-align: center;"><img src="data:image/png;base64,{st.session_state.foto_perfil}" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid #3B82F6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);"></div>', unsafe_allow_html=True)
+                    st.markdown(f'<div style="text-align: center;"><img src="data:image/jpeg;base64,{st.session_state.foto_perfil}" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid #3B82F6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);"></div>', unsafe_allow_html=True)
                 else:
                     st.info("Nenhuma foto carregada.")
                 
@@ -407,31 +407,46 @@ else:
                 uploaded_file = st.file_uploader("Alterar foto (PNG, JPG)", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
                 
                 if uploaded_file is not None:
-                    with st.spinner("Otimizando e salvando na nuvem..."):
+                    with st.spinner("Comprimindo e salvando (Evitando erro de limite)..."):
                         try:
-                            # Comprime a imagem para não estourar o limite do GSheets
+                            # 1. Abre a imagem usando Pillow
                             img = Image.open(uploaded_file)
-                            img.thumbnail((200, 200))
+                            
+                            # 2. Converte para RGB para não bugar a criação do JPEG se for um PNG transparente
+                            if img.mode in ("RGBA", "P"):
+                                img = img.convert("RGB")
+                            
+                            # 3. Redimensiona muito a imagem (Tamanho avatar)
+                            img.thumbnail((120, 120))
+                            
+                            # 4. Salva em um Buffer de memória no formato JPEG (Muito mais leve que PNG) com qualidade 50%
                             buffered = BytesIO()
-                            img.save(buffered, format="PNG")
+                            img.save(buffered, format="JPEG", quality=50, optimize=True)
                             img_str = base64.b64encode(buffered.getvalue()).decode()
                             
-                            # Salva na planilha Usuarios
-                            conn = st.connection("gsheets", type=GSheetsConnection)
-                            df_usuarios = conn.read(worksheet="Usuarios", ttl=0)
-                            
-                            if 'Foto' not in df_usuarios.columns:
-                                df_usuarios['Foto'] = ""
-                            
-                            df_usuarios.loc[df_usuarios['Usuario'].str.lower() == st.session_state.usuario.lower(), 'Foto'] = img_str
-                            conn.update(worksheet="Usuarios", data=df_usuarios)
-                            
-                            st.session_state.foto_perfil = img_str
-                            st.success("Foto salva com sucesso!")
-                            time.sleep(1)
-                            st.rerun()
+                            # Trava de Segurança Google Sheets (Limite de 50.000 caracteres por célula)
+                            if len(img_str) > 45000:
+                                st.error("⚠️ A imagem selecionada é muito complexa, mesmo após compressão. Escolha uma foto com fundo limpo.")
+                            else:
+                                conn = st.connection("gsheets", type=GSheetsConnection)
+                                df_usuarios = conn.read(worksheet="Usuarios", ttl=0)
+                                
+                                if 'Foto' not in df_usuarios.columns:
+                                    df_usuarios['Foto'] = ""
+                                
+                                df_usuarios.loc[df_usuarios['Usuario'].str.lower() == st.session_state.usuario.lower(), 'Foto'] = img_str
+                                
+                                # Limpa NaNs residuais para não estragar a planilha do Google
+                                df_usuarios = df_usuarios.fillna("")
+                                
+                                conn.update(worksheet="Usuarios", data=df_usuarios)
+                                
+                                st.session_state.foto_perfil = img_str
+                                st.success("Foto salva com sucesso!")
+                                time.sleep(1)
+                                st.rerun()
                         except Exception as e:
-                            st.error(f"Erro ao salvar a foto na planilha. Verifique se a coluna 'Foto' existe na aba Usuarios. Erro: {e}")
+                            st.error(f"Erro ao salvar a foto. Verifique se a coluna 'Foto' existe na aba Usuarios. Erro: {e}")
 
         with col_info:
             with st.container(border=True):
@@ -492,9 +507,11 @@ else:
               var seconds = Math.floor((distance % (1000 * 60)) / 1000);
               minutes = minutes < 10 ? "0" + minutes : minutes;
               seconds = seconds < 10 ? "0" + seconds : seconds;
+              
               var timerDiv = document.getElementById("timer");
               var glowDiv = document.getElementById("timer-glow");
               timerDiv.innerHTML = "⏳ " + minutes + ":" + seconds;
+              
               if (minutes < 5) {
                   timerDiv.style.color = "#FF4B4B";
                   glowDiv.style.boxShadow = "0 0 20px rgba(255, 75, 75, 0.6)";
@@ -534,7 +551,13 @@ else:
 
     # --- RESULTADOS ---
     elif st.session_state.page == "Resultado":
-        st.title("Relatório de Missão")
+        st.markdown("""
+        <div class='vmb-hero'>
+            <div class='vmb-eyebrow'>ANÁLISE DE PERFORMANCE</div>
+            <h1 class='vmb-title'>Relatório de Missão</h1>
+            <p class='vmb-subtitle'>Veja sua nota, seu ritmo, seus acertos e os pontos que precisam de reforço.</p>
+        </div>
+        """, unsafe_allow_html=True)
         
         tempo_total_segundos = st.session_state.fim_time - st.session_state.inicio_time
         minutos = int(tempo_total_segundos // 60)
@@ -559,7 +582,7 @@ else:
 
         # SALVAMENTO
         if not st.session_state.resultado_salvo:
-            with st.spinner("Salvando telemetria..."):
+            with st.spinner("Salvando telemetria na nuvem..."):
                 try:
                     conn = st.connection("gsheets", type=GSheetsConnection)
                     df_historico = conn.read(worksheet="Historico", ttl=0)
@@ -574,6 +597,7 @@ else:
                         "Detalhes_Modulos": json.dumps(detalhes_mod)
                     }])
                     df_atualizado = pd.concat([df_historico, novo_registro], ignore_index=True)
+                    df_atualizado = df_atualizado.fillna("")
                     conn.update(worksheet="Historico", data=df_atualizado)
                     st.session_state.resultado_salvo = True
                 except Exception as e:
