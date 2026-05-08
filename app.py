@@ -36,6 +36,7 @@ def inject_custom_css():
         #MainMenu { visibility: hidden !important; }
         footer { visibility: hidden !important; }
         
+        /* Garantir que o header fique transparente, mas o botão de recolher a barra continue visível e clicável */
         header[data-testid="stHeader"] { background-color: transparent !important; z-index: 99999 !important; }
         header[data-testid="stHeader"] svg { fill: #FAFAFA !important; stroke: #FAFAFA !important; }
 
@@ -55,7 +56,7 @@ def inject_custom_css():
         }
 
         .block-container {
-            padding-top: 1.5rem !important; /* Retirado o espaço vazio do topo */
+            padding-top: 1rem !important; 
             padding-bottom: 4rem !important;
             max-width: 1220px !important;
         }
@@ -134,6 +135,14 @@ def inject_custom_css():
         .stTextInput input:focus { border-color: #3B82F6 !important; }
         
         .stRadio label { font-weight: 600 !important; }
+        
+        /* Top Navigation Customizada para o Botão do Perfil */
+        .top-right-nav {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
     </style>
     """, unsafe_allow_html=True)
 
@@ -141,7 +150,7 @@ inject_custom_css()
 
 # --- FUNÇÕES DE LOGO ---
 def premium_illustration(kind):
-    # Renderiza as logos sem caixas ou fundos artificiais
+    import base64
     if kind == "logo_abertura":
         try:
             with open("Logo_VMB_V.png", "rb") as f:
@@ -197,13 +206,21 @@ if "logado" not in st.session_state:
         "resultado_salvo": False, "xp_usuario": 0, "nivel_usuario": "Trainee", "foto_perfil": ""
     })
 
+# --- FUNÇÕES CORE E NOVA GAMIFICAÇÃO ANCORD ---
 def calcular_gamificacao(df_user):
+    """Calcula XP e Nível baseado no histórico de simulados (Status ANCORD)"""
     xp = len(df_user) * 150
-    if xp < 300: nivel = "SDR Trainee"
-    elif xp < 750: nivel = "SDR Júnior"
-    elif xp < 1200: nivel = "SDR Pleno"
-    elif xp < 2000: nivel = "SDR Sênior"
-    else: nivel = "SDR Elite 🏆"
+    # Nova Régua Focada na Aprovação ANCORD
+    if xp < 300: 
+        nivel = "Iniciante (Fase de Base)"
+    elif xp < 750: 
+        nivel = "Em Construção Teórica"
+    elif xp < 1200: 
+        nivel = "Quase Lá (Ajustes Finais)"
+    elif xp < 2000: 
+        nivel = "Pronto para a ANCORD ✅"
+    else: 
+        nivel = "Elite ANCORD 🏆 (Aprovação Certa)"
     return xp, nivel
 
 def selecionar_questoes_balanceadas(banco, modulos, total_desejado=20):
@@ -325,6 +342,13 @@ if not st.session_state.logado:
                         st.error(f"Falha de conexão com os servidores. {e}")
 
 else:
+    # --- TOP NAVIGATION BAR INVISÍVEL (Apenas para o Perfil no Canto Direito) ---
+    col_vazio, col_perfil = st.columns([9, 1])
+    with col_perfil:
+        if st.button("⚙️ Meu Perfil", use_container_width=True):
+            st.session_state.page = "Perfil"
+            st.rerun()
+
     # --- BARRA LATERAL ---
     with st.sidebar:
         # LOGO VMB SOLO NO TOPO (Círculo Vermelho - Ajustado)
@@ -344,32 +368,31 @@ else:
         <div style="background: linear-gradient(145deg, rgba(37, 99, 235, 0.1), rgba(15, 23, 42, 0.4)); padding: 16px; border-radius: 16px; border: 1px solid rgba(59, 130, 246, 0.2); margin-bottom: 24px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
             <div style="flex-shrink: 0;">{foto_html}</div>
             <div style="overflow: hidden;">
-                <div style="font-size: 10px; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">Agente Ativo</div>
+                <div style="font-size: 10px; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">Status Atual</div>
                 <div style="font-size: 15px; font-weight: 700; color: #F8FAFC; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{st.session_state.usuario}</div>
-                <div style="font-size: 12px; font-weight: 600; color: #60A5FA; margin-top: 2px;">{st.session_state.nivel_usuario}</div>
+                <div style="font-size: 11px; font-weight: 600; color: #60A5FA; margin-top: 2px;">{st.session_state.nivel_usuario}</div>
             </div>
         </div>
         """
         st.markdown(sidebar_html, unsafe_allow_html=True)
         
-        # MENU LATERAL COM "MEU PERFIL" RESTAURADO AQUI E "SAIR" NO FUNDO
+        # MENU LATERAL
         st.markdown("<div style='font-size: 12px; color: #64748B; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; margin-left: 5px;'>Navegação</div>", unsafe_allow_html=True)
-        menu = st.radio("Navegação", ["Dashboard Principal", "Meu Perfil", "Evolução e IA"], label_visibility="collapsed")
+        # O perfil não está mais aqui, ele foi para o canto superior direito
+        menu = st.radio("Módulos de Avaliação", ["Dashboard Principal", "Evolução e IA"], label_visibility="collapsed")
         
-        # Joga o botão de sair lá para o final
-        st.markdown("<div style='flex-grow: 1; min-height: 180px;'></div>", unsafe_allow_html=True)
+        # BOTÃO SAIR NO FUNDO ESQUERDO (Círculo Laranja Superior Realocado)
+        st.markdown("<div style='height: 35vh;'></div>", unsafe_allow_html=True)
+        st.divider()
         if st.button("🚪 Sair do Sistema", use_container_width=True):
             st.session_state.clear()
             st.rerun()
 
-    # Controle Roteamento
-    if menu == "Evolução e IA" and st.session_state.page != "Evolução":
+    # Controle Roteamento (Lidar com botão isolado)
+    if menu == "Evolução e IA" and st.session_state.page != "Evolução" and st.session_state.page != "Perfil":
         st.session_state.page = "Evolução"
         st.rerun()
-    elif menu == "Meu Perfil" and st.session_state.page != "Perfil":
-        st.session_state.page = "Perfil"
-        st.rerun()
-    elif menu == "Dashboard Principal" and st.session_state.page not in["Home", "Instrucoes", "Simulado", "Resultado"]:
+    elif menu == "Dashboard Principal" and st.session_state.page not in["Home", "Instrucoes", "Simulado", "Resultado", "Perfil"]:
         st.session_state.page = "Home"
         st.rerun()
 
@@ -400,7 +423,7 @@ else:
         except:
             pass 
 
-        st.markdown(premium_section_banner("Selecione sua missão", "Cada simulado desbloqueia uma nova etapa da trilha de evolução comercial e técnica."), unsafe_allow_html=True)
+        st.markdown(premium_section_banner("Selecione sua missão", "Cada simulado desbloqueia uma nova etapa da trilha de evolução rumo à aprovação."), unsafe_allow_html=True)
         for i, nome_sim in enumerate(SIMULADOS_ORDEM):
             with st.container(border=True):
                 col_txt, col_btn = st.columns([4, 1])
@@ -420,13 +443,13 @@ else:
                     else:
                         st.button("Bloqueado", key=f"btn_{i}", disabled=True, use_container_width=True)
 
-    # --- TELA DE PERFIL ---
+    # --- TELA DE PERFIL PREMIUM E PREPARAÇÃO ANCORD ---
     elif st.session_state.page == "Perfil":
         st.markdown(premium_page_header(
             "Meu Perfil",
-            "Personalize seu avatar. A imagem é otimizada e salva na nuvem corporativa.",
+            "Personalize seu avatar, veja seu nível atual de experiência e confira se está preparado para a ANCORD.",
             "logo_interna",
-            "CONFIGURAÇÕES"
+            "CONFIGURAÇÕES E PRONTIDÃO"
         ), unsafe_allow_html=True)
         
         col_foto, col_info = st.columns([1, 2])
@@ -474,16 +497,35 @@ else:
 
         with col_info:
             with st.container(border=True):
-                st.markdown("### Credenciais")
+                st.markdown("### Credenciais e Prontidão ANCORD")
                 st.write(f"**Identificação:** {st.session_state.usuario}")
                 st.write(f"**Patente:** {st.session_state.nivel_usuario}")
-                st.write(f"**Pontuação:** {st.session_state.xp_usuario} XP")
+                st.write(f"**Pontuação Geral:** {st.session_state.xp_usuario} XP")
+                
                 st.divider()
-                st.markdown("#### Trilha de Conquistas")
-                if st.session_state.xp_usuario >= 2000: st.markdown("🏆 **SDR Elite:** Você atingiu o topo da cadeia alimentar.")
-                elif st.session_state.xp_usuario >= 1200: st.markdown("🥇 **SDR Pleno:** Experiência de mercado validada em campo.")
-                elif st.session_state.xp_usuario >= 750: st.markdown("🥈 **SDR Júnior:** Começando a se destacar nas avaliações.")
-                else: st.markdown("🎯 **Trainee em Evolução:** Faça mais simulados para subir de patente.")
+                st.markdown("#### 🎯 Termômetro de Prontidão para a Prova")
+                
+                # Barra de Progresso de Prontidão (Base: 1500 XP = Pronto)
+                xp_atual = st.session_state.xp_usuario
+                meta_xp = 1500
+                progresso = min(int((xp_atual / meta_xp) * 100), 100)
+                
+                st.progress(progresso)
+                st.caption(f"Status atual: **{progresso}% de prontidão** (Baseado em Volume e Acertos)")
+                
+                st.markdown("<br>", unsafe_allow_html=True)
+                st.markdown("#### 🧠 Feedback do Mentor IA")
+                
+                if xp_atual < 300:
+                    st.error("🤖 **Mentor IA:** Você está na fase de fundação. Seu foco não deve ser a prova agora, mas sim errar bastante nos simulados para fixar a teoria base.")
+                elif xp_atual < 750:
+                    st.warning("🤖 **Mentor IA:** Você já tem uma boa fundação teórica, mas falta a malícia da prova. Identifique pegadinhas da ANCORD no gabarito analítico.")
+                elif xp_atual < 1200:
+                    st.info("🤖 **Mentor IA:** Muito bom! Você já possui o conhecimento técnico necessário. Agora é hora de preencher as lacunas olhando seu Radar de Competências na aba Evolução.")
+                elif xp_atual < 2000:
+                    st.success("🤖 **Mentor IA:** Você atingiu a Prontidão Elite! Suas métricas apontam para uma aprovação segura. Recomendamos realizar o agendamento oficial da prova da ANCORD.")
+                else:
+                    st.success("🤖 **Mentor IA:** Nível de Domínio Master. Você não só passará na prova, como gabaritará várias disciplinas. Mantenha as revisões leves até o dia D.")
 
     # --- TELA DE INSTRUÇÕES ---
     elif st.session_state.page == "Instrucoes":
@@ -500,7 +542,7 @@ else:
                 <li><b>Tempo restrito:</b> Exatos 30 minutos. O cronômetro entrará em modo crítico nos últimos 5 minutos.</li>
                 <li><b>Estrutura:</b> 20 questões táticas, distribuídas uniformemente.</li>
                 <li><b>Integridade:</b> Simule o ambiente oficial. Sem consultas, sem interrupções.</li>
-                <li><b>Alerta do Sistema:</b> Não atualize a página (F5).</li>
+                <li><b>Alerta do Sistema:</b> Não atualize a página (F5), ou a missão será abortada com perda total de dados.</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
@@ -607,6 +649,7 @@ else:
 
         percentual = (acertos / total_questoes) * 100 if total_questoes > 0 else 0
 
+        # SALVAMENTO
         if not st.session_state.resultado_salvo:
             with st.spinner("Salvando telemetria na nuvem..."):
                 try:
