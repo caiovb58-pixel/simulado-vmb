@@ -353,7 +353,7 @@ if not st.session_state.logado:
         ), unsafe_allow_html=True)
         
         with st.container(border=True):
-            user = st.text_input("Usuário", placeholder="ID do Agente")
+            user = st.text_input("Usuário", placeholder="Log In")
             pw = st.text_input("Senha", type="password", placeholder="••••••••")
             
             st.markdown("<br>", unsafe_allow_html=True)
