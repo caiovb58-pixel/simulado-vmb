@@ -30,6 +30,7 @@ def inject_custom_css():
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
+        /* Esconder ícones e textos residuais do Streamlit */
         button[title="View fullscreen"] { display: none !important; }
         .stDeployButton { display: none !important; }
         #MainMenu { visibility: hidden !important; }
@@ -54,7 +55,7 @@ def inject_custom_css():
         }
 
         .block-container {
-            padding-top: 1rem !important; /* Reduzido para colar o conteúdo mais no topo */
+            padding-top: 1.5rem !important; /* Retirado o espaço vazio do topo */
             padding-bottom: 4rem !important;
             max-width: 1220px !important;
         }
@@ -132,46 +133,49 @@ def inject_custom_css():
         }
         .stTextInput input:focus { border-color: #3B82F6 !important; }
         
-        /* Ajuste dos labels do st.radio na sidebar */
-        .stRadio label {
-            font-weight: 600 !important;
-        }
+        .stRadio label { font-weight: 600 !important; }
     </style>
     """, unsafe_allow_html=True)
 
-# Geração dos Blocos de HTML Compactados com Separação das Logos
+inject_custom_css()
+
+# --- FUNÇÕES DE LOGO ---
 def premium_illustration(kind):
-    import base64
-    
+    # Renderiza as logos sem caixas ou fundos artificiais
     if kind == "logo_abertura":
         try:
             with open("Logo_VMB_V.png", "rb") as f:
                 data = base64.b64encode(f.read()).decode()
-            return f"<div class='vmb-illustration'><img src='data:image/png;base64,{data}' style='width:100%; max-width:280px; border-radius: 24px; box-shadow: 0 0 45px rgba(37, 99, 235, 0.5); object-fit: contain;'></div>"
-        except:
-            pass 
-            
+            return f"<div style='display:flex; justify-content:center; align-items:center; height:100%;'><img src='data:image/png;base64,{data}' style='width:100%; max-width:280px; object-fit:contain; filter: drop-shadow(0 0 25px rgba(37, 99, 235, 0.3));'></div>"
+        except: pass 
     elif kind == "logo_interna":
         try:
             with open("VMB_logo_solo.png", "rb") as f:
                 data = base64.b64encode(f.read()).decode()
-            return f"<div class='vmb-illustration' style='display:flex; justify-content:center; align-items:center;'><img src='data:image/png;base64,{data}' style='width:100%; max-width:180px; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); object-fit: contain;'></div>"
-        except:
-            pass
-
-    return "<div class='vmb-illustration'><h2>📊</h2></div>"
+            return f"<div style='display:flex; justify-content:center; align-items:center; height:100%;'><img src='data:image/png;base64,{data}' style='width:100%; max-width:220px; object-fit:contain; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));'></div>"
+        except: pass
+    return ""
 
 def premium_page_header(title, subtitle, kind="logo_interna", eyebrow="VMB INVEST | PERFORMANCE SYSTEM"):
     ill = premium_illustration(kind)
-    return f"<div class='vmb-hero'><div style='display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(200px, 0.85fr); gap: 22px; align-items: center;'><div><div class='vmb-eyebrow'>{eyebrow}</div><h1 style='font-size: clamp(32px, 4.5vw, 48px); line-height: 1.1; margin: 12px 0 8px;'>{title}</h1><p style='color: #AAB8CF; font-size: 16px; margin: 0;'>{subtitle}</p></div>{ill}</div></div>"
+    return f"""
+    <div class='vmb-hero'>
+        <div style='display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(200px, 0.85fr); gap: 22px; align-items: center;'>
+            <div>
+                <div class='vmb-eyebrow'>{eyebrow}</div>
+                <h1 style='font-size: clamp(32px, 4.5vw, 48px); line-height: 1.1; margin: 12px 0 8px;'>{title}</h1>
+                <p style='color: #AAB8CF; font-size: 16px; margin: 0;'>{subtitle}</p>
+            </div>
+            {ill}
+        </div>
+    </div>
+    """
 
 def premium_section_banner(title, subtitle):
     return f"<div style='display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; margin: 18px 0 16px; border-radius: 22px; background: linear-gradient(90deg, rgba(37,99,235,0.20), rgba(15,23,42,0.64)); border: 1px solid rgba(96,165,250,0.20);'><div><h3 style='margin:0 !important; font-size:22px;'>{title}</h3><p style='margin:4px 0 0; color:#9AA8BD;'>{subtitle}</p></div><div style='font-weight:900;color:#BFDBFE;'>PREMIUM</div></div>"
 
 def premium_metric_card(label, value, hint=""):
-    return f"<div class='vmb-metric-card'><div class='vmb-metric-label'>{label}</div><div class='vmb-metric-value'>{value}</div><div style='color: #60A5FA; font-size: 12px; font-weight: 700; margin-top: 5px;'>{hint}</div></div>"
-
-inject_custom_css()
+    return f"<div class='vmb-metric-card'><div class='vmb-metric-label'>{label}</div><div style='color: #FFFFFF; font-size: 28px; font-weight: 900; margin-top: 4px;'>{value}</div><div style='color: #60A5FA; font-size: 12px; font-weight: 700; margin-top: 5px;'>{hint}</div></div>"
 
 # --- MÓDULOS ---
 DIC_SIMULADOS = {
@@ -193,7 +197,6 @@ if "logado" not in st.session_state:
         "resultado_salvo": False, "xp_usuario": 0, "nivel_usuario": "Trainee", "foto_perfil": ""
     })
 
-# --- FUNÇÕES CORE ---
 def calcular_gamificacao(df_user):
     xp = len(df_user) * 150
     if xp < 300: nivel = "SDR Trainee"
@@ -324,15 +327,15 @@ if not st.session_state.logado:
 else:
     # --- BARRA LATERAL ---
     with st.sidebar:
-        # LOGO VMB SOLO BEM AJUSTADA (Círculo Vermelho)
+        # LOGO VMB SOLO NO TOPO (Círculo Vermelho - Ajustado)
         try:
             with open("VMB_logo_solo.png", "rb") as f:
                 logo_sb = base64.b64encode(f.read()).decode()
-            st.markdown(f'<div style="text-align: center; margin-top: -20px; margin-bottom: 30px;"><img src="data:image/png;base64,{logo_sb}" style="width: 85%; max-width: 220px; filter: drop-shadow(0 4px 15px rgba(59, 130, 246, 0.3));"></div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="text-align: center; margin-top: -30px; margin-bottom: 20px;"><img src="data:image/png;base64,{logo_sb}" style="width: 80%; max-width: 180px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));"></div>', unsafe_allow_html=True)
         except:
             st.markdown("<h3 style='text-align: center; color: #3B82F6;'>VMB INVEST</h3>", unsafe_allow_html=True)
 
-        # CARD DO AGENTE (Círculo Laranja Inferior - Mais premium)
+        # CARD DO AGENTE (Círculo Laranja Inferior - Premium)
         foto_html = "👤"
         if st.session_state.foto_perfil:
             foto_html = f'<img src="data:image/jpeg;base64,{st.session_state.foto_perfil}" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid #3B82F6; box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);">'
@@ -349,11 +352,12 @@ else:
         """
         st.markdown(sidebar_html, unsafe_allow_html=True)
         
-        # MENU
-        st.markdown("<div style='font-size: 12px; color: #64748B; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; margin-left: 5px;'>Menu de Navegação</div>", unsafe_allow_html=True)
-        menu = st.radio("Módulos de Avaliação",["Dashboard Principal", "Evolução e IA", "Meu Perfil"], label_visibility="collapsed")
+        # MENU LATERAL COM "MEU PERFIL" RESTAURADO AQUI E "SAIR" NO FUNDO
+        st.markdown("<div style='font-size: 12px; color: #64748B; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; margin-left: 5px;'>Navegação</div>", unsafe_allow_html=True)
+        menu = st.radio("Navegação", ["Dashboard Principal", "Meu Perfil", "Evolução e IA"], label_visibility="collapsed")
         
-        st.markdown("<div style='margin-top: 50px;'></div>", unsafe_allow_html=True)
+        # Joga o botão de sair lá para o final
+        st.markdown("<div style='flex-grow: 1; min-height: 180px;'></div>", unsafe_allow_html=True)
         if st.button("🚪 Sair do Sistema", use_container_width=True):
             st.session_state.clear()
             st.rerun()
@@ -365,7 +369,7 @@ else:
     elif menu == "Meu Perfil" and st.session_state.page != "Perfil":
         st.session_state.page = "Perfil"
         st.rerun()
-    elif menu == "Dashboard Principal" and st.session_state.page not in["Home", "Instrucoes", "Simulado", "Resultado", "Perfil"]:
+    elif menu == "Dashboard Principal" and st.session_state.page not in["Home", "Instrucoes", "Simulado", "Resultado"]:
         st.session_state.page = "Home"
         st.rerun()
 
@@ -373,7 +377,7 @@ else:
     if st.session_state.page == "Home":
         st.markdown(premium_page_header(
             "Central de Treinamento",
-            "Escolha sua próxima missão, acompanhe seu progresso e avance por uma jornada de evolução orientada por performance.",
+            "Escolha sua próxima missão, acompanhe seu progresso e avance por uma jornada orientada por dados.",
             "logo_interna", 
             "DASHBOARD PRINCIPAL"
         ), unsafe_allow_html=True)
@@ -388,9 +392,9 @@ else:
             
             st.markdown(f"""
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
-                <div class='vmb-metric-card'><div class='vmb-metric-label'>Aproveitamento Geral</div><div class='vmb-metric-value'>{avg_score:.1f}%</div><div style='color: #60A5FA; font-size: 12px; font-weight: 700; margin-top: 5px;'>média acumulada</div></div>
-                <div class='vmb-metric-card'><div class='vmb-metric-label'>Melhor Nota</div><div class='vmb-metric-value' style='color:#4ADE80;'>🏆 {max_score:.1f}%</div><div style='color: #60A5FA; font-size: 12px; font-weight: 700; margin-top: 5px;'>recorde pessoal</div></div>
-                <div class='vmb-metric-card'><div class='vmb-metric-label'>Simulados Concluídos</div><div class='vmb-metric-value'>⚡ {qtd_sim}</div><div style='color: #60A5FA; font-size: 12px; font-weight: 700; margin-top: 5px;'>missões finalizadas</div></div>
+                {premium_metric_card("Aproveitamento Geral", f"{avg_score:.1f}%", "média acumulada")}
+                {premium_metric_card("Melhor Nota", f"🏆 {max_score:.1f}%", "recorde pessoal")}
+                {premium_metric_card("Simulados Concluídos", f"⚡ {qtd_sim}", "missões finalizadas")}
             </div>
             """, unsafe_allow_html=True)
         except:
@@ -496,11 +500,10 @@ else:
                 <li><b>Tempo restrito:</b> Exatos 30 minutos. O cronômetro entrará em modo crítico nos últimos 5 minutos.</li>
                 <li><b>Estrutura:</b> 20 questões táticas, distribuídas uniformemente.</li>
                 <li><b>Integridade:</b> Simule o ambiente oficial. Sem consultas, sem interrupções.</li>
-                <li><b>Alerta do Sistema:</b> Não atualize a página (F5), ou a missão será abortada com perda total de dados.</li>
+                <li><b>Alerta do Sistema:</b> Não atualize a página (F5).</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
-        
         col1, col2 = st.columns(2)
         with col1:
             if st.button("Cancelar Missão", use_container_width=True):
@@ -678,16 +681,15 @@ else:
                 if not df_user.empty:
                     df_user.reset_index(drop=True, inplace=True)
                     
-                    # Gráfico de Evolução no Tempo (NOVIDADE)
+                    # Gráfico de Evolução no Tempo (Linha do Tempo)
                     st.markdown("### 📈 Evolução Histórica (Linha do Tempo)")
                     if len(df_user) > 1:
                         df_user['Tentativa_Num'] = range(1, len(df_user) + 1)
                         df_user['Rotulo'] = [f"{i}ª T. ({row['Simulado'][:10]}...)" for i, row in zip(df_user['Tentativa_Num'], df_user.itertuples())]
                         
                         fig_line = px.line(df_user, x='Rotulo', y='Nota (%)', markers=True)
-                        fig_line.update_traces(line_color='#3B82F6', line_width=3, marker=dict(size=10, color='#60A5FA', line=dict(width=2, color='#FFFFFF')))
+                        fig_line.update_traces(line_color='#3B82F6', line_width=4, marker=dict(size=12, color='#60A5FA', line=dict(width=2, color='#FFFFFF')))
                         
-                        # Adiciona uma linha verde de meta (70%)
                         fig_line.add_hline(y=70, line_dash="dash", line_color="#10B981", annotation_text="Meta (70%)", annotation_position="bottom right")
                         
                         fig_line.update_layout(
@@ -704,7 +706,6 @@ else:
                     
                     st.divider()
 
-                    # Processamento de Tempos e Radar
                     total_secs = 0
                     valid_times = 0
                     for t_str in df_user['Tempo']:
@@ -759,7 +760,7 @@ else:
                         if strong_mods: st.markdown(f"<br>**🏆 Dominância:**<br>O módulo de **{strong_mods[-1]}** atingiu padrão de excelência. Modo manutenção ativado.", unsafe_allow_html=True)
 
                         st.markdown("<br>**⏱️ Pacing de Prova:**", unsafe_allow_html=True)
-                        if media_secs > 1500: st.markdown("⚠️ *Velocidade de risco:* Você está usando quase todo o tempo limite. Em prova oficial, você não terá fôlego para revisar.")
+                        if media_secs > 1500: st.markdown("⚠️ *Velocidade de risco:* Você está usando quase todo o tempo limite. Em prova oficial, você não terá fôlego para revisar. Pratique leitura dinâmica.")
                         elif media_secs > 0 and media_secs < 600: st.markdown("⚡ *Impulsividade:* Seu tempo de resposta está muito rápido. Cuidado com pegadinhas.")
                         elif media_secs > 0: st.markdown("✅ *Ritmo Cadenciado:* Seu controle de tempo está perfeitamente alinhado com candidatos aprovados.")
                         st.markdown("</div>", unsafe_allow_html=True)
