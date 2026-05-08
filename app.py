@@ -210,7 +210,6 @@ if "logado" not in st.session_state:
 def calcular_gamificacao(df_user):
     """Calcula XP e Nível baseado no histórico de simulados (Status ANCORD)"""
     xp = len(df_user) * 150
-    # Nova Régua Focada na Aprovação ANCORD
     if xp < 300: 
         nivel = "Iniciante (Fase de Base)"
     elif xp < 750: 
@@ -351,7 +350,6 @@ else:
 
     # --- BARRA LATERAL ---
     with st.sidebar:
-        # LOGO VMB SOLO NO TOPO (Círculo Vermelho - Ajustado)
         try:
             with open("VMB_logo_solo.png", "rb") as f:
                 logo_sb = base64.b64encode(f.read()).decode()
@@ -359,7 +357,6 @@ else:
         except:
             st.markdown("<h3 style='text-align: center; color: #3B82F6;'>VMB INVEST</h3>", unsafe_allow_html=True)
 
-        # CARD DO AGENTE (Círculo Laranja Inferior - Premium)
         foto_html = "👤"
         if st.session_state.foto_perfil:
             foto_html = f'<img src="data:image/jpeg;base64,{st.session_state.foto_perfil}" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid #3B82F6; box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);">'
@@ -378,10 +375,9 @@ else:
         
         # MENU LATERAL
         st.markdown("<div style='font-size: 12px; color: #64748B; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; margin-left: 5px;'>Navegação</div>", unsafe_allow_html=True)
-        # O perfil não está mais aqui, ele foi para o canto superior direito
         menu = st.radio("Módulos de Avaliação", ["Dashboard Principal", "Evolução e IA"], label_visibility="collapsed")
         
-        # BOTÃO SAIR NO FUNDO ESQUERDO (Círculo Laranja Superior Realocado)
+        # BOTÃO SAIR NO FUNDO ESQUERDO
         st.markdown("<div style='height: 35vh;'></div>", unsafe_allow_html=True)
         st.divider()
         if st.button("🚪 Sair do Sistema", use_container_width=True):
@@ -505,7 +501,6 @@ else:
                 st.divider()
                 st.markdown("#### 🎯 Termômetro de Prontidão para a Prova")
                 
-                # Barra de Progresso de Prontidão (Base: 1500 XP = Pronto)
                 xp_atual = st.session_state.xp_usuario
                 meta_xp = 1500
                 progresso = min(int((xp_atual / meta_xp) * 100), 100)
@@ -649,7 +644,7 @@ else:
 
         percentual = (acertos / total_questoes) * 100 if total_questoes > 0 else 0
 
-        # SALVAMENTO
+        # SALVAMENTO NA PLANILHA
         if not st.session_state.resultado_salvo:
             with st.spinner("Salvando telemetria na nuvem..."):
                 try:
@@ -706,7 +701,7 @@ else:
             st.session_state.page = "Home"
             st.rerun()
 
-    # --- TELA EVOLUÇÃO E IA ---
+    # --- TELA EVOLUÇÃO E IA COM CORREÇÃO E ANÁLISE COMPLETA ---
     elif st.session_state.page == "Evolução":
         st.markdown(premium_page_header(
             "Inteligência e Evolução", 
@@ -724,95 +719,135 @@ else:
                 if not df_user.empty:
                     df_user.reset_index(drop=True, inplace=True)
                     
-                    # Gráfico de Evolução no Tempo (Linha do Tempo)
-                    st.markdown("### 📈 Evolução Histórica (Linha do Tempo)")
-                    if len(df_user) > 1:
-                        df_user['Tentativa_Num'] = range(1, len(df_user) + 1)
-                        df_user['Rotulo'] = [f"{i}ª T. ({row['Simulado'][:10]}...)" for i, row in zip(df_user['Tentativa_Num'], df_user.itertuples())]
-                        
-                        fig_line = px.line(df_user, x='Rotulo', y='Nota (%)', markers=True)
-                        fig_line.update_traces(line_color='#3B82F6', line_width=4, marker=dict(size=12, color='#60A5FA', line=dict(width=2, color='#FFFFFF')))
-                        
-                        fig_line.add_hline(y=70, line_dash="dash", line_color="#10B981", annotation_text="Meta (70%)", annotation_position="bottom right")
-                        
-                        fig_line.update_layout(
-                            plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)',
-                            xaxis_title="", yaxis_title="Nota (%)",
-                            xaxis=dict(showgrid=False, color='#8B949E'),
-                            yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)', color='#8B949E', range=[0, 105]),
-                            margin=dict(l=20, r=20, t=20, b=20),
-                            hovermode="x unified"
-                        )
-                        st.plotly_chart(fig_line, use_container_width=True)
-                    else:
-                        st.info("💡 Complete mais simulados para gerar o gráfico de evolução temporal.")
-                    
-                    st.divider()
-
+                    # 1. PROCESSAR TEMPO DE FORMA ESTRUTURADA
+                    tempos_segundos =[]
                     total_secs = 0
                     valid_times = 0
+                    
                     for t_str in df_user['Tempo']:
                         match = re.search(r'(\d+)m\s*(\d+)s', str(t_str))
                         if match:
-                            total_secs += int(match.group(1)) * 60 + int(match.group(2))
+                            secs = int(match.group(1)) * 60 + int(match.group(2))
+                            total_secs += secs
                             valid_times += 1
+                            tempos_segundos.append(secs)
+                        else:
+                            tempos_segundos.append(0)
                     
-                    media_secs = total_secs // valid_times if valid_times > 0 else 0
+                    df_user['Segundos'] = tempos_segundos
+                    df_user['Minutos'] = df_user['Segundos'] / 60.0
                     
+                    media_secs_prova = total_secs // valid_times if valid_times > 0 else 0
+                    media_secs_questao = total_secs / (valid_times * 20) if valid_times > 0 else 0
+                    avg_score = df_user['Nota (%)'].mean()
+                    
+                    # Criando rótulo com iteração segura
+                    df_user['Rotulo'] = [f"{i+1}ª T. ({row['Simulado'][:12]}...)" for i, row in df_user.iterrows()]
+
+                    # --- HEADERS: KPIS ---
+                    col1, col2, col3, col4 = st.columns(4)
+                    col1.metric("Média de Acertos", f"{avg_score:.1f}%")
+                    col2.metric("Simulados Realizados", len(df_user))
+                    col3.metric("Tempo Médio / Prova", f"{media_secs_prova // 60}m {media_secs_prova % 60}s")
+                    col4.metric("Tempo / Questão", f"{int(media_secs_questao)}s")
+                    
+                    st.divider()
+
+                    # --- GRÁFICOS DE LINHA E TEMPO ---
+                    col_chart1, col_chart2 = st.columns(2)
+                    with col_chart1:
+                        st.markdown("### 📈 Evolução Histórica (Notas)")
+                        if len(df_user) > 1:
+                            fig_line = px.line(df_user, x='Rotulo', y='Nota (%)', markers=True)
+                            fig_line.update_traces(line_color='#3B82F6', line_width=4, marker=dict(size=12, color='#60A5FA', line=dict(width=2, color='#FFFFFF')))
+                            fig_line.add_hline(y=70, line_dash="dash", line_color="#10B981", annotation_text="Meta (70%)", annotation_position="bottom right")
+                            fig_line.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="", yaxis_title="Nota (%)", xaxis=dict(showgrid=False, color='#8B949E'), yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)', color='#8B949E', range=[0, 105]), margin=dict(l=20, r=20, t=20, b=20), hovermode="x unified")
+                            st.plotly_chart(fig_line, use_container_width=True)
+                        else:
+                            st.info("💡 Complete mais simulados para gerar o gráfico de evolução temporal.")
+
+                    with col_chart2:
+                        st.markdown("### ⏱️ Evolução de Tempo (Minutos)")
+                        if len(df_user) > 0:
+                            fig_time = px.bar(df_user, x='Rotulo', y='Minutos', text_auto='.1f')
+                            fig_time.update_traces(marker_color='#8B5CF6', marker_line_color='#C4B5FD', marker_line_width=1.5, textposition='outside', textfont_color='#FAFAFA')
+                            fig_time.add_hline(y=30, line_dash="dash", line_color="#EF4444", annotation_text="Limite (30m)", annotation_position="top right")
+                            
+                            max_y = df_user['Minutos'].max() * 1.2 if df_user['Minutos'].max() > 0 else 35
+                            fig_time.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="", yaxis_title="Minutos", xaxis=dict(showgrid=False, color='#8B949E'), yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)', color='#8B949E', range=[0, max(35, max_y)]), margin=dict(l=20, r=20, t=20, b=20))
+                            st.plotly_chart(fig_time, use_container_width=True)
+                    
+                    st.divider()
+
+                    # --- RADAR E IA ---
                     module_scores = {}
                     for _, row in df_user.iterrows():
-                        if 'Detalhes_Modulos' in df_user.columns and pd.notna(row['Detalhes_Modulos']):
+                        if 'Detalhes_Modulos' in df_user.columns and pd.notna(row['Detalhes_Modulos']) and str(row['Detalhes_Modulos']).strip() != "":
                             try:
-                                detalhes = json.loads(row['Detalhes_Modulos'])
+                                detalhes = json.loads(str(row['Detalhes_Modulos']))
                                 for mod, score in detalhes.items():
-                                    if mod not in module_scores: module_scores[mod] =[]
+                                    if mod not in module_scores: module_scores[mod] = []
                                     module_scores[mod].append(score)
-                                continue 
-                            except: pass
-                        
-                        sim_name = row['Simulado']
-                        if sim_name in DIC_SIMULADOS:
-                            for mod in DIC_SIMULADOS[sim_name]:
-                                if mod not in module_scores: module_scores[mod] = []
-                                module_scores[mod].append(row['Nota (%)'])
-                                
+                            except Exception:
+                                pass
+                        else:
+                            sim_name = row['Simulado']
+                            if sim_name in DIC_SIMULADOS:
+                                for mod in DIC_SIMULADOS[sim_name]:
+                                    if mod not in module_scores: module_scores[mod] =[]
+                                    module_scores[mod].append(row['Nota (%)'])
+
                     avg_module_scores = {mod: sum(scores)/len(scores) for mod, scores in module_scores.items()}
 
-                    col_radar, col_ia = st.columns([1.2, 1])
+                    col_radar, col_ia = st.columns([1.2, 1.2])
                     with col_radar:
-                        st.markdown("<h3 style='text-align:center;'>Radar de Competências</h3>", unsafe_allow_html=True)
+                        st.markdown("<h3 style='text-align:center;'>🎯 Radar de Forças e Fraquezas</h3>", unsafe_allow_html=True)
                         if avg_module_scores:
                             df_radar = pd.DataFrame(dict(Força=list(avg_module_scores.values()), Modulo=list(avg_module_scores.keys())))
-                            df_radar = pd.concat([df_radar, df_radar.iloc[[0]]]) 
-                            
-                            fig = go.Figure()
-                            fig.add_trace(go.Scatterpolar(r=df_radar['Força'], theta=df_radar['Modulo'], fill='toself', name='Sua Força', line_color='#3B82F6', fillcolor='rgba(59, 130, 246, 0.4)'))
-                            fig.add_trace(go.Scatterpolar(r=[85]*len(df_radar), theta=df_radar['Modulo'], fill='none', name='Top 10% Elite', line_color='rgba(16, 185, 129, 0.5)', line_dash='dash'))
+                            df_radar = pd.concat([df_radar, df_radar.iloc[[0]]])
 
-                            fig.update_layout(polar=dict(bgcolor='rgba(0,0,0,0)', radialaxis=dict(visible=True, range=[0, 100], gridcolor='#30363D', color='#8B949E'), angularaxis=dict(gridcolor='#30363D', color='#FAFAFA')), showlegend=True, legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', margin=dict(l=40, r=40, t=20, b=20))
-                            st.plotly_chart(fig, use_container_width=True)
+                            fig_radar = go.Figure()
+                            fig_radar.add_trace(go.Scatterpolar(r=df_radar['Força'], theta=df_radar['Modulo'], fill='toself', name='Sua Força', line_color='#3B82F6', fillcolor='rgba(59, 130, 246, 0.4)'))
+                            fig_radar.add_trace(go.Scatterpolar(r=[85]*len(df_radar), theta=df_radar['Modulo'], fill='none', name='Meta Elite (85%)', line_color='rgba(16, 185, 129, 0.5)', line_dash='dash'))
+
+                            fig_radar.update_layout(polar=dict(bgcolor='rgba(0,0,0,0)', radialaxis=dict(visible=True, range=[0, 100], gridcolor='#30363D', color='#8B949E'), angularaxis=dict(gridcolor='#30363D', color='#FAFAFA')), showlegend=True, legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', margin=dict(l=40, r=40, t=20, b=20))
+                            st.plotly_chart(fig_radar, use_container_width=True)
+                        else:
+                            st.info("Faça mais simulados para desenhar seu radar.")
 
                     with col_ia:
-                        st.markdown("### 🧠 Diagnóstico do Mentor")
+                        st.markdown("### 🧠 Mentor IA - Dicas ANCORD")
+
                         sorted_mods = sorted(avg_module_scores.items(), key=lambda item: item[1])
                         weak_mods =[mod for mod, score in sorted_mods if score < 70]
                         strong_mods =[mod for mod, score in sorted_mods if score >= 85]
-                        
-                        st.markdown("""<div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);"><p style="color:#8B949E; font-size:14px; margin-bottom:5px;">ANÁLISE HEURÍSTICA CONCLUÍDA</p>""", unsafe_allow_html=True)
-                        if weak_mods: st.markdown(f"**🚨 Atenção Crítica:**<br>Detectei falhas estruturais em **{weak_mods[0]}**. Redirecione 80% do seu próximo ciclo de estudos para a teoria base deste módulo.", unsafe_allow_html=True)
-                        if strong_mods: st.markdown(f"<br>**🏆 Dominância:**<br>O módulo de **{strong_mods[-1]}** atingiu padrão de excelência. Modo manutenção ativado.", unsafe_allow_html=True)
 
-                        st.markdown("<br>**⏱️ Pacing de Prova:**", unsafe_allow_html=True)
-                        if media_secs > 1500: st.markdown("⚠️ *Velocidade de risco:* Você está usando quase todo o tempo limite. Em prova oficial, você não terá fôlego para revisar. Pratique leitura dinâmica.")
-                        elif media_secs > 0 and media_secs < 600: st.markdown("⚡ *Impulsividade:* Seu tempo de resposta está muito rápido. Cuidado com pegadinhas.")
-                        elif media_secs > 0: st.markdown("✅ *Ritmo Cadenciado:* Seu controle de tempo está perfeitamente alinhado com candidatos aprovados.")
+                        st.markdown("""<div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);"><p style="color:#8B949E; font-size:14px; margin-bottom:5px;">ANÁLISE HEURÍSTICA DE DESEMPENHO</p>""", unsafe_allow_html=True)
+
+                        if weak_mods:
+                            st.markdown(f"**🚨 Foco de Estudo:** Detectei falhas em **{weak_mods[0]}**. A prova da ANCORD exige mínimo de 50% em módulos específicos. Reforce a teoria urgentemente.", unsafe_allow_html=True)
+                        if strong_mods:
+                            st.markdown(f"<br>**🏆 Ponto Forte:** O módulo **{strong_mods[-1]}** está excelente. Mantenha com revisões ativas.", unsafe_allow_html=True)
+
+                        st.markdown("<br>**⏱️ Gestão de Tempo:**", unsafe_allow_html=True)
+                        if media_secs_questao > 90:
+                            st.markdown("⚠️ *Lento:* Você demora mais de 1m30s por questão. Na prova oficial (120 minutos / 80 questões), o ideal é 1m30s. Treine agilidade.")
+                        elif media_secs_questao < 40 and valid_times > 0:
+                            st.markdown("⚡ *Rápido demais:* Menos de 40s por questão pode indicar leitura desatenta. Cuidado com cascas de banana.")
+                        elif valid_times > 0:
+                            st.markdown("✅ *Ritmo Perfeito:* Seu tempo médio é excelente para a aprovação.")
+
+                        st.markdown("<br>🕵️‍♂️ **Alerta de Pegadinhas (Padrão ANCORD):**<br>Redobre a atenção quando a questão contiver as palavras: <span style='color:#EF4444; font-weight:bold;'>EXCETO, APENAS, SEMPRE, OBRIGATORIAMENTE, GARANTIDO.</span> A ANCORD as utiliza para invalidar alternativas longas.", unsafe_allow_html=True)
+
                         st.markdown("</div>", unsafe_allow_html=True)
-                    
+
                     st.divider()
                     st.subheader("Data Grid (Registros Brutos)")
-                    df_display = df_user[['Data', 'Simulado', 'Nota (%)', 'Tempo']].copy()
+                    df_display = df_user[['Rotulo', 'Data', 'Simulado', 'Nota (%)', 'Tempo']].copy()
+                    df_display.rename(columns={'Rotulo': 'Tentativa'}, inplace=True)
                     st.dataframe(df_display, column_config={"Nota (%)": st.column_config.ProgressColumn("Desempenho", help="Sua nota percentual", format="%f%%", min_value=0, max_value=100), "Data": st.column_config.TextColumn("Data da Execução"), "Simulado": st.column_config.TextColumn("Missão")}, hide_index=True, use_container_width=True)
+
                 else:
                     st.info("Aguardando telemetria inicial. Faça seu primeiro simulado.")
             except Exception as e:
-                st.error("Falha ao processar banco de dados da IA.")
+                st.error(f"Falha ao processar banco de dados da IA. Detalhes do Erro: {e}")
