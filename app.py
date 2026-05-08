@@ -6,6 +6,9 @@ import time
 import os
 import json
 import re
+import base64
+from io import BytesIO
+from PIL import Image
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit.components.v1 as components
@@ -27,270 +30,123 @@ def inject_custom_css():
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-        /* Esconder ícones e textos residuais do Streamlit */
         button[title="View fullscreen"] { display: none !important; }
         .stDeployButton { display: none !important; }
         #MainMenu { visibility: hidden !important; }
         footer { visibility: hidden !important; }
         
-        /* Garantir que o header fique transparente, mas o botão de recolher a barra continue visível e clicável */
-        header[data-testid="stHeader"] {
-            background-color: transparent !important;
-            z-index: 99999 !important;
-        }
-        
-        /* Forçar a cor do ícone de abrir/fechar a barra lateral para branco */
-        header[data-testid="stHeader"] svg {
-            fill: #FAFAFA !important;
-            stroke: #FAFAFA !important;
-        }
+        header[data-testid="stHeader"] { background-color: transparent !important; z-index: 99999 !important; }
+        header[data-testid="stHeader"] svg { fill: #FAFAFA !important; stroke: #FAFAFA !important; }
 
         :root {
-            --vmb-black: #050812;
-            --vmb-black-2: #0A1020;
-            --vmb-card: rgba(10, 16, 32, 0.72);
-            --vmb-card-strong: rgba(12, 18, 35, 0.92);
-            --vmb-blue: #2563EB;
-            --vmb-blue-2: #3B82F6;
-            --vmb-blue-3: #60A5FA;
+            --vmb-black: #0E1117;
+            --vmb-card: rgba(15, 23, 42, 0.85);
+            --vmb-blue: #3B82F6;
             --vmb-white: #F8FAFC;
-            --vmb-muted: #9AA8BD;
-            --vmb-border: rgba(148, 163, 184, 0.18);
-            --vmb-glow: rgba(37, 99, 235, 0.32);
         }
 
-        html, body, [class*="css"] {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
-        }
+        html, body,[class*="css"] { font-family: 'Inter', sans-serif !important; }
 
         .stApp {
             color: var(--vmb-white);
-            background:
-                radial-gradient(circle at 12% 8%, rgba(37, 99, 235, 0.12) 0, transparent 40%),
-                radial-gradient(circle at 88% 18%, rgba(96, 165, 250, 0.08) 0, transparent 30%),
-                linear-gradient(135deg, #020617 0%, #050B14 100%) !important;
+            background: linear-gradient(135deg, #020617 0%, #0A1020 100%) !important;
             background-attachment: fixed !important;
         }
 
-        .stApp::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
-            background-image:
-                linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
-                radial-gradient(circle at 30% 30%, rgba(59,130,246,0.13), transparent 22%),
-                radial-gradient(circle at 75% 62%, rgba(255,255,255,0.06), transparent 18%);
-            background-size: 56px 56px, 56px 56px, 100% 100%, 100% 100%;
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.2));
-        }
-
         .block-container {
-            position: relative;
-            z-index: 1;
-            padding-top: 3rem !important;
+            padding-top: 2rem !important;
             padding-bottom: 4rem !important;
             max-width: 1220px !important;
         }
 
         h1, h2, h3, h4 {
             color: var(--vmb-white) !important;
-            font-family: 'Inter', sans-serif !important;
+            font-weight: 800 !important;
             letter-spacing: -0.02em !important;
-            text-shadow: none !important;
         }
 
         .vmb-hero {
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(148, 163, 184, 0.14);
-            border-radius: 24px;
-            padding: 32px;
-            background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.98));
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(12px);
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.6), rgba(2, 6, 23, 0.8));
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
             margin-bottom: 24px;
-        }
-
-        .vmb-hero::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(120deg, rgba(255,255,255,0.13), transparent 24%, transparent 74%, rgba(96,165,250,0.12));
-            pointer-events: none;
         }
 
         .vmb-eyebrow {
             display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
-            border: 1px solid rgba(96, 165, 250, 0.28);
+            padding: 6px 12px;
             border-radius: 999px;
-            background: rgba(37, 99, 235, 0.12);
-            color: #BFDBFE;
-            font-weight: 800;
-            font-size: 12px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
-
-        .vmb-title {
-            font-size: clamp(32px, 4.5vw, 56px);
-            line-height: 1.05;
-            margin: 12px 0 8px;
-            font-weight: 800;
-            color: #FFFFFF !important;
-        }
-
-        .vmb-subtitle {
-            color: #AAB8CF;
-            font-size: 16px;
-            line-height: 1.65;
-            max-width: 680px;
-            margin: 0;
-        }
-
-        .vmb-hero-grid {
-            display: grid;
-            grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
-            gap: 22px;
-            align-items: center;
-        }
-
-        .vmb-illustration {
-            position: relative;
-            min-height: 230px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: rgba(37, 99, 235, 0.15);
+            color: #60A5FA;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: 0.05em;
         }
 
         .vmb-premium-card, div[data-testid="stVerticalBlock"] div[style*="border"] {
-            background: linear-gradient(145deg, rgba(15, 23, 42, 0.82), rgba(2, 6, 23, 0.74)) !important;
-            border: 1px solid var(--vmb-border) !important;
-            border-radius: 22px !important;
-            box-shadow: 0 20px 60px rgba(2,6,23,0.42), inset 0 1px 0 rgba(255,255,255,0.05) !important;
-            padding: 22px !important;
-            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease !important;
-            backdrop-filter: blur(18px) !important;
+            background: var(--vmb-card) !important;
+            border: 1px solid rgba(255,255,255,0.05) !important;
+            border-radius: 16px !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2) !important;
+            padding: 20px !important;
+            transition: all 0.3s ease !important;
         }
 
         div[data-testid="stVerticalBlock"] div[style*="border"]:hover {
-            transform: translateY(-4px) !important;
-            border-color: rgba(96, 165, 250, 0.56) !important;
-            box-shadow: 0 26px 78px rgba(37, 99, 235, 0.20), inset 0 1px 0 rgba(255,255,255,0.08) !important;
-        }
-
-        .vmb-metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 16px;
-            margin: 18px 0 28px;
+            transform: translateY(-3px) !important;
+            border-color: rgba(59, 130, 246, 0.4) !important;
         }
 
         .vmb-metric-card {
-            border-radius: 20px;
-            padding: 24px;
+            border-radius: 16px;
+            padding: 20px;
             background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(148, 163, 184, 0.12);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.05);
         }
-
-        .vmb-metric-label { color: #94A3B8; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
-        .vmb-metric-value { color: #FFFFFF; font-size: 30px; font-weight: 900; margin-top: 8px; letter-spacing: -0.04em; }
-        .vmb-metric-hint { color: #60A5FA; font-size: 12px; font-weight: 700; margin-top: 5px; }
-
-        .vmb-section-banner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 18px;
-            padding: 18px 20px;
-            margin: 18px 0 16px;
-            border-radius: 22px;
-            background: linear-gradient(90deg, rgba(37,99,235,0.20), rgba(15,23,42,0.64));
-            border: 1px solid rgba(96,165,250,0.20);
-        }
-
+        .vmb-metric-label { color: #94A3B8; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .vmb-metric-value { color: #FFFFFF; font-size: 28px; font-weight: 900; margin-top: 4px; }
+        
         .stButton>button {
-            border-radius: 12px !important;
-            font-weight: 800 !important;
-            letter-spacing: 0.01em !important;
-            transition: all 0.25s ease !important;
-            min-height: 44px !important;
-            border: 1px solid rgba(148,163,184,0.18) !important;
-            background: rgba(15,23,42,0.78) !important;
-            color: #F8FAFC !important;
+            border-radius: 10px !important;
+            font-weight: 700 !important;
+            min-height: 42px !important;
+            transition: all 0.2s ease !important;
         }
-
         .stButton>button[kind="primary"] {
-            background: linear-gradient(92deg, #1D4ED8, #2563EB 48%, #60A5FA) !important;
-            border: 1px solid rgba(191,219,254,0.25) !important;
-            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.42) !important;
+            background: linear-gradient(92deg, #1D4ED8, #3B82F6) !important;
+            border: none !important;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3) !important;
         }
-
-        .stButton>button:hover {
-            transform: translateY(-2px) scale(1.01) !important;
-            border-color: rgba(96,165,250,0.62) !important;
-            box-shadow: 0 16px 40px rgba(37,99,235,0.28) !important;
-        }
-
-        section[data-testid="stSidebar"] {
-            background:
-                radial-gradient(circle at 50% 0%, rgba(37,99,235,0.24), transparent 32%),
-                linear-gradient(180deg, rgba(2,6,23,0.96), rgba(8,13,28,0.96)) !important;
-            border-right: 1px solid rgba(148,163,184,0.14) !important;
-            backdrop-filter: blur(20px) !important;
+        .stButton>button[kind="primary"]:hover {
+            transform: scale(1.02) !important;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5) !important;
         }
         
-        @media (max-width: 900px) {
-            .vmb-hero-grid, .vmb-metrics-grid { grid-template-columns: 1fr; }
-            .vmb-illustration { min-height: 160px; }
+        .stTextInput input {
+            border-radius: 10px !important;
+            background-color: rgba(0, 0, 0, 0.3) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+        .stTextInput input:focus { border-color: #3B82F6 !important; }
+        
+        /* Top Navigation Bar Customizada */
+        .top-nav {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
     </style>
     """, unsafe_allow_html=True)
 
-# Geração dos Blocos de HTML Compactados com Separação das Logos
-def premium_illustration(kind):
-    import base64
-    
-    if kind == "logo_abertura":
-        try:
-            with open("Logo_VMB_V.png", "rb") as f:
-                data = base64.b64encode(f.read()).decode()
-            # Brilho azul neon poderoso atrás da logo da VMB (Tela de Abertura)
-            return f"<div class='vmb-illustration'><img src='data:image/png;base64,{data}' style='width:100%; max-width:280px; border-radius: 24px; box-shadow: 0 0 45px rgba(37, 99, 235, 0.5); object-fit: contain;'></div>"
-        except:
-            pass 
-            
-    elif kind == "logo_interna":
-        try:
-            with open("VMB_logo_solo.png", "rb") as f:
-                data = base64.b64encode(f.read()).decode()
-            # Fundo suave para a Logo VMB Solo nas telas internas
-            return f"<div class='vmb-illustration'><img src='data:image/png;base64,{data}' style='width:100%; max-width:240px; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); object-fit: contain;'></div>"
-        except:
-            pass
-
-    return "<div class='vmb-illustration'><h2>📊</h2></div>"
-
-def premium_page_header(title, subtitle, kind="logo_interna", eyebrow="VMB INVEST | PERFORMANCE SYSTEM"):
-    ill = premium_illustration(kind)
-    return f"<div class='vmb-hero'><div class='vmb-hero-grid'><div><div class='vmb-eyebrow'>{eyebrow}</div><div class='vmb-title'>{title}</div><p class='vmb-subtitle'>{subtitle}</p></div>{ill}</div></div>"
-
-def premium_section_banner(title, subtitle):
-    return f"<div class='vmb-section-banner'><div><h3 style='margin:0 !important; font-size:22px;'>{title}</h3><p style='margin:4px 0 0; color:#9AA8BD;'>{subtitle}</p></div><div style='font-weight:900;color:#BFDBFE;'>PREMIUM</div></div>"
-
-def premium_metric_card(label, value, hint=""):
-    return f"<div class='vmb-metric-card'><div class='vmb-metric-label'>{label}</div><div class='vmb-metric-value'>{value}</div><div class='vmb-metric-hint'>{hint}</div></div>"
-
 inject_custom_css()
 
-# Módulos por simulado
+# --- MÓDULOS ---
 DIC_SIMULADOS = {
     "Simulado 1 (Semanas 1 e 2)":["A Atividade do Assessor de Investimentos (AI)", "Lavagem de Dinheiro"],
     "Simulado 2 (Semanas 3 e 4)":["Mercado de Capitais", "Securitização de Recebíveis", "Derivativos"],
@@ -307,12 +163,12 @@ if "logado" not in st.session_state:
         "logado": False, "usuario": "", "page": "Login", "simulado_atual_indice": 0,
         "simulado_nome": "", "modulos_selecionados":[], "quiz_atual": None,
         "inicio_time": None, "fim_time": None, "respostas_usuario": {},
-        "resultado_salvo": False, "xp_usuario": 0, "nivel_usuario": "Trainee", "foto_perfil": None
+        "resultado_salvo": False, "xp_usuario": 0, "nivel_usuario": "Trainee", "foto_perfil": ""
     })
 
+# --- FUNÇÕES CORE ---
 def calcular_gamificacao(df_user):
-    simulados_feitos = len(df_user)
-    xp = simulados_feitos * 150
+    xp = len(df_user) * 150
     if xp < 300: nivel = "SDR Trainee"
     elif xp < 750: nivel = "SDR Júnior"
     elif xp < 1200: nivel = "SDR Pleno"
@@ -363,22 +219,30 @@ def selecionar_questoes_balanceadas(banco, modulos, total_desejado=20):
 # --- INTERFACE ---
 if not st.session_state.logado:
     st.markdown("<br><br>", unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([0.8, 2.4, 0.8])
+    col1, col2, col3 = st.columns([1, 2, 1])
+    
     with col2:
-        st.markdown(premium_page_header(
-            "VMB INVEST", 
-            "Treinamento de alta performance para assessores que querem evoluir com método, dados e mentalidade de elite.", 
-            "logo_abertura", # <- AQUI PUXA A Logo_VMB_V.png
-            "SIMULADO DE ELITE"
-        ), unsafe_allow_html=True)
+        # TELA DE LOGIN MAIS LIMPA (Evitando caixas extras)
+        try:
+            with open("Logo_VMB_V.png", "rb") as f:
+                data = base64.b64encode(f.read()).decode()
+            st.markdown(f"""
+            <div style='text-align: center; margin-bottom: 20px;'>
+                <img src='data:image/png;base64,{data}' style='width: 180px; filter: drop-shadow(0 0 20px rgba(37, 99, 235, 0.4)); margin-bottom: 15px;'>
+                <h2 style='margin:0;'>Portal SDR Elite</h2>
+                <p style='color: #8B949E;'>Treinamento de Alta Performance</p>
+            </div>
+            """, unsafe_allow_html=True)
+        except:
+            st.markdown("<h1 style='text-align:center;'>VMB INVEST</h1>", unsafe_allow_html=True)
         
         with st.container(border=True):
-            user = st.text_input("Usuário", placeholder="ID do Agente")
-            pw = st.text_input("Senha", type="password", placeholder="••••••••")
+            user = st.text_input("ID do Agente", placeholder="Seu usuário")
+            pw = st.text_input("Senha de Acesso", type="password", placeholder="••••••••")
             
             st.markdown("<br>", unsafe_allow_html=True)
             if st.button("ACESSAR PLATAFORMA ⚡", use_container_width=True, type="primary"):
-                with st.spinner("Autenticando e sincronizando progresso..."):
+                with st.spinner("Autenticando..."):
                     try:
                         conn = st.connection("gsheets", type=GSheetsConnection)
                         df_usuarios = conn.read(worksheet="Usuarios", ttl=0) 
@@ -388,6 +252,12 @@ if not st.session_state.logado:
                             usuario_formatado = user.capitalize()
                             st.session_state.logado = True
                             st.session_state.usuario = usuario_formatado
+                            
+                            # Recarrega a foto do GSheets
+                            if 'Foto' in df_usuarios.columns:
+                                foto_b64 = user_match['Foto'].values[0] if not user_match.empty else ""
+                                if pd.notna(foto_b64) and foto_b64 != "":
+                                    st.session_state.foto_perfil = foto_b64
                             
                             try:
                                 df_historico = conn.read(worksheet="Historico", ttl=0)
@@ -414,71 +284,66 @@ if not st.session_state.logado:
                             st.rerun()
                         else:
                             st.error("Acesso negado. Credenciais inválidas.")
-                    except:
-                        st.error("Falha de conexão com os servidores.")
+                    except Exception as e:
+                        st.error(f"Falha de conexão com os servidores. {e}")
 
 else:
-    # --- BARRA LATERAL GAMIFICADA ---
+    # --- TOP NAVIGATION BAR (Canto Superior Direito) ---
+    col_vazio, col_perfil, col_sair = st.columns([8, 1.2, 1])
+    with col_perfil:
+        if st.button("⚙️ Meu Perfil", use_container_width=True):
+            st.session_state.page = "Perfil"
+            st.rerun()
+    with col_sair:
+        if st.button("🚪 Sair", use_container_width=True):
+            st.session_state.clear()
+            st.rerun()
+    st.markdown("<div style='border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px;'></div>", unsafe_allow_html=True)
+
+    # --- BARRA LATERAL (Agora focada apenas nos Módulos e Info Rápida) ---
     with st.sidebar:
-        import base64
-        
-        # LOGO VMB SOLO NO TOPO DA SIDEBAR (Círculo Amarelo que você pontuou!)
         try:
             with open("VMB_logo_solo.png", "rb") as f:
                 logo_sb = base64.b64encode(f.read()).decode()
-            st.markdown(f'<div style="text-align: center; margin-bottom: 25px;"><img src="data:image/png;base64,{logo_sb}" style="max-width: 160px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));"></div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="text-align: center; margin-bottom: 25px;"><img src="data:image/png;base64,{logo_sb}" style="max-width: 140px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));"></div>', unsafe_allow_html=True)
         except:
-            st.markdown("<h3 style='text-align: center; color: #3B82F6;'>VMB INVEST</h3>", unsafe_allow_html=True)
+            pass
 
         foto_html = "👤"
-        if "foto_perfil" in st.session_state and st.session_state.foto_perfil:
-            try:
-                foto_base64 = base64.b64encode(st.session_state.foto_perfil).decode()
-                foto_html = f'<img src="data:image/png;base64,{foto_base64}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #3B82F6;">'
-            except: pass
+        if st.session_state.foto_perfil:
+            foto_html = f'<img src="data:image/png;base64,{st.session_state.foto_perfil}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #3B82F6;">'
 
-        sidebar_html = '<div style="background: rgba(37, 99, 235, 0.08); padding: 20px; border-radius: 20px; border: 1px solid rgba(37, 99, 235, 0.15); margin-bottom: 20px; display: flex; align-items: center; gap: 15px;">'
-        sidebar_html += '<div style="flex-shrink: 0;">' + foto_html + '</div>'
-        sidebar_html += '<div style="overflow: hidden;">'
-        sidebar_html += '<div style="font-size: 12px; color: #8B949E; text-transform: uppercase; letter-spacing: 0.05em;">Agente</div>'
-        sidebar_html += '<div style="font-size: 18px; font-weight: 800; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + str(st.session_state.usuario) + '</div>'
-        sidebar_html += '<div style="font-size: 12px; font-weight: 700; color: #3B82F6; margin-top: 2px;">' + str(st.session_state.nivel_usuario) + '</div>'
-        sidebar_html += '</div></div>'
-        sidebar_html += '<div style="padding: 0 10px 20px;">'
-        sidebar_html += '<div style="background: rgba(255,255,255,0.05); border-radius: 10px; height: 6px; overflow: hidden;">'
-        xp_percent = (st.session_state.xp_usuario % 1000) / 10
-        sidebar_html += '<div style="background: linear-gradient(90deg, #3B82F6, #60A5FA); width: ' + str(xp_percent) + '%; height: 100%;"></div>'
-        sidebar_html += '</div>'
-        sidebar_html += '<div style="font-size: 10px; color: #8B949E; margin-top: 6px; text-align: right; font-weight: 600;">' + str(st.session_state.xp_usuario) + ' XP</div>'
-        sidebar_html += '</div>'
+        sidebar_html = f"""
+        <div style="background: rgba(37, 99, 235, 0.08); padding: 20px; border-radius: 16px; border: 1px solid rgba(37, 99, 235, 0.15); margin-bottom: 20px; display: flex; align-items: center; gap: 15px;">
+            <div style="flex-shrink: 0;">{foto_html}</div>
+            <div style="overflow: hidden;">
+                <div style="font-size: 11px; color: #8B949E; text-transform: uppercase; letter-spacing: 0.05em;">Agente Ativo</div>
+                <div style="font-size: 16px; font-weight: 800; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{st.session_state.usuario}</div>
+                <div style="font-size: 12px; font-weight: 700; color: #3B82F6; margin-top: 2px;">{st.session_state.nivel_usuario}</div>
+            </div>
+        </div>
+        """
         st.markdown(sidebar_html, unsafe_allow_html=True)
         
-        menu = st.radio("Módulos da Plataforma",["Dashboard Principal", "Evolução e IA", "Meu Perfil"])
-        
-        st.markdown("<br><br><br><br><br><br>", unsafe_allow_html=True)
-        st.divider()
-        if st.button("🚪 Sair do Sistema", use_container_width=True):
-            st.session_state.clear()
-            st.rerun()
+        menu = st.radio("Módulos de Avaliação", ["Dashboard Principal", "Evolução e IA"])
 
+    # Controle de Roteamento da Sidebar
     if menu == "Evolução e IA" and st.session_state.page != "Evolução":
         st.session_state.page = "Evolução"
         st.rerun()
-    elif menu == "Meu Perfil" and st.session_state.page != "Perfil":
-        st.session_state.page = "Perfil"
-        st.rerun()
-    elif menu == "Dashboard Principal" and st.session_state.page not in["Home", "Instrucoes", "Simulado", "Resultado"]:
+    elif menu == "Dashboard Principal" and st.session_state.page not in["Home", "Instrucoes", "Simulado", "Resultado", "Perfil"]:
         st.session_state.page = "Home"
         st.rerun()
 
     # --- HOME / DASHBOARD ---
     if st.session_state.page == "Home":
-        st.markdown(premium_page_header(
-            "Central de Treinamento",
-            "Escolha sua próxima missão, acompanhe seu progresso e avance por uma jornada de evolução orientada por performance.",
-            "logo_interna",  # <-- UTILIZA A VMB_logo_solo.png AQUI
-            "DASHBOARD PRINCIPAL"
-        ), unsafe_allow_html=True)
+        st.markdown("""
+        <div class='vmb-hero'>
+            <div class='vmb-eyebrow'>VMB INVEST | PERFORMANCE SYSTEM</div>
+            <h1 class='vmb-title'>Central de Treinamento</h1>
+            <p class='vmb-subtitle'>Escolha sua próxima missão, acompanhe seu progresso e avance por uma jornada orientada por dados.</p>
+        </div>
+        """, unsafe_allow_html=True)
         
         try:
             conn = st.connection("gsheets", type=GSheetsConnection)
@@ -488,16 +353,17 @@ else:
             max_score = df_user_hist['Nota (%)'].max() if not df_user_hist.empty else 0
             qtd_sim = len(df_user_hist)
             
-            metrics_html = "<div class='vmb-metrics-grid'>"
-            metrics_html += premium_metric_card("Aproveitamento Geral", "{0:.1f}%".format(avg_score), "média acumulada")
-            metrics_html += premium_metric_card("Melhor Nota", "🏆 {0:.1f}%".format(max_score), "recorde pessoal")
-            metrics_html += premium_metric_card("Simulados Concluídos", "⚡ " + str(qtd_sim), "missões finalizadas")
-            metrics_html += "</div>"
-            st.markdown(metrics_html, unsafe_allow_html=True)
+            st.markdown(f"""
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
+                <div class='vmb-metric-card'><div class='vmb-metric-label'>Aproveitamento Geral</div><div class='vmb-metric-value'>{avg_score:.1f}%</div><div class='vmb-metric-hint'>média acumulada</div></div>
+                <div class='vmb-metric-card'><div class='vmb-metric-label'>Melhor Nota</div><div class='vmb-metric-value' style='color:#4ADE80;'>🏆 {max_score:.1f}%</div><div class='vmb-metric-hint'>recorde pessoal</div></div>
+                <div class='vmb-metric-card'><div class='vmb-metric-label'>Simulados Concluídos</div><div class='vmb-metric-value'>⚡ {qtd_sim}</div><div class='vmb-metric-hint'>missões finalizadas</div></div>
+            </div>
+            """, unsafe_allow_html=True)
         except:
             pass 
 
-        st.markdown(premium_section_banner("Selecione sua missão", "Cada simulado desbloqueia uma nova etapa da trilha de evolução comercial e técnica."), unsafe_allow_html=True)
+        st.markdown("<h3 style='margin-bottom:15px;'>Selecione sua missão</h3>", unsafe_allow_html=True)
         for i, nome_sim in enumerate(SIMULADOS_ORDEM):
             with st.container(border=True):
                 col_txt, col_btn = st.columns([4, 1])
@@ -517,27 +383,84 @@ else:
                     else:
                         st.button("Bloqueado", key=f"btn_{i}", disabled=True, use_container_width=True)
 
+    # --- TELA DE PERFIL (FOTO SALVA NA PLANILHA) ---
+    elif st.session_state.page == "Perfil":
+        st.markdown("""
+        <div class='vmb-hero'>
+            <div class='vmb-eyebrow'>CONFIGURAÇÕES</div>
+            <h1 class='vmb-title'>Meu Perfil</h1>
+            <p class='vmb-subtitle'>Personalize seu avatar. Ele ficará salvo e aparecerá em todos os seus acessos.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        col_foto, col_info = st.columns([1, 2])
+        
+        with col_foto:
+            with st.container(border=True):
+                st.markdown("### Foto de Perfil")
+                if st.session_state.foto_perfil:
+                    st.markdown(f'<div style="text-align: center;"><img src="data:image/png;base64,{st.session_state.foto_perfil}" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid #3B82F6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);"></div>', unsafe_allow_html=True)
+                else:
+                    st.info("Nenhuma foto carregada.")
+                
+                st.markdown("<br>", unsafe_allow_html=True)
+                uploaded_file = st.file_uploader("Alterar foto (PNG, JPG)", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
+                
+                if uploaded_file is not None:
+                    with st.spinner("Otimizando e salvando na nuvem..."):
+                        try:
+                            # Comprime a imagem para não estourar o limite do GSheets
+                            img = Image.open(uploaded_file)
+                            img.thumbnail((200, 200))
+                            buffered = BytesIO()
+                            img.save(buffered, format="PNG")
+                            img_str = base64.b64encode(buffered.getvalue()).decode()
+                            
+                            # Salva na planilha Usuarios
+                            conn = st.connection("gsheets", type=GSheetsConnection)
+                            df_usuarios = conn.read(worksheet="Usuarios", ttl=0)
+                            
+                            if 'Foto' not in df_usuarios.columns:
+                                df_usuarios['Foto'] = ""
+                            
+                            df_usuarios.loc[df_usuarios['Usuario'].str.lower() == st.session_state.usuario.lower(), 'Foto'] = img_str
+                            conn.update(worksheet="Usuarios", data=df_usuarios)
+                            
+                            st.session_state.foto_perfil = img_str
+                            st.success("Foto salva com sucesso!")
+                            time.sleep(1)
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Erro ao salvar a foto na planilha. Verifique se a coluna 'Foto' existe na aba Usuarios. Erro: {e}")
+
+        with col_info:
+            with st.container(border=True):
+                st.markdown("### Credenciais")
+                st.write(f"**Identificação:** {st.session_state.usuario}")
+                st.write(f"**Patente:** {st.session_state.nivel_usuario}")
+                st.write(f"**Pontuação:** {st.session_state.xp_usuario} XP")
+                
+                st.divider()
+                st.markdown("#### Trilha de Conquistas")
+                if st.session_state.xp_usuario >= 2000: st.markdown("🏆 **SDR Elite:** Você atingiu o topo da cadeia alimentar.")
+                elif st.session_state.xp_usuario >= 1200: st.markdown("🥇 **SDR Pleno:** Experiência de mercado validada em campo.")
+                elif st.session_state.xp_usuario >= 750: st.markdown("🥈 **SDR Júnior:** Começando a se destacar nas avaliações.")
+                else: st.markdown("🎯 **Trainee em Evolução:** Faça mais simulados para subir de patente.")
+
     # --- TELA DE INSTRUÇÕES ---
     elif st.session_state.page == "Instrucoes":
-        st.markdown(premium_page_header(
-            f"Operação: {st.session_state.simulado_nome}",
-            "Leia o protocolo, entre em modo foco e execute a missão com precisão de prova oficial.",
-            "logo_interna",
-            "PROTOCOLO DE AVALIAÇÃO"
-        ), unsafe_allow_html=True)
-        
+        st.title(f"Operação: {st.session_state.simulado_nome}")
+        st.warning("⚠️ **ATENÇÃO: LEIA AS REGRAS ANTES DE COMEÇAR!**")
         st.markdown("""
         <div style="background: rgba(234, 179, 8, 0.1); border-left: 4px solid #EAB308; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h4 style="margin-top: 0; color: #EAB308;">Protocolo de Avaliação</h4>
             <ul style="color: #D1D5DB; margin-bottom: 0;">
                 <li><b>Tempo restrito:</b> Exatos 30 minutos. O cronômetro entrará em modo crítico nos últimos 5 minutos.</li>
                 <li><b>Estrutura:</b> 20 questões táticas, distribuídas uniformemente.</li>
                 <li><b>Integridade:</b> Simule o ambiente oficial. Sem consultas, sem interrupções.</li>
-                <li><b>Alerta do Sistema:</b> Não atualize a página (F5), ou a missão será abortada com perda total de dados.</li>
+                <li><b>Alerta do Sistema:</b> Não atualize a página (F5).</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
-        
         col1, col2 = st.columns(2)
         with col1:
             if st.button("Cancelar Missão", use_container_width=True):
@@ -569,12 +492,9 @@ else:
               var seconds = Math.floor((distance % (1000 * 60)) / 1000);
               minutes = minutes < 10 ? "0" + minutes : minutes;
               seconds = seconds < 10 ? "0" + seconds : seconds;
-              
               var timerDiv = document.getElementById("timer");
               var glowDiv = document.getElementById("timer-glow");
-              
               timerDiv.innerHTML = "⏳ " + minutes + ":" + seconds;
-              
               if (minutes < 5) {
                   timerDiv.style.color = "#FF4B4B";
                   glowDiv.style.boxShadow = "0 0 20px rgba(255, 75, 75, 0.6)";
@@ -600,7 +520,6 @@ else:
                 st.markdown(f"<span style='color: #8B949E; font-size: 12px;'>MÓDULO: {q['modulo'].upper()}</span>", unsafe_allow_html=True)
                 st.write(q['pergunta'])
                 opcoes =[f"{k}) {v}" for k, v in q.get("opcoes", {}).items()]
-                
                 chave_unica = f"rad_{st.session_state.simulado_atual_indice}_{q['id']}_{idx}"
                 respostas_locais[idx] = st.radio("Selecione:", opcoes, key=chave_unica, index=None, label_visibility="collapsed")
                 st.markdown("<hr style='opacity: 0.2;'>", unsafe_allow_html=True)
@@ -615,12 +534,7 @@ else:
 
     # --- RESULTADOS ---
     elif st.session_state.page == "Resultado":
-        st.markdown(premium_page_header(
-            "Relatório de Missão", 
-            "Veja sua nota, seu ritmo, seus acertos e os pontos que precisam de reforço para a próxima tentativa.", 
-            "logo_interna", 
-            "ANÁLISE DE PERFORMANCE"
-        ), unsafe_allow_html=True)
+        st.title("Relatório de Missão")
         
         tempo_total_segundos = st.session_state.fim_time - st.session_state.inicio_time
         minutos = int(tempo_total_segundos // 60)
@@ -643,6 +557,7 @@ else:
 
         percentual = (acertos / total_questoes) * 100 if total_questoes > 0 else 0
 
+        # SALVAMENTO
         if not st.session_state.resultado_salvo:
             with st.spinner("Salvando telemetria..."):
                 try:
@@ -697,12 +612,13 @@ else:
 
     # --- TELA EVOLUÇÃO E IA ---
     elif st.session_state.page == "Evolução":
-        st.markdown(premium_page_header(
-            "Inteligência de Dados e Evolução", 
-            "Transforme histórico, radar de competências e diagnóstico do mentor em um plano objetivo de melhoria.", 
-            "logo_interna", 
-            "MENTOR ANALÍTICO"
-        ), unsafe_allow_html=True)
+        st.markdown("""
+        <div class='vmb-hero'>
+            <div class='vmb-eyebrow'>MENTOR ANALÍTICO</div>
+            <h1 class='vmb-title'>Inteligência e Evolução</h1>
+            <p class='vmb-subtitle'>Transforme histórico e diagnóstico da IA em um plano objetivo de melhoria.</p>
+        </div>
+        """, unsafe_allow_html=True)
         
         with st.spinner("Processando heurística..."):
             try:
@@ -766,8 +682,8 @@ else:
                         if strong_mods: st.markdown(f"<br>**🏆 Dominância:**<br>O módulo de **{strong_mods[-1]}** atingiu padrão de excelência. Modo manutenção ativado.", unsafe_allow_html=True)
 
                         st.markdown("<br>**⏱️ Pacing de Prova:**", unsafe_allow_html=True)
-                        if media_secs > 1500: st.markdown("⚠️ *Velocidade de risco:* Você está usando quase todo o tempo limite. Em prova oficial, você não terá fôlego para revisar. Pratique leitura dinâmica.")
-                        elif media_secs > 0 and media_secs < 600: st.markdown("⚡ *Impulsividade:* Seu tempo de resposta está muito rápido. Isso levanta suspeita de desatenção a palavras como 'EXCETO' ou dupla negação.")
+                        if media_secs > 1500: st.markdown("⚠️ *Velocidade de risco:* Você está usando quase todo o tempo limite. Em prova oficial, você não terá fôlego para revisar.")
+                        elif media_secs > 0 and media_secs < 600: st.markdown("⚡ *Impulsividade:* Seu tempo de resposta está muito rápido. Cuidado com pegadinhas.")
                         elif media_secs > 0: st.markdown("✅ *Ritmo Cadenciado:* Seu controle de tempo está perfeitamente alinhado com candidatos aprovados.")
                         st.markdown("</div>", unsafe_allow_html=True)
                     
@@ -779,40 +695,3 @@ else:
                     st.info("Aguardando telemetria inicial. Faça seu primeiro simulado.")
             except Exception as e:
                 st.error("Falha ao processar banco de dados da IA.")
-
-    # --- TELA DE PERFIL ---
-    elif st.session_state.page == "Perfil":
-        st.markdown(premium_page_header(
-            "Meu Perfil", 
-            "Gerencie suas informações, personalize seu avatar e acompanhe suas conquistas na plataforma.", 
-            "logo_interna", 
-            "CONFIGURAÇÕES DE AGENTE"
-        ), unsafe_allow_html=True)
-        col_foto, col_info = st.columns([1, 2])
-        
-        with col_foto:
-            with st.container(border=True):
-                st.markdown("### Foto de Perfil")
-                if st.session_state.foto_perfil:
-                    st.image(st.session_state.foto_perfil, use_container_width=True)
-                else:
-                    st.info("Nenhuma foto carregada.")
-                
-                uploaded_file = st.file_uploader("Alterar foto", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
-                if uploaded_file is not None:
-                    st.session_state.foto_perfil = uploaded_file.getvalue()
-                    st.success("Foto atualizada com sucesso!")
-                    time.sleep(1)
-                    st.rerun()
-
-        with col_info:
-            with st.container(border=True):
-                st.markdown("### Informações da Conta")
-                st.write(f"**Usuário:** {st.session_state.usuario}")
-                st.write(f"**Nível Atual:** {st.session_state.nivel_usuario}")
-                st.write(f"**XP Total:** {st.session_state.xp_usuario}")
-                st.divider()
-                st.markdown("#### Conquistas")
-                if st.session_state.xp_usuario >= 2000: st.markdown("🏆 **Agente Elite:** Você atingiu o topo da performance.")
-                elif st.session_state.xp_usuario >= 1200: st.markdown("🥇 **Agente Sênior:** Experiência comprovada em simulados.")
-                else: st.markdown("🎯 **Em Evolução:** Continue completando missões para desbloquear insígnias.")
