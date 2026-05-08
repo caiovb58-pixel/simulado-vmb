@@ -595,7 +595,7 @@ outro:
                 foto_html = f'<img src="data:image/png;base64,{foto_base64}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #3B82F6;">'
             exceto: passar
 
-        st.markdown(f"""
+        barra_lateral_html = f"""
         <div style="background: rgba(37, 99, 235, 0.08); padding: 20px; border-radius: 20px; border: 1px solid rgba(37, 99, 235, 0.15); margin-bottom: 20px; display: flex; align-items: center; gap: 15px;">
             <div style="flex-shrink: 0;">{foto_html}</div>
             <div style="overflow: hidden;">
@@ -610,7 +610,9 @@ outro:
             </div>
             <div style="font-size: 10px; color: #8B949E; margin-top: 6px; text-align: right; font-weight: 600;">{st.session_state.xp_usuario} XP</div>
         </div>
-        "", unsafe_allow_html=True)
+        """
+        # Limpar possíveis chaves residuais de estilos CSS se necessário, mas aqui o erro era na interpolação
+        st.markdown(sidebar_html, unsafe_allow_html=True)
         
         menu = st.radio("Módulos da Plataforma", ["Dashboard Principal", "Evolução e IA", "Meu Perfil"])
         
