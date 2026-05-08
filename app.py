@@ -132,6 +132,7 @@ def inject_custom_css():
         }
         .stTextInput input:focus { border-color: #3B82F6 !important; }
         
+        /* Top Navigation Bar Customizada */
         .top-nav {
             display: flex;
             justify-content: flex-end;
@@ -244,18 +245,26 @@ if not st.session_state.logado:
                     try:
                         conn = st.connection("gsheets", type=GSheetsConnection)
                         df_usuarios = conn.read(worksheet="Usuarios", ttl=0) 
-                        # Limpeza preventiva de NaNs para evitar crash nas checagens
                         df_usuarios = df_usuarios.fillna("") 
                         
-                        user_match = df_usuarios[(df_usuarios['Usuario'].astype(str).str.lower() == user.lower()) & (df_usuarios['Senha'].astype(str) == pw)]
+                        # Limpeza robusta para evitar erro de espaço invisível e float (.0)
+                        df_usuarios['Usuario'] = df_usuarios['Usuario'].astype(str).str.strip().str.lower()
+                        df_usuarios['Senha'] = df_usuarios['Senha'].astype(str).str.strip().str.replace(r'\.0$', '', regex=True)
                         
-                        if not user_match.empty or (user.lower() == "admin" and pw == "admin"):
+                        user_input = user.strip().lower()
+                        pw_input = pw.strip()
+
+                        user_match = df_usuarios[(df_usuarios['Usuario'] == user_input) & (df_usuarios['Senha'] == pw_input)]
+                        
+                        # Chave mestra restaurada! Funciona mesmo se a planilha falhar
+                        if not user_match.empty or (user_input in["caio", "vmb", "aluno", "admin"] and pw_input in ["ancord2026", "admin"]):
                             usuario_formatado = user.capitalize()
                             st.session_state.logado = True
                             st.session_state.usuario = usuario_formatado
                             
-                            if 'Foto' in df_usuarios.columns:
-                                foto_b64 = user_match['Foto'].values[0] if not user_match.empty else ""
+                            # Recarrega a foto do GSheets (se houver e não for pela chave mestra vazia)
+                            if 'Foto' in df_usuarios.columns and not user_match.empty:
+                                foto_b64 = user_match['Foto'].values[0]
                                 if pd.notna(foto_b64) and foto_b64 != "":
                                     st.session_state.foto_perfil = foto_b64
                             
@@ -289,7 +298,7 @@ if not st.session_state.logado:
                         st.error(f"Falha de conexão com os servidores. {e}")
 
 else:
-    # --- TOP NAVIGATION BAR ---
+    # --- TOP NAVIGATION BAR (Canto Superior Direito) ---
     col_vazio, col_perfil, col_sair = st.columns([8, 1.2, 1])
     with col_perfil:
         if st.button("⚙️ Meu Perfil", use_container_width=True):
@@ -328,6 +337,7 @@ else:
         
         menu = st.radio("Módulos de Avaliação", ["Dashboard Principal", "Evolução e IA"])
 
+    # Controle de Roteamento da Sidebar
     if menu == "Evolução e IA" and st.session_state.page != "Evolução":
         st.session_state.page = "Evolução"
         st.rerun()
@@ -355,9 +365,9 @@ else:
             
             st.markdown(f"""
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
-                <div class='vmb-metric-card'><div class='vmb-metric-label'>Aproveitamento Geral</div><div class='vmb-metric-value'>{avg_score:.1f}%</div></div>
-                <div class='vmb-metric-card'><div class='vmb-metric-label'>Melhor Nota</div><div class='vmb-metric-value' style='color:#4ADE80;'>🏆 {max_score:.1f}%</div></div>
-                <div class='vmb-metric-card'><div class='vmb-metric-label'>Simulados Concluídos</div><div class='vmb-metric-value'>⚡ {qtd_sim}</div></div>
+                <div class='vmb-metric-card'><div class='vmb-metric-label'>Aproveitamento Geral</div><div class='vmb-metric-value'>{avg_score:.1f}%</div><div class='vmb-metric-hint'>média acumulada</div></div>
+                <div class='vmb-metric-card'><div class='vmb-metric-label'>Melhor Nota</div><div class='vmb-metric-value' style='color:#4ADE80;'>🏆 {max_score:.1f}%</div><div class='vmb-metric-hint'>recorde pessoal</div></div>
+                <div class='vmb-metric-card'><div class='vmb-metric-label'>Simulados Concluídos</div><div class='vmb-metric-value'>⚡ {qtd_sim}</div><div class='vmb-metric-hint'>missões finalizadas</div></div>
             </div>
             """, unsafe_allow_html=True)
         except:
@@ -434,7 +444,7 @@ else:
                                 if 'Foto' not in df_usuarios.columns:
                                     df_usuarios['Foto'] = ""
                                 
-                                df_usuarios.loc[df_usuarios['Usuario'].str.lower() == st.session_state.usuario.lower(), 'Foto'] = img_str
+                                df_usuarios.loc[df_usuarios['Usuario'].astype(str).str.strip().str.lower() == st.session_state.usuario.lower(), 'Foto'] = img_str
                                 
                                 # Limpa NaNs residuais para não estragar a planilha do Google
                                 df_usuarios = df_usuarios.fillna("")
@@ -706,8 +716,8 @@ else:
                         if strong_mods: st.markdown(f"<br>**🏆 Dominância:**<br>O módulo de **{strong_mods[-1]}** atingiu padrão de excelência. Modo manutenção ativado.", unsafe_allow_html=True)
 
                         st.markdown("<br>**⏱️ Pacing de Prova:**", unsafe_allow_html=True)
-                        if media_secs > 1500: st.markdown("⚠️ *Velocidade de risco:* Você está usando quase todo o tempo limite. Em prova oficial, você não terá fôlego para revisar.")
-                        elif media_secs > 0 and media_secs < 600: st.markdown("⚡ *Impulsividade:* Seu tempo de resposta está muito rápido. Cuidado com pegadinhas.")
+                        if media_secs > 1500: st.markdown("⚠️ *Velocidade de risco:* Você está usando quase todo o tempo limite. Em prova oficial, você não terá fôlego para revisar. Pratique leitura dinâmica.")
+                        elif media_secs > 0 and media_secs < 600: st.markdown("⚡ *Impulsividade:* Seu tempo de resposta está muito rápido. Isso levanta suspeita de desatenção a palavras como 'EXCETO' ou dupla negação.")
                         elif media_secs > 0: st.markdown("✅ *Ritmo Cadenciado:* Seu controle de tempo está perfeitamente alinhado com candidatos aprovados.")
                         st.markdown("</div>", unsafe_allow_html=True)
                     
