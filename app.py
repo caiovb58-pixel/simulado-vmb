@@ -38,6 +38,12 @@ def inject_custom_css():
             background-color: transparent !important;
             z-index: 99999 !important;
         }
+        
+        /* Forçar a cor do ícone de abrir/fechar a barra lateral para branco */
+        header[data-testid="stHeader"] svg {
+            fill: #FAFAFA !important;
+            stroke: #FAFAFA !important;
+        }
 
         :root {
             --vmb-black: #050812;
@@ -248,20 +254,31 @@ def inject_custom_css():
     </style>
     """, unsafe_allow_html=True)
 
-# Geração dos Blocos de HTML Compactados (Sem pular linhas para evitar bug do Markdown virar código fonte)
+# Geração dos Blocos de HTML Compactados com Separação das Logos
 def premium_illustration(kind):
-    if kind == "logo":
-        import base64
+    import base64
+    
+    if kind == "logo_abertura":
         try:
-            with open("vmb_logo_fundo_preto.png", "rb") as f:
+            with open("Logo_VMB_V.png", "rb") as f:
                 data = base64.b64encode(f.read()).decode()
-            # Brilho azul neon poderoso atrás da logo da VMB
+            # Brilho azul neon poderoso atrás da logo da VMB (Tela de Abertura)
             return f"<div class='vmb-illustration'><img src='data:image/png;base64,{data}' style='width:100%; max-width:280px; border-radius: 24px; box-shadow: 0 0 45px rgba(37, 99, 235, 0.5); object-fit: contain;'></div>"
         except:
-            pass # Se falhar, renderiza o fallback padrão (código SVG que omiti aqui pra encurtar)
+            pass 
+            
+    elif kind == "logo_interna":
+        try:
+            with open("VMB_logo_solo.png", "rb") as f:
+                data = base64.b64encode(f.read()).decode()
+            # Fundo suave para a Logo VMB Solo nas telas internas
+            return f"<div class='vmb-illustration'><img src='data:image/png;base64,{data}' style='width:100%; max-width:240px; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); object-fit: contain;'></div>"
+        except:
+            pass
+
     return "<div class='vmb-illustration'><h2>📊</h2></div>"
 
-def premium_page_header(title, subtitle, kind="dashboard", eyebrow="VMB INVEST | PERFORMANCE SYSTEM"):
+def premium_page_header(title, subtitle, kind="logo_interna", eyebrow="VMB INVEST | PERFORMANCE SYSTEM"):
     ill = premium_illustration(kind)
     return f"<div class='vmb-hero'><div class='vmb-hero-grid'><div><div class='vmb-eyebrow'>{eyebrow}</div><div class='vmb-title'>{title}</div><p class='vmb-subtitle'>{subtitle}</p></div>{ill}</div></div>"
 
@@ -349,11 +366,14 @@ if not st.session_state.logado:
     col1, col2, col3 = st.columns([0.8, 2.4, 0.8])
     with col2:
         st.markdown(premium_page_header(
-            "VMB INVEST", "Treinamento de alta performance para assessores que querem evoluir com método, dados e mentalidade de elite.", "logo", "SIMULADO DE ELITE"
+            "VMB INVEST", 
+            "Treinamento de alta performance para assessores que querem evoluir com método, dados e mentalidade de elite.", 
+            "logo_abertura", # <- AQUI PUXA A Logo_VMB_V.png
+            "SIMULADO DE ELITE"
         ), unsafe_allow_html=True)
         
         with st.container(border=True):
-            user = st.text_input("Usuário", placeholder="Log In")
+            user = st.text_input("Usuário", placeholder="ID do Agente")
             pw = st.text_input("Senha", type="password", placeholder="••••••••")
             
             st.markdown("<br>", unsafe_allow_html=True)
@@ -401,6 +421,15 @@ else:
     # --- BARRA LATERAL GAMIFICADA ---
     with st.sidebar:
         import base64
+        
+        # LOGO VMB SOLO NO TOPO DA SIDEBAR (Círculo Amarelo que você pontuou!)
+        try:
+            with open("VMB_logo_solo.png", "rb") as f:
+                logo_sb = base64.b64encode(f.read()).decode()
+            st.markdown(f'<div style="text-align: center; margin-bottom: 25px;"><img src="data:image/png;base64,{logo_sb}" style="max-width: 160px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));"></div>', unsafe_allow_html=True)
+        except:
+            st.markdown("<h3 style='text-align: center; color: #3B82F6;'>VMB INVEST</h3>", unsafe_allow_html=True)
+
         foto_html = "👤"
         if "foto_perfil" in st.session_state and st.session_state.foto_perfil:
             try:
@@ -424,7 +453,7 @@ else:
         sidebar_html += '</div>'
         st.markdown(sidebar_html, unsafe_allow_html=True)
         
-        menu = st.radio("Módulos da Plataforma", ["Dashboard Principal", "Evolução e IA", "Meu Perfil"])
+        menu = st.radio("Módulos da Plataforma",["Dashboard Principal", "Evolução e IA", "Meu Perfil"])
         
         st.markdown("<br><br><br><br><br><br>", unsafe_allow_html=True)
         st.divider()
@@ -447,7 +476,7 @@ else:
         st.markdown(premium_page_header(
             "Central de Treinamento",
             "Escolha sua próxima missão, acompanhe seu progresso e avance por uma jornada de evolução orientada por performance.",
-            "logo",  # <-- UTILIZA A LOGO DA VMB AQUI
+            "logo_interna",  # <-- UTILIZA A VMB_logo_solo.png AQUI
             "DASHBOARD PRINCIPAL"
         ), unsafe_allow_html=True)
         
@@ -493,7 +522,7 @@ else:
         st.markdown(premium_page_header(
             f"Operação: {st.session_state.simulado_nome}",
             "Leia o protocolo, entre em modo foco e execute a missão com precisão de prova oficial.",
-            "logo",
+            "logo_interna",
             "PROTOCOLO DE AVALIAÇÃO"
         ), unsafe_allow_html=True)
         
@@ -571,6 +600,7 @@ else:
                 st.markdown(f"<span style='color: #8B949E; font-size: 12px;'>MÓDULO: {q['modulo'].upper()}</span>", unsafe_allow_html=True)
                 st.write(q['pergunta'])
                 opcoes =[f"{k}) {v}" for k, v in q.get("opcoes", {}).items()]
+                
                 chave_unica = f"rad_{st.session_state.simulado_atual_indice}_{q['id']}_{idx}"
                 respostas_locais[idx] = st.radio("Selecione:", opcoes, key=chave_unica, index=None, label_visibility="collapsed")
                 st.markdown("<hr style='opacity: 0.2;'>", unsafe_allow_html=True)
@@ -585,7 +615,12 @@ else:
 
     # --- RESULTADOS ---
     elif st.session_state.page == "Resultado":
-        st.markdown(premium_page_header("Relatório de Missão", "Veja sua nota, seu ritmo, seus acertos e os pontos que precisam de reforço para a próxima tentativa.", "logo", "ANÁLISE DE PERFORMANCE"), unsafe_allow_html=True)
+        st.markdown(premium_page_header(
+            "Relatório de Missão", 
+            "Veja sua nota, seu ritmo, seus acertos e os pontos que precisam de reforço para a próxima tentativa.", 
+            "logo_interna", 
+            "ANÁLISE DE PERFORMANCE"
+        ), unsafe_allow_html=True)
         
         tempo_total_segundos = st.session_state.fim_time - st.session_state.inicio_time
         minutos = int(tempo_total_segundos // 60)
@@ -662,7 +697,12 @@ else:
 
     # --- TELA EVOLUÇÃO E IA ---
     elif st.session_state.page == "Evolução":
-        st.markdown(premium_page_header("Inteligência de Dados e Evolução", "Transforme histórico, radar de competências e diagnóstico do mentor em um plano objetivo de melhoria.", "logo", "MENTOR ANALÍTICO"), unsafe_allow_html=True)
+        st.markdown(premium_page_header(
+            "Inteligência de Dados e Evolução", 
+            "Transforme histórico, radar de competências e diagnóstico do mentor em um plano objetivo de melhoria.", 
+            "logo_interna", 
+            "MENTOR ANALÍTICO"
+        ), unsafe_allow_html=True)
         
         with st.spinner("Processando heurística..."):
             try:
@@ -742,7 +782,12 @@ else:
 
     # --- TELA DE PERFIL ---
     elif st.session_state.page == "Perfil":
-        st.markdown(premium_page_header("Meu Perfil", "Gerencie suas informações, personalize seu avatar e acompanhe suas conquistas na plataforma.", "logo", "CONFIGURAÇÕES DE AGENTE"), unsafe_allow_html=True)
+        st.markdown(premium_page_header(
+            "Meu Perfil", 
+            "Gerencie suas informações, personalize seu avatar e acompanhe suas conquistas na plataforma.", 
+            "logo_interna", 
+            "CONFIGURAÇÕES DE AGENTE"
+        ), unsafe_allow_html=True)
         col_foto, col_info = st.columns([1, 2])
         
         with col_foto:
