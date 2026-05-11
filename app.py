@@ -203,7 +203,8 @@ if "logado" not in st.session_state:
         "logado": False, "usuario": "", "page": "Login", "simulado_atual_indice": 0,
         "simulado_nome": "", "modulos_selecionados":[], "quiz_atual": None,
         "inicio_time": None, "fim_time": None, "respostas_usuario": {},
-        "resultado_salvo": False, "xp_usuario": 0, "nivel_usuario": "Trainee", "foto_perfil": ""
+        "resultado_salvo": False, "xp_usuario": 0, "nivel_usuario": "Trainee", "foto_perfil": "",
+        "questoes_vistas": set() # <--- Memória das questões já respondidas
     })
 
 # --- FUNÇÕES CORE E NOVA GAMIFICAÇÃO ANCORD ---
@@ -211,7 +212,6 @@ def calcular_gamificacao(df_user):
     """Calcula XP e Nível baseado no histórico de simulados e módulos concluídos"""
     xp = len(df_user) * 150
     
-    # Identificar quantos simulados únicos o usuário já passou com >= 70%
     simulados_passados = set()
     for _, row in df_user.iterrows():
         nota = pd.to_numeric(str(row['Nota (%)']).replace(',', '.'), errors='coerce')
@@ -221,7 +221,6 @@ def calcular_gamificacao(df_user):
     total_modulos = len(SIMULADOS_ORDEM)
     
     if len(simulados_passados) < total_modulos:
-        # Ainda não completou todo o edital (mesmo se tiver muito XP)
         if xp < 300: 
             nivel = "Iniciante (Fase de Base)"
         elif xp < 750: 
@@ -231,7 +230,6 @@ def calcular_gamificacao(df_user):
         else: 
             nivel = "Experiente (Faltam Módulos)"
     else:
-        # Completou todos os módulos com nota de aprovação
         if xp < 2000: 
             nivel = "Pronto para a ANCORD ✅"
         else: 
@@ -240,42 +238,66 @@ def calcular_gamificacao(df_user):
     return xp, nivel
 
 def selecionar_questoes_balanceadas(banco, modulos, total_desejado=20):
+    """Seleciona questões dando prioridade absoluta às questões ainda não vistas."""
+    if "questoes_vistas" not in st.session_state:
+        st.session_state.questoes_vistas = set()
+
     questoes_por_modulo = {mod:[] for mod in modulos}
+    
     for q in banco:
         if q["modulo"] in modulos:
             questoes_por_modulo[q["modulo"]].append(q)
             
+    # Embaralhar garantindo que as Não Vistas fiquem no topo da lista
+    for mod in modulos:
+        nao_vistas = [q for q in questoes_por_modulo[mod] if q["id"] not in st.session_state.questoes_vistas]
+        vistas =[q for q in questoes_por_modulo[mod] if q["id"] in st.session_state.questoes_vistas]
+        random.shuffle(nao_vistas)
+        random.shuffle(vistas)
+        questoes_por_modulo[mod] = nao_vistas + vistas # Puxa do topo primeiro!
+
     total_disponivel = sum(len(qs) for qs in questoes_por_modulo.values())
     if total_disponivel <= total_desejado:
         todas =[q for qs in questoes_por_modulo.values() for q in qs]
+        for q in todas:
+            st.session_state.questoes_vistas.add(q["id"])
         random.shuffle(todas)
         return todas
         
     selecionadas =[]
-    modulos_restantes =[mod for mod in modulos if len(questoes_por_modulo[mod]) > 0]
+    modulos_restantes = [mod for mod in modulos if len(questoes_por_modulo[mod]) > 0]
     vagas = total_desejado
     
     while vagas > 0 and modulos_restantes:
         cota = vagas // len(modulos_restantes)
         resto = vagas % len(modulos_restantes)
         novos_modulos_restantes =[]
+        
         for i, mod in enumerate(modulos_restantes):
             cota_atual = cota + (1 if i < resto else 0)
             disponivel = len(questoes_por_modulo[mod])
+            
             if disponivel <= cota_atual:
                 selecionadas.extend(questoes_por_modulo[mod])
                 vagas -= disponivel
                 questoes_por_modulo[mod] =[]
             else:
                 novos_modulos_restantes.append(mod)
+                
         if len(novos_modulos_restantes) == len(modulos_restantes):
             for i, mod in enumerate(novos_modulos_restantes):
                 cota_atual = cota + (1 if i < resto else 0)
-                escolhidas = random.sample(questoes_por_modulo[mod], cota_atual)
+                escolhidas = questoes_por_modulo[mod][:cota_atual] # Pega exatamente do topo (novas primeiro)
                 selecionadas.extend(escolhidas)
+                questoes_por_modulo[mod] = questoes_por_modulo[mod][cota_atual:] 
                 vagas -= cota_atual
             break
         modulos_restantes = novos_modulos_restantes
+        
+    # Anota no carrinho que o usuário já viu essas questões
+    for q in selecionadas:
+        st.session_state.questoes_vistas.add(q["id"])
+        
     random.shuffle(selecionadas)
     return selecionadas
 
@@ -526,7 +548,6 @@ else:
                 
                 st.divider()
                 
-                # Buscar o histórico atualizado do usuário para saber as missões concluídas
                 try:
                     conn = st.connection("gsheets", type=GSheetsConnection)
                     df_historico = conn.read(worksheet="Historico", ttl=0)
