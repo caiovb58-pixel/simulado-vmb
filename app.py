@@ -204,7 +204,8 @@ if "logado" not in st.session_state:
         "simulado_nome": "", "modulos_selecionados":[], "quiz_atual": None,
         "inicio_time": None, "fim_time": None, "respostas_usuario": {},
         "resultado_salvo": False, "xp_usuario": 0, "nivel_usuario": "Trainee", "foto_perfil": "",
-        "questoes_vistas": set() # <--- Memória das questões já respondidas
+        "questoes_vistas": set(),
+        "data_prova": "", "frase_pessoal": ""
     })
 
 # --- FUNÇÕES CORE E NOVA GAMIFICAÇÃO ANCORD ---
@@ -248,13 +249,12 @@ def selecionar_questoes_balanceadas(banco, modulos, total_desejado=20):
         if q["modulo"] in modulos:
             questoes_por_modulo[q["modulo"]].append(q)
             
-    # Embaralhar garantindo que as Não Vistas fiquem no topo da lista
     for mod in modulos:
-        nao_vistas = [q for q in questoes_por_modulo[mod] if q["id"] not in st.session_state.questoes_vistas]
+        nao_vistas =[q for q in questoes_por_modulo[mod] if q["id"] not in st.session_state.questoes_vistas]
         vistas =[q for q in questoes_por_modulo[mod] if q["id"] in st.session_state.questoes_vistas]
         random.shuffle(nao_vistas)
         random.shuffle(vistas)
-        questoes_por_modulo[mod] = nao_vistas + vistas # Puxa do topo primeiro!
+        questoes_por_modulo[mod] = nao_vistas + vistas
 
     total_disponivel = sum(len(qs) for qs in questoes_por_modulo.values())
     if total_disponivel <= total_desejado:
@@ -287,14 +287,13 @@ def selecionar_questoes_balanceadas(banco, modulos, total_desejado=20):
         if len(novos_modulos_restantes) == len(modulos_restantes):
             for i, mod in enumerate(novos_modulos_restantes):
                 cota_atual = cota + (1 if i < resto else 0)
-                escolhidas = questoes_por_modulo[mod][:cota_atual] # Pega exatamente do topo (novas primeiro)
+                escolhidas = questoes_por_modulo[mod][:cota_atual]
                 selecionadas.extend(escolhidas)
                 questoes_por_modulo[mod] = questoes_por_modulo[mod][cota_atual:] 
                 vagas -= cota_atual
             break
         modulos_restantes = novos_modulos_restantes
         
-    # Anota no carrinho que o usuário já viu essas questões
     for q in selecionadas:
         st.session_state.questoes_vistas.add(q["id"])
         
@@ -345,10 +344,23 @@ if not st.session_state.logado:
                             st.session_state.logado = True
                             st.session_state.usuario = usuario_formatado
                             
+                            # Carregar Foto
                             if 'Foto' in df_usuarios.columns and not user_match.empty:
                                 foto_b64 = user_match['Foto'].values[0]
                                 if pd.notna(foto_b64) and foto_b64 != "":
                                     st.session_state.foto_perfil = foto_b64
+                            
+                            # Carregar Data da Prova
+                            if 'Data_Prova' in df_usuarios.columns and not user_match.empty:
+                                dp_val = user_match['Data_Prova'].values[0]
+                                if pd.notna(dp_val) and str(dp_val).strip() != "":
+                                    st.session_state.data_prova = str(dp_val).strip()
+                            
+                            # Carregar Frase Pessoal
+                            if 'Frase_Pessoal' in df_usuarios.columns and not user_match.empty:
+                                fp_val = user_match['Frase_Pessoal'].values[0]
+                                if pd.notna(fp_val) and str(fp_val).strip() != "":
+                                    st.session_state.frase_pessoal = str(fp_val).strip()
                             
                             try:
                                 df_historico = conn.read(worksheet="Historico", ttl=0)
@@ -400,6 +412,8 @@ else:
         if st.session_state.foto_perfil:
             foto_html = f'<img src="data:image/jpeg;base64,{st.session_state.foto_perfil}" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid #3B82F6; box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);">'
 
+        frase_sidebar = f'<div style="font-size: 10px; color: #AAB8CF; margin-top: 5px; font-style: italic; white-space: normal; line-height: 1.2;">"{st.session_state.frase_pessoal}"</div>' if st.session_state.frase_pessoal else ''
+
         sidebar_html = f"""
         <div style="background: linear-gradient(145deg, rgba(37, 99, 235, 0.1), rgba(15, 23, 42, 0.4)); padding: 16px; border-radius: 16px; border: 1px solid rgba(59, 130, 246, 0.2); margin-bottom: 24px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
             <div style="flex-shrink: 0;">{foto_html}</div>
@@ -407,6 +421,7 @@ else:
                 <div style="font-size: 10px; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">Status Atual</div>
                 <div style="font-size: 15px; font-weight: 700; color: #F8FAFC; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{st.session_state.usuario}</div>
                 <div style="font-size: 11px; font-weight: 600; color: #60A5FA; margin-top: 2px;">{st.session_state.nivel_usuario}</div>
+                {frase_sidebar}
             </div>
         </div>
         """
@@ -507,6 +522,7 @@ else:
                     st.info("Nenhuma foto carregada.")
                 
                 st.markdown("<br>", unsafe_allow_html=True)
+                st.caption("📌 **Instrução Oficial:** A imagem enviada deve possuir o tamanho de **120x120 pixels** ou proporção quadrada. Arquivos fora desse formato serão redimensionados e cortados automaticamente pelo sistema.")
                 uploaded_file = st.file_uploader("Alterar foto (PNG, JPG)", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
                 
                 if uploaded_file is not None:
@@ -515,6 +531,7 @@ else:
                             img = Image.open(uploaded_file)
                             if img.mode in ("RGBA", "P"):
                                 img = img.convert("RGB")
+                            # Forçar o redimensionamento exato/proporcional
                             img.thumbnail((120, 120))
                             buffered = BytesIO()
                             img.save(buffered, format="JPEG", quality=50, optimize=True)
@@ -580,6 +597,64 @@ else:
                     st.warning(f"🤖 **Mentor IA:** Você já dominou {modulos_concluidos} etapas do edital, mas ainda faltam módulos essenciais. Continue avançando nas missões bloqueadas. Dica: Se esbarrar em um módulo de baixa nota, revise a teoria e faça anotações dos erros antes de refazer o simulado.")
                 else:
                     st.success("🤖 **Mentor IA:** Parabéns! Você já varreu todos os módulos do edital da ANCORD. Agora a estratégia muda: foque em refazer os simulados de forma intercalada, estude suas fraquezas apontadas no Radar (aba Evolução) e foque na gestão de tempo para simular a prova.")
+
+            # NOVA SEÇÃO: Planejamento e Motivação
+            with st.container(border=True):
+                st.markdown("### 🗓️ Planejamento e Motivação")
+                
+                if st.session_state.data_prova:
+                    try:
+                        exam_date = datetime.strptime(st.session_state.data_prova, "%Y-%m-%d").date()
+                        hoje = datetime.now().date()
+                        diff = (exam_date - hoje).days
+                        
+                        if diff > 0:
+                            st.info(f"⏳ **Contagem Regressiva:** Faltam exatos **{diff} dias** para a sua prova da ANCORD!")
+                        elif diff == 0:
+                            st.warning("🚨 **É HOJE!** Mantenha a calma, lembre-se do treinamento e faça uma excelente prova!")
+                        else:
+                            st.error(f"🗓️ A data da sua prova ({exam_date.strftime('%d/%m/%Y')}) já passou. Atualize seu calendário se for necessário.")
+                    except:
+                        pass
+                
+                col_date, col_phrase = st.columns([1, 1.5])
+                
+                with col_date:
+                    try:
+                        curr_date_val = datetime.strptime(st.session_state.data_prova, "%Y-%m-%d").date() if st.session_state.data_prova else None
+                    except:
+                        curr_date_val = None
+                    nova_data = st.date_input("Agendamento da Prova", value=curr_date_val, format="DD/MM/YYYY")
+                    
+                with col_phrase:
+                    nova_frase = st.text_input("Sua Frase Pessoal / Mantra", value=st.session_state.frase_pessoal, placeholder="Ex: Foguete não tem ré!", max_chars=80)
+                    
+                if st.button("Salvar Planejamento na Nuvem", use_container_width=True):
+                    with st.spinner("Sincronizando com o servidor..."):
+                        try:
+                            conn = st.connection("gsheets", type=GSheetsConnection)
+                            df_usuarios = conn.read(worksheet="Usuarios", ttl=0)
+                            
+                            if 'Data_Prova' not in df_usuarios.columns:
+                                df_usuarios['Data_Prova'] = ""
+                            if 'Frase_Pessoal' not in df_usuarios.columns:
+                                df_usuarios['Frase_Pessoal'] = ""
+                                
+                            idx_user = df_usuarios['Usuario'].astype(str).str.strip().str.lower() == st.session_state.usuario.lower()
+                            df_usuarios.loc[idx_user, 'Frase_Pessoal'] = nova_frase
+                            df_usuarios.loc[idx_user, 'Data_Prova'] = str(nova_data) if nova_data else ""
+                            
+                            df_usuarios = df_usuarios.fillna("")
+                            conn.update(worksheet="Usuarios", data=df_usuarios)
+                            
+                            st.session_state.frase_pessoal = nova_frase
+                            st.session_state.data_prova = str(nova_data) if nova_data else ""
+                            
+                            st.success("Planejamento e frase atualizados com sucesso!")
+                            time.sleep(1)
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Erro ao salvar informações. Verifique as colunas na aba Usuarios. Erro: {e}")
 
     # --- TELA DE INSTRUÇÕES ---
     elif st.session_state.page == "Instrucoes":
