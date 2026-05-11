@@ -166,81 +166,6 @@ def inject_custom_css():
         }
 
         /* ================================================================
-           CALCULADORA HP12C — Estilo
-        ================================================================ */
-        .calc-wrapper {
-            background: linear-gradient(160deg, #1a2340 0%, #0d1628 100%);
-            border: 1px solid rgba(59,130,246,0.25);
-            border-radius: 14px;
-            padding: 14px 12px 16px;
-            margin-top: 10px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-            font-family: 'Inter', sans-serif;
-        }
-        .calc-title {
-            text-align: center;
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            color: #60A5FA;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-        .calc-display {
-            background: #0a1a0a;
-            border: 1px solid #1a4a1a;
-            border-radius: 8px;
-            padding: 8px 10px;
-            margin-bottom: 10px;
-            min-height: 50px;
-        }
-        .calc-display-expr {
-            font-size: 9px;
-            color: #4a8a4a;
-            font-family: monospace;
-            min-height: 12px;
-            word-break: break-all;
-        }
-        .calc-display-main {
-            font-size: 22px;
-            font-weight: 700;
-            color: #7CFC00;
-            font-family: 'Courier New', monospace;
-            text-align: right;
-            letter-spacing: 1px;
-        }
-        .calc-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 4px;
-        }
-        .calc-btn {
-            padding: 7px 2px;
-            border: none;
-            border-radius: 6px;
-            font-size: 9px;
-            font-weight: 700;
-            cursor: pointer;
-            text-align: center;
-            line-height: 1.2;
-            transition: transform 0.1s, box-shadow 0.1s;
-            color: #fff;
-        }
-        .calc-btn:active { transform: scale(0.92); }
-        .calc-btn.num  { background: #1e3a5f; border: 1px solid #2d5080; }
-        .calc-btn.op   { background: #7c3a00; border: 1px solid #a05010; }
-        .calc-btn.fn   { background: #1a3a1a; border: 1px solid #2a5a2a; color: #7CFC00; }
-        .calc-btn.spec { background: #3a1a1a; border: 1px solid #5a2a2a; }
-        .calc-btn.eq   { background: linear-gradient(135deg, #1D4ED8, #3B82F6); border: none; font-size: 14px; }
-        .calc-btn.zero { grid-column: span 2; }
-        .calc-label {
-            font-size: 7px;
-            color: #94A3B8;
-            display: block;
-            margin-top: 1px;
-        }
-
-        /* ================================================================
            RESPONSIVIDADE MOBILE
         ================================================================ */
 
@@ -353,16 +278,6 @@ def inject_custom_css():
                 padding: 6px 0 !important;
             }
 
-            /* Calculadora mais compacta em telas muito pequenas */
-            .calc-btn {
-                padding: 5px 1px !important;
-                font-size: 8px !important;
-            }
-            .calc-display-main {
-                font-size: 18px !important;
-            }
-        }
-
         /* Smartphones muito pequenos */
         @media (max-width: 480px) {
             .vmb-hero {
@@ -424,267 +339,146 @@ def premium_section_banner(title, subtitle):
 def premium_metric_card(label, value, hint=""):
     return f"<div class='vmb-metric-card'><div class='vmb-metric-label'>{label}</div><div style='color: #FFFFFF; font-size: clamp(20px, 3vw, 28px); font-weight: 900; margin-top: 4px;'>{value}</div><div style='color: #60A5FA; font-size: 12px; font-weight: 700; margin-top: 5px;'>{hint}</div></div>"
 
-# --- CALCULADORA HP12C ---
-def render_hp12c():
-    """Renderiza a calculadora HP12C estilo retro como componente HTML."""
-    calc_html = """
-    <div class="calc-wrapper">
-        <div class="calc-title">HP 12C · Financeira</div>
-        <div class="calc-display">
-            <div class="calc-display-expr" id="expr"></div>
-            <div class="calc-display-main" id="disp">0</div>
+# --- HP12C FLUTUANTE PREMIUM ---
+def inject_hp12c():
+    hp12c_html = """
+    <style>
+    #hp12c-fab {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        z-index: 999999;
+        background: linear-gradient(135deg, #2563EB, #1D4ED8);
+        color: white;
+        font-size: 26px;
+        font-weight: bold;
+        box-shadow:
+            0 10px 30px rgba(37,99,235,0.45),
+            0 0 0 1px rgba(255,255,255,0.08);
+        transition: all 0.25s ease;
+        backdrop-filter: blur(10px);
+    }
+    #hp12c-fab:hover {
+        transform: scale(1.08);
+        box-shadow:
+            0 15px 40px rgba(37,99,235,0.65),
+            0 0 20px rgba(37,99,235,0.35);
+    }
+    #hp12c-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.55);
+        backdrop-filter: blur(10px);
+        z-index: 999998;
+        display: none;
+        animation: fadeIn 0.2s ease;
+    }
+    #hp12c-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 420px;
+        max-width: 95vw;
+        height: 760px;
+        max-height: 92vh;
+        background: rgba(15,23,42,0.98);
+        border-radius: 24px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow:
+            0 20px 60px rgba(0,0,0,0.6),
+            0 0 0 1px rgba(255,255,255,0.04);
+        display: none;
+        z-index: 999999;
+        animation: scaleIn 0.25s ease;
+    }
+    #hp12c-header {
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        background: rgba(255,255,255,0.03);
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        color: white;
+        font-family: Inter, sans-serif;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+    #hp12c-close {
+        cursor: pointer;
+        font-size: 24px;
+        opacity: 0.7;
+        transition: 0.2s;
+    }
+    #hp12c-close:hover {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+    #hp12c-frame {
+        width: 100%;
+        height: calc(100% - 60px);
+        border: none;
+        background: #111827;
+    }
+    @keyframes fadeIn {
+        from {opacity:0;}
+        to {opacity:1;}
+    }
+    @keyframes scaleIn {
+        from {
+            opacity:0;
+            transform: translate(-50%, -50%) scale(0.92);
+        }
+        to {
+            opacity:1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+    }
+    </style>
+    <button id="hp12c-fab">
+        🧮
+    </button>
+    <div id="hp12c-overlay"></div>
+    <div id="hp12c-modal">
+        <div id="hp12c-header">
+            <span>HP12C Financeira</span>
+            <span id="hp12c-close">✕</span>
         </div>
-        <div class="calc-grid" id="calcGrid">
-
-            <!-- Linha 1: funções financeiras -->
-            <button class="calc-btn fn" onclick="hp('n')">n<span class="calc-label">períodos</span></button>
-            <button class="calc-btn fn" onclick="hp('i')">i%<span class="calc-label">taxa</span></button>
-            <button class="calc-btn fn" onclick="hp('pv')">PV<span class="calc-label">VP</span></button>
-            <button class="calc-btn fn" onclick="hp('pmt')">PMT<span class="calc-label">pgto</span></button>
-            <button class="calc-btn fn" onclick="hp('fv')">FV<span class="calc-label">VF</span></button>
-
-            <!-- Linha 2: funções de cálculo -->
-            <button class="calc-btn fn" onclick="hp('cn')">CN<span class="calc-label">calc n</span></button>
-            <button class="calc-btn fn" onclick="hp('ci')">Ci<span class="calc-label">calc i</span></button>
-            <button class="calc-btn fn" onclick="hp('cpv')">CPV<span class="calc-label">calc PV</span></button>
-            <button class="calc-btn fn" onclick="hp('cpmt')">CPMT<span class="calc-label">calc PMT</span></button>
-            <button class="calc-btn fn" onclick="hp('cfv')">CFV<span class="calc-label">calc FV</span></button>
-
-            <!-- Linha 3: operações -->
-            <button class="calc-btn spec" onclick="hp('cls')">CLR</button>
-            <button class="calc-btn spec" onclick="hp('ce')">CE</button>
-            <button class="calc-btn spec" onclick="hp('pm')">±</button>
-            <button class="calc-btn spec" onclick="hp('pct')">%</button>
-            <button class="calc-btn op"   onclick="hp('/')">÷</button>
-
-            <!-- Linha 4 -->
-            <button class="calc-btn num" onclick="hp('7')">7</button>
-            <button class="calc-btn num" onclick="hp('8')">8</button>
-            <button class="calc-btn num" onclick="hp('9')">9</button>
-            <button class="calc-btn spec" onclick="hp('sqrt')">√</button>
-            <button class="calc-btn op"   onclick="hp('*')">×</button>
-
-            <!-- Linha 5 -->
-            <button class="calc-btn num" onclick="hp('4')">4</button>
-            <button class="calc-btn num" onclick="hp('5')">5</button>
-            <button class="calc-btn num" onclick="hp('6')">6</button>
-            <button class="calc-btn spec" onclick="hp('pow')">xʸ</button>
-            <button class="calc-btn op"   onclick="hp('-')">−</button>
-
-            <!-- Linha 6 -->
-            <button class="calc-btn num" onclick="hp('1')">1</button>
-            <button class="calc-btn num" onclick="hp('2')">2</button>
-            <button class="calc-btn num" onclick="hp('3')">3</button>
-            <button class="calc-btn spec" onclick="hp('inv')">1/x</button>
-            <button class="calc-btn op"   onclick="hp('+')">+</button>
-
-            <!-- Linha 7 -->
-            <button class="calc-btn num zero" onclick="hp('0')">0</button>
-            <button class="calc-btn num" onclick="hp('.')">.</button>
-            <button class="calc-btn spec" onclick="hp('enter')">ENT</button>
-            <button class="calc-btn eq"   onclick="hp('=')">=</button>
-
-        </div>
+        <iframe
+            id="hp12c-frame"
+            src="https://epxx.co/artigos/hp12c_en.html">
+        </iframe>
     </div>
-
     <script>
-    (function(){
-        // Registros financeiros HP12C
-        var reg = { n: null, i: null, pv: null, pmt: null, fv: null };
-        var pendingReg = null;    // qual registro será salvo no próximo ENT
-        var display  = "0";
-        var expr     = "";
-        var op       = null;
-        var prev     = null;
-        var newNum   = true;
-        var rpnStack = [];        // pilha RPN simples
-
-        function fmt(v) {
-            if (!isFinite(v)) return "ERRO";
-            // Até 8 casas, sem zeros extras
-            var s = parseFloat(v.toFixed(8)).toString();
-            return s;
+    const fab = document.getElementById("hp12c-fab");
+    const modal = document.getElementById("hp12c-modal");
+    const overlay = document.getElementById("hp12c-overlay");
+    const closeBtn = document.getElementById("hp12c-close");
+    fab.onclick = () => {
+        modal.style.display = "block";
+        overlay.style.display = "block";
+    }
+    function closeModal() {
+        modal.style.display = "none";
+        overlay.style.display = "none";
+    }
+    overlay.onclick = closeModal;
+    closeBtn.onclick = closeModal;
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") {
+            closeModal();
         }
-
-        function upd() {
-            document.getElementById("disp").textContent = display;
-            document.getElementById("expr").textContent = expr;
-        }
-
-        // Iteração de Newton-Raphson para taxa (i)
-        function calcI(n, pv, pmt, fv) {
-            var i = 0.1;
-            for (var k = 0; k < 200; k++) {
-                var r = i;
-                var f, df;
-                if (Math.abs(r) < 1e-9) {
-                    f  = pv + pmt * n + fv;
-                    df = 0;
-                } else {
-                    var x = Math.pow(1+r, n);
-                    f  = pv*x + pmt*(x-1)/r + fv;
-                    df = pv*n*Math.pow(1+r, n-1) + pmt*(n*Math.pow(1+r,n-1)*r - (x-1))/(r*r);
-                }
-                if (Math.abs(df) < 1e-15) break;
-                var ni = r - f/df;
-                if (Math.abs(ni - r) < 1e-9) { i = ni; break; }
-                i = ni;
-            }
-            return i * 100;
-        }
-
-        // Iteração Newton para n
-        function calcN(i, pv, pmt, fv) {
-            var r = i / 100;
-            if (Math.abs(r) < 1e-9) return -(pv + fv) / pmt;
-            return Math.log((pmt/r - fv) / (pv + pmt/r)) / Math.log(1 + r);
-        }
-
-        window.hp = function(k) {
-            var v = parseFloat(display);
-
-            // Dígitos e ponto
-            if (!isNaN(k) || k === '.') {
-                if (newNum) { display = (k === '.') ? "0." : k; newNum = false; }
-                else {
-                    if (k === '.' && display.includes('.')) return;
-                    display = (display === "0" && k !== '.') ? k : display + k;
-                }
-                upd(); return;
-            }
-
-            switch(k) {
-                // --- Limpar ---
-                case 'cls': display="0"; expr=""; op=null; prev=null; newNum=true; reg={n:null,i:null,pv:null,pmt:null,fv:null}; rpnStack=[]; break;
-                case 'ce':  display="0"; newNum=true; break;
-
-                // --- Operações básicas ---
-                case '+': case '-': case '*': case '/':
-                    if (op && !newNum) {
-                        var r2 = calc(op, prev, parseFloat(display));
-                        display = fmt(r2); prev = r2;
-                    } else { prev = parseFloat(display); }
-                    op = k; newNum = true;
-                    expr = display + " " + {'+':'+','-':'−','*':'×','/':'÷'}[k];
-                    break;
-
-                case '=':
-                    if (op) {
-                        var res = calc(op, prev, parseFloat(display));
-                        expr = "";  op = null; prev = null;
-                        display = fmt(res);
-                    }
-                    newNum = true;
-                    break;
-
-                // --- Funções especiais ---
-                case 'pm':  display = fmt(-parseFloat(display)); break;
-                case 'pct': display = fmt(parseFloat(display) / 100); break;
-                case 'sqrt':
-                    var sv = parseFloat(display);
-                    display = sv >= 0 ? fmt(Math.sqrt(sv)) : "ERRO";
-                    break;
-                case 'pow':
-                    prev = parseFloat(display); op = 'pow'; newNum = true;
-                    expr = display + " ^"; break;
-                case 'inv':
-                    var iv = parseFloat(display);
-                    display = iv !== 0 ? fmt(1/iv) : "ERRO";
-                    break;
-
-                // --- Registros HP12C ---
-                // Guardar valor atual no registro
-                case 'n':   reg.n   = parseFloat(display); expr = "n = " + display;   newNum=true; break;
-                case 'i':   reg.i   = parseFloat(display); expr = "i = " + display;   newNum=true; break;
-                case 'pv':  reg.pv  = parseFloat(display); expr = "PV = " + display;  newNum=true; break;
-                case 'pmt': reg.pmt = parseFloat(display); expr = "PMT = " + display; newNum=true; break;
-                case 'fv':  reg.fv  = parseFloat(display); expr = "FV = " + display;  newNum=true; break;
-
-                // Calcular n
-                case 'cn':
-                    if (reg.i!==null && reg.pv!==null && reg.pmt!==null && reg.fv!==null) {
-                        var cn = calcN(reg.i, reg.pv, reg.pmt, reg.fv);
-                        display = fmt(cn); reg.n = cn; expr = "n = ?";
-                    } else { display = "FALTA"; }
-                    newNum = true; break;
-
-                // Calcular i
-                case 'ci':
-                    if (reg.n!==null && reg.pv!==null && reg.pmt!==null && reg.fv!==null) {
-                        var ci = calcI(reg.n, reg.pv, reg.pmt, reg.fv);
-                        display = fmt(ci); reg.i = ci; expr = "i = ?";
-                    } else { display = "FALTA"; }
-                    newNum = true; break;
-
-                // Calcular PV
-                case 'cpv':
-                    if (reg.n!==null && reg.i!==null && reg.pmt!==null && reg.fv!==null) {
-                        var ri = reg.i/100;
-                        var cpv;
-                        if (Math.abs(ri) < 1e-9) {
-                            cpv = -reg.pmt * reg.n - reg.fv;
-                        } else {
-                            var x = Math.pow(1+ri, reg.n);
-                            cpv = -(reg.pmt*(1 - 1/x)/ri + reg.fv/x);
-                        }
-                        display = fmt(cpv); reg.pv = cpv; expr = "PV = ?";
-                    } else { display = "FALTA"; }
-                    newNum = true; break;
-
-                // Calcular PMT
-                case 'cpmt':
-                    if (reg.n!==null && reg.i!==null && reg.pv!==null && reg.fv!==null) {
-                        var ri2 = reg.i/100;
-                        var cpmt;
-                        if (Math.abs(ri2) < 1e-9) {
-                            cpmt = -(reg.pv + reg.fv) / reg.n;
-                        } else {
-                            var x2 = Math.pow(1+ri2, reg.n);
-                            cpmt = -(reg.pv*x2 + reg.fv)/(x2-1)*ri2;
-                        }
-                        display = fmt(cpmt); reg.pmt = cpmt; expr = "PMT = ?";
-                    } else { display = "FALTA"; }
-                    newNum = true; break;
-
-                // Calcular FV
-                case 'cfv':
-                    if (reg.n!==null && reg.i!==null && reg.pv!==null && reg.pmt!==null) {
-                        var ri3 = reg.i/100;
-                        var cfv;
-                        if (Math.abs(ri3) < 1e-9) {
-                            cfv = -reg.pv - reg.pmt * reg.n;
-                        } else {
-                            var x3 = Math.pow(1+ri3, reg.n);
-                            cfv = -reg.pv*x3 - reg.pmt*(x3-1)/ri3;
-                        }
-                        display = fmt(cfv); reg.fv = cfv; expr = "FV = ?";
-                    } else { display = "FALTA"; }
-                    newNum = true; break;
-
-                // ENT: empurra valor na pilha (modo RPN auxiliar)
-                case 'enter':
-                    rpnStack.push(parseFloat(display));
-                    newNum = true;
-                    expr = "▲ " + display;
-                    break;
-            }
-            upd();
-        };
-
-        function calc(o, a, b) {
-            switch(o) {
-                case '+': return a + b;
-                case '-': return a - b;
-                case '*': return a * b;
-                case '/': return b !== 0 ? a / b : Infinity;
-                case 'pow': return Math.pow(a, b);
-            }
-            return b;
-        }
-    })();
+    });
     </script>
     """
-    components.html(calc_html, height=420, scrolling=False)
+    components.html(hp12c_html, height=0, width=0)
 
 # --- ESTADO DA SESSÃO ---
 if "logado" not in st.session_state:
@@ -936,17 +730,6 @@ else:
                 disabled=is_simulado
             )
 
-        # --- CALCULADORA HP12C CONDICIONAL ---
-        # Aparece na sidebar apenas quando o simulado selecionado contém Matemática Financeira,
-        # inclusive durante a execução da prova — sem bloquear nenhuma outra funcionalidade.
-        if st.session_state.simulado_nome and simulado_tem_matematica(st.session_state.simulado_nome):
-            st.markdown(
-                "<div style='font-size: 12px; color: #64748B; font-weight: 600; text-transform: uppercase; "
-                "letter-spacing: 1px; margin: 18px 0 6px 5px;'>Calculadora Financeira</div>",
-                unsafe_allow_html=True
-            )
-            render_hp12c()
-
         # BOTÃO SAIR
         st.markdown("<div style='height: 35vh;'></div>", unsafe_allow_html=True)
         st.divider()
@@ -1167,7 +950,7 @@ else:
         
         # Aviso sobre calculadora se for simulado de matemática
         if simulado_tem_matematica(st.session_state.simulado_nome):
-            st.success("🧮 **Calculadora HP12C disponível** na barra lateral durante esta prova.")
+            st.success("🧮 **Calculadora HP12C disponível** durante esta prova — clique no botão flutuante 🧮 no canto inferior direito da tela.")
         
         st.markdown("""
         <div style="background: rgba(234, 179, 8, 0.1); border-left: 4px solid #EAB308; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
@@ -1198,6 +981,9 @@ else:
 
     # --- EXECUÇÃO DO SIMULADO ---
     elif st.session_state.page == "Simulado" and st.session_state.quiz_atual:
+        # HP12C FLUTUANTE — aparece apenas nas provas de Matemática Financeira
+        if simulado_tem_matematica(st.session_state.simulado_nome):
+            inject_hp12c()
         timer_container = st.empty()
         with timer_container:
             js_timer = """
