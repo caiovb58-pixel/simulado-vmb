@@ -494,7 +494,7 @@ else:
     if st.session_state.page == "Home":
         st.markdown(premium_page_header(
             "Central de Treinamento",
-            "Escolha sua próxima missão, acompanhe seu progresso e avance por uma jornada orientada por dados.",
+            "Escolha seu próximo simulado, acompanhe seu progresso e avance por sua jornada Ancord.",
             "logo_interna", 
             "DASHBOARD PRINCIPAL"
         ), unsafe_allow_html=True)
@@ -517,7 +517,7 @@ else:
         except:
             pass 
 
-        st.markdown(premium_section_banner("Selecione sua missão", "Cada simulado desbloqueia uma nova etapa da trilha de evolução rumo à aprovação."), unsafe_allow_html=True)
+        st.markdown(premium_section_banner("Selecione seu simulado", "Cada simulado desbloqueia uma nova etapa da sua Jornada Ancord rumo à aprovação."), unsafe_allow_html=True)
         for i, nome_sim in enumerate(SIMULADOS_ORDEM):
             with st.container(border=True):
                 col_txt, col_btn = st.columns([4, 1])
