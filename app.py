@@ -397,13 +397,15 @@ if not st.session_state.logado:
                         st.error(f"Falha de conexão com os servidores. {e}")
 
 else:
-    # Verificador de Perfil Pendente
+    # Verificador de Perfil Pendente e Simulado em andamento
     is_perfil_pendente = not st.session_state.data_prova or not st.session_state.frase_pessoal
+    is_simulado = st.session_state.page == "Simulado"
 
     # --- TOP NAVIGATION BAR INVISÍVEL (Apenas para o Perfil no Canto Direito) ---
     col_vazio, col_perfil = st.columns([9, 1])
     with col_perfil:
-        if st.button("⚙️ Meu Perfil", disabled=is_perfil_pendente, use_container_width=True):
+        # Trava o acesso ao perfil se o perfil estiver pendente ou durante o simulado
+        if st.button("⚙️ Meu Perfil", disabled=(is_perfil_pendente or is_simulado), use_container_width=True):
             st.session_state.page = "Perfil"
             st.rerun()
 
@@ -466,12 +468,14 @@ else:
             else:
                 menu_idx = 0
                 
-            menu = st.radio("Módulos de Avaliação",["Dashboard Principal", "Evolução e IA"], index=menu_idx, label_visibility="collapsed")
+            # Trava o rádio menu lateral durante o simulado
+            menu = st.radio("Módulos de Avaliação",["Dashboard Principal", "Evolução e IA"], index=menu_idx, label_visibility="collapsed", disabled=is_simulado)
         
         # BOTÃO SAIR NO FUNDO ESQUERDO
         st.markdown("<div style='height: 35vh;'></div>", unsafe_allow_html=True)
         st.divider()
-        if st.button("🚪 Sair do Sistema", use_container_width=True):
+        # Trava o botão de logout (Sair) durante o simulado
+        if st.button("🚪 Sair do Sistema", use_container_width=True, disabled=is_simulado):
             st.session_state.clear()
             st.rerun()
 
