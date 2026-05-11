@@ -24,6 +24,27 @@ except ImportError:
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(page_title="VMB - Simulado de Elite", layout="wide", page_icon="⚡")
 
+# --- MÓDULOS (definido antes do CSS pois é usado na lógica da calculadora) ---
+DIC_SIMULADOS = {
+    "Simulado 1 (Semanas 1 e 2)":["A Atividade do Assessor de Investimentos (AI)", "Lavagem de Dinheiro"],
+    "Simulado 2 (Semanas 3 e 4)":["Mercado de Capitais", "Securitização de Recebíveis", "Derivativos"],
+    "Simulado 3 (Semanas 5 e 6)":["Fundos de Investimentos", "Outros Fundos de Investimentos", "Clubes de Investimentos"],
+    "Simulado 4 (Semanas 7 e 8)":["Mercado Financeiro", "Sistema Financeiro Nacional"],
+    "Simulado 5 (Semanas 9 e 10)":["Instituições e Intermediadores Financeiros", "Economia"],
+    "Simulado 6 (Semanas 11 e 12)":["Matemática Financeira", "Administração de Risco"]
+}
+SIMULADOS_ORDEM = list(DIC_SIMULADOS.keys())
+
+# Módulos que exibem a calculadora HP12C
+MODULOS_MATEMATICA = ["Matemática Financeira", "Administração de Risco"]
+
+def simulado_tem_matematica(nome_simulado):
+    """Verifica se o simulado selecionado contém módulos de Matemática Financeira."""
+    if not nome_simulado:
+        return False
+    modulos = DIC_SIMULADOS.get(nome_simulado, [])
+    return any(m in MODULOS_MATEMATICA for m in modulos)
+
 # --- CSS PREMIUM (Injeção de Estilo) ---
 def inject_custom_css():
     st.markdown("""
@@ -36,7 +57,7 @@ def inject_custom_css():
         #MainMenu { visibility: hidden !important; }
         footer { visibility: hidden !important; }
         
-        /* Garantir que o header fique transparente, mas o botão de recolher a barra continue visível e clicável */
+        /* Header transparente, botão de recolher sidebar visível */
         header[data-testid="stHeader"] { background-color: transparent !important; z-index: 99999 !important; }
         header[data-testid="stHeader"] svg { fill: #FAFAFA !important; stroke: #FAFAFA !important; }
 
@@ -143,6 +164,224 @@ def inject_custom_css():
             right: 20px;
             z-index: 10;
         }
+
+        /* ================================================================
+           CALCULADORA HP12C — Estilo
+        ================================================================ */
+        .calc-wrapper {
+            background: linear-gradient(160deg, #1a2340 0%, #0d1628 100%);
+            border: 1px solid rgba(59,130,246,0.25);
+            border-radius: 14px;
+            padding: 14px 12px 16px;
+            margin-top: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            font-family: 'Inter', sans-serif;
+        }
+        .calc-title {
+            text-align: center;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #60A5FA;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .calc-display {
+            background: #0a1a0a;
+            border: 1px solid #1a4a1a;
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin-bottom: 10px;
+            min-height: 50px;
+        }
+        .calc-display-expr {
+            font-size: 9px;
+            color: #4a8a4a;
+            font-family: monospace;
+            min-height: 12px;
+            word-break: break-all;
+        }
+        .calc-display-main {
+            font-size: 22px;
+            font-weight: 700;
+            color: #7CFC00;
+            font-family: 'Courier New', monospace;
+            text-align: right;
+            letter-spacing: 1px;
+        }
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 4px;
+        }
+        .calc-btn {
+            padding: 7px 2px;
+            border: none;
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            line-height: 1.2;
+            transition: transform 0.1s, box-shadow 0.1s;
+            color: #fff;
+        }
+        .calc-btn:active { transform: scale(0.92); }
+        .calc-btn.num  { background: #1e3a5f; border: 1px solid #2d5080; }
+        .calc-btn.op   { background: #7c3a00; border: 1px solid #a05010; }
+        .calc-btn.fn   { background: #1a3a1a; border: 1px solid #2a5a2a; color: #7CFC00; }
+        .calc-btn.spec { background: #3a1a1a; border: 1px solid #5a2a2a; }
+        .calc-btn.eq   { background: linear-gradient(135deg, #1D4ED8, #3B82F6); border: none; font-size: 14px; }
+        .calc-btn.zero { grid-column: span 2; }
+        .calc-label {
+            font-size: 7px;
+            color: #94A3B8;
+            display: block;
+            margin-top: 1px;
+        }
+
+        /* ================================================================
+           RESPONSIVIDADE MOBILE
+        ================================================================ */
+
+        /* Tablets e telas médias */
+        @media (max-width: 1024px) {
+            .block-container {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+                max-width: 100% !important;
+            }
+            .vmb-hero {
+                padding: 20px !important;
+            }
+        }
+
+        /* Smartphones */
+        @media (max-width: 768px) {
+            /* Layout geral */
+            .block-container {
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+                padding-top: 0.5rem !important;
+            }
+
+            /* Hero header: empilhar em mobile */
+            .vmb-hero > div {
+                grid-template-columns: 1fr !important;
+            }
+            .vmb-hero h1 {
+                font-size: 24px !important;
+            }
+            .vmb-hero p {
+                font-size: 13px !important;
+            }
+
+            /* Grid de métricas: 1 coluna em mobile */
+            div[style*="grid-template-columns: repeat(3"] {
+                grid-template-columns: 1fr !important;
+            }
+            div[style*="grid-template-columns: repeat(4"] {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            /* Metric cards menores */
+            .vmb-metric-card {
+                padding: 14px !important;
+            }
+            .vmb-metric-value {
+                font-size: 22px !important;
+            }
+
+            /* Botões maiores para toque */
+            .stButton>button {
+                min-height: 48px !important;
+                font-size: 14px !important;
+            }
+
+            /* Colunas do simulado: empilhar */
+            div[data-testid="column"] {
+                width: 100% !important;
+                flex: 1 1 100% !important;
+                min-width: 100% !important;
+            }
+
+            /* Cards dos simulados: empilhar botão abaixo */
+            div[data-testid="stVerticalBlock"] div[style*="border"] {
+                padding: 14px !important;
+            }
+
+            /* Timer centralizado e menor */
+            #timer-glow {
+                padding: 8px 20px !important;
+            }
+            #timer {
+                font-size: 20px !important;
+            }
+
+            /* Top nav perfil: ajustar proporção */
+            div[data-testid="column"]:has(button) {
+                min-width: 90px !important;
+            }
+
+            /* Ocultar logo interna no hero em telas muito pequenas */
+            .vmb-hero > div > div:last-child img {
+                max-width: 140px !important;
+            }
+
+            /* Gráficos: garantir scroll horizontal se necessário */
+            div[data-testid="stPlotlyChart"] {
+                overflow-x: auto !important;
+            }
+
+            /* Sidebar adaptada */
+            section[data-testid="stSidebar"] {
+                min-width: 240px !important;
+                max-width: 280px !important;
+            }
+
+            /* Expanders (correção de questões) */
+            details summary {
+                font-size: 13px !important;
+            }
+
+            /* Radio questões: tamanho de toque confortável */
+            .stRadio > div {
+                gap: 10px !important;
+            }
+            .stRadio label {
+                font-size: 14px !important;
+                padding: 6px 0 !important;
+            }
+
+            /* Calculadora mais compacta em telas muito pequenas */
+            .calc-btn {
+                padding: 5px 1px !important;
+                font-size: 8px !important;
+            }
+            .calc-display-main {
+                font-size: 18px !important;
+            }
+        }
+
+        /* Smartphones muito pequenos */
+        @media (max-width: 480px) {
+            .vmb-hero {
+                border-radius: 12px !important;
+                padding: 16px !important;
+            }
+            .vmb-hero h1 {
+                font-size: 20px !important;
+            }
+            h2 { font-size: 18px !important; }
+            h3 { font-size: 16px !important; }
+
+            .vmb-metric-value { font-size: 20px !important; }
+
+            /* Esconder logo no hero para ganhar espaço */
+            .vmb-hero > div > div:last-child {
+                display: none !important;
+            }
+        }
     </style>
     """, unsafe_allow_html=True)
 
@@ -150,7 +389,6 @@ inject_custom_css()
 
 # --- FUNÇÕES DE LOGO ---
 def premium_illustration(kind):
-    import base64
     if kind == "logo_abertura":
         try:
             with open("VMB_V_Branco.png", "rb") as f:
@@ -172,8 +410,8 @@ def premium_page_header(title, subtitle, kind="logo_interna", eyebrow="VMB INVES
         <div style='display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(200px, 0.85fr); gap: 22px; align-items: center;'>
             <div>
                 <div class='vmb-eyebrow'>{eyebrow}</div>
-                <h1 style='font-size: clamp(32px, 4.5vw, 48px); line-height: 1.1; margin: 12px 0 8px;'>{title}</h1>
-                <p style='color: #AAB8CF; font-size: 16px; margin: 0;'>{subtitle}</p>
+                <h1 style='font-size: clamp(24px, 4.5vw, 48px); line-height: 1.1; margin: 12px 0 8px;'>{title}</h1>
+                <p style='color: #AAB8CF; font-size: clamp(13px, 2vw, 16px); margin: 0;'>{subtitle}</p>
             </div>
             {ill}
         </div>
@@ -181,21 +419,272 @@ def premium_page_header(title, subtitle, kind="logo_interna", eyebrow="VMB INVES
     """
 
 def premium_section_banner(title, subtitle):
-    return f"<div style='display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; margin: 18px 0 16px; border-radius: 22px; background: linear-gradient(90deg, rgba(37,99,235,0.20), rgba(15,23,42,0.64)); border: 1px solid rgba(96,165,250,0.20);'><div><h3 style='margin:0 !important; font-size:22px;'>{title}</h3><p style='margin:4px 0 0; color:#9AA8BD;'>{subtitle}</p></div><div style='font-weight:900;color:#BFDBFE;'>PREMIUM</div></div>"
+    return f"<div style='display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; margin: 18px 0 16px; border-radius: 22px; background: linear-gradient(90deg, rgba(37,99,235,0.20), rgba(15,23,42,0.64)); border: 1px solid rgba(96,165,250,0.20); flex-wrap: wrap; gap: 10px;'><div><h3 style='margin:0 !important; font-size: clamp(16px, 3vw, 22px);'>{title}</h3><p style='margin:4px 0 0; color:#9AA8BD; font-size: clamp(12px, 2vw, 14px);'>{subtitle}</p></div><div style='font-weight:900;color:#BFDBFE;'>PREMIUM</div></div>"
 
 def premium_metric_card(label, value, hint=""):
-    return f"<div class='vmb-metric-card'><div class='vmb-metric-label'>{label}</div><div style='color: #FFFFFF; font-size: 28px; font-weight: 900; margin-top: 4px;'>{value}</div><div style='color: #60A5FA; font-size: 12px; font-weight: 700; margin-top: 5px;'>{hint}</div></div>"
+    return f"<div class='vmb-metric-card'><div class='vmb-metric-label'>{label}</div><div style='color: #FFFFFF; font-size: clamp(20px, 3vw, 28px); font-weight: 900; margin-top: 4px;'>{value}</div><div style='color: #60A5FA; font-size: 12px; font-weight: 700; margin-top: 5px;'>{hint}</div></div>"
 
-# --- MÓDULOS ---
-DIC_SIMULADOS = {
-    "Simulado 1 (Semanas 1 e 2)":["A Atividade do Assessor de Investimentos (AI)", "Lavagem de Dinheiro"],
-    "Simulado 2 (Semanas 3 e 4)":["Mercado de Capitais", "Securitização de Recebíveis", "Derivativos"],
-    "Simulado 3 (Semanas 5 e 6)":["Fundos de Investimentos", "Outros Fundos de Investimentos", "Clubes de Investimentos"],
-    "Simulado 4 (Semanas 7 e 8)":["Mercado Financeiro", "Sistema Financeiro Nacional"],
-    "Simulado 5 (Semanas 9 e 10)":["Instituições e Intermediadores Financeiros", "Economia"],
-    "Simulado 6 (Semanas 11 e 12)":["Matemática Financeira", "Administração de Risco"]
-}
-SIMULADOS_ORDEM = list(DIC_SIMULADOS.keys())
+# --- CALCULADORA HP12C ---
+def render_hp12c():
+    """Renderiza a calculadora HP12C estilo retro como componente HTML."""
+    calc_html = """
+    <div class="calc-wrapper">
+        <div class="calc-title">HP 12C · Financeira</div>
+        <div class="calc-display">
+            <div class="calc-display-expr" id="expr"></div>
+            <div class="calc-display-main" id="disp">0</div>
+        </div>
+        <div class="calc-grid" id="calcGrid">
+
+            <!-- Linha 1: funções financeiras -->
+            <button class="calc-btn fn" onclick="hp('n')">n<span class="calc-label">períodos</span></button>
+            <button class="calc-btn fn" onclick="hp('i')">i%<span class="calc-label">taxa</span></button>
+            <button class="calc-btn fn" onclick="hp('pv')">PV<span class="calc-label">VP</span></button>
+            <button class="calc-btn fn" onclick="hp('pmt')">PMT<span class="calc-label">pgto</span></button>
+            <button class="calc-btn fn" onclick="hp('fv')">FV<span class="calc-label">VF</span></button>
+
+            <!-- Linha 2: funções de cálculo -->
+            <button class="calc-btn fn" onclick="hp('cn')">CN<span class="calc-label">calc n</span></button>
+            <button class="calc-btn fn" onclick="hp('ci')">Ci<span class="calc-label">calc i</span></button>
+            <button class="calc-btn fn" onclick="hp('cpv')">CPV<span class="calc-label">calc PV</span></button>
+            <button class="calc-btn fn" onclick="hp('cpmt')">CPMT<span class="calc-label">calc PMT</span></button>
+            <button class="calc-btn fn" onclick="hp('cfv')">CFV<span class="calc-label">calc FV</span></button>
+
+            <!-- Linha 3: operações -->
+            <button class="calc-btn spec" onclick="hp('cls')">CLR</button>
+            <button class="calc-btn spec" onclick="hp('ce')">CE</button>
+            <button class="calc-btn spec" onclick="hp('pm')">±</button>
+            <button class="calc-btn spec" onclick="hp('pct')">%</button>
+            <button class="calc-btn op"   onclick="hp('/')">÷</button>
+
+            <!-- Linha 4 -->
+            <button class="calc-btn num" onclick="hp('7')">7</button>
+            <button class="calc-btn num" onclick="hp('8')">8</button>
+            <button class="calc-btn num" onclick="hp('9')">9</button>
+            <button class="calc-btn spec" onclick="hp('sqrt')">√</button>
+            <button class="calc-btn op"   onclick="hp('*')">×</button>
+
+            <!-- Linha 5 -->
+            <button class="calc-btn num" onclick="hp('4')">4</button>
+            <button class="calc-btn num" onclick="hp('5')">5</button>
+            <button class="calc-btn num" onclick="hp('6')">6</button>
+            <button class="calc-btn spec" onclick="hp('pow')">xʸ</button>
+            <button class="calc-btn op"   onclick="hp('-')">−</button>
+
+            <!-- Linha 6 -->
+            <button class="calc-btn num" onclick="hp('1')">1</button>
+            <button class="calc-btn num" onclick="hp('2')">2</button>
+            <button class="calc-btn num" onclick="hp('3')">3</button>
+            <button class="calc-btn spec" onclick="hp('inv')">1/x</button>
+            <button class="calc-btn op"   onclick="hp('+')">+</button>
+
+            <!-- Linha 7 -->
+            <button class="calc-btn num zero" onclick="hp('0')">0</button>
+            <button class="calc-btn num" onclick="hp('.')">.</button>
+            <button class="calc-btn spec" onclick="hp('enter')">ENT</button>
+            <button class="calc-btn eq"   onclick="hp('=')">=</button>
+
+        </div>
+    </div>
+
+    <script>
+    (function(){
+        // Registros financeiros HP12C
+        var reg = { n: null, i: null, pv: null, pmt: null, fv: null };
+        var pendingReg = null;    // qual registro será salvo no próximo ENT
+        var display  = "0";
+        var expr     = "";
+        var op       = null;
+        var prev     = null;
+        var newNum   = true;
+        var rpnStack = [];        // pilha RPN simples
+
+        function fmt(v) {
+            if (!isFinite(v)) return "ERRO";
+            // Até 8 casas, sem zeros extras
+            var s = parseFloat(v.toFixed(8)).toString();
+            return s;
+        }
+
+        function upd() {
+            document.getElementById("disp").textContent = display;
+            document.getElementById("expr").textContent = expr;
+        }
+
+        // Iteração de Newton-Raphson para taxa (i)
+        function calcI(n, pv, pmt, fv) {
+            var i = 0.1;
+            for (var k = 0; k < 200; k++) {
+                var r = i;
+                var f, df;
+                if (Math.abs(r) < 1e-9) {
+                    f  = pv + pmt * n + fv;
+                    df = 0;
+                } else {
+                    var x = Math.pow(1+r, n);
+                    f  = pv*x + pmt*(x-1)/r + fv;
+                    df = pv*n*Math.pow(1+r, n-1) + pmt*(n*Math.pow(1+r,n-1)*r - (x-1))/(r*r);
+                }
+                if (Math.abs(df) < 1e-15) break;
+                var ni = r - f/df;
+                if (Math.abs(ni - r) < 1e-9) { i = ni; break; }
+                i = ni;
+            }
+            return i * 100;
+        }
+
+        // Iteração Newton para n
+        function calcN(i, pv, pmt, fv) {
+            var r = i / 100;
+            if (Math.abs(r) < 1e-9) return -(pv + fv) / pmt;
+            return Math.log((pmt/r - fv) / (pv + pmt/r)) / Math.log(1 + r);
+        }
+
+        window.hp = function(k) {
+            var v = parseFloat(display);
+
+            // Dígitos e ponto
+            if (!isNaN(k) || k === '.') {
+                if (newNum) { display = (k === '.') ? "0." : k; newNum = false; }
+                else {
+                    if (k === '.' && display.includes('.')) return;
+                    display = (display === "0" && k !== '.') ? k : display + k;
+                }
+                upd(); return;
+            }
+
+            switch(k) {
+                // --- Limpar ---
+                case 'cls': display="0"; expr=""; op=null; prev=null; newNum=true; reg={n:null,i:null,pv:null,pmt:null,fv:null}; rpnStack=[]; break;
+                case 'ce':  display="0"; newNum=true; break;
+
+                // --- Operações básicas ---
+                case '+': case '-': case '*': case '/':
+                    if (op && !newNum) {
+                        var r2 = calc(op, prev, parseFloat(display));
+                        display = fmt(r2); prev = r2;
+                    } else { prev = parseFloat(display); }
+                    op = k; newNum = true;
+                    expr = display + " " + {'+':'+','-':'−','*':'×','/':'÷'}[k];
+                    break;
+
+                case '=':
+                    if (op) {
+                        var res = calc(op, prev, parseFloat(display));
+                        expr = "";  op = null; prev = null;
+                        display = fmt(res);
+                    }
+                    newNum = true;
+                    break;
+
+                // --- Funções especiais ---
+                case 'pm':  display = fmt(-parseFloat(display)); break;
+                case 'pct': display = fmt(parseFloat(display) / 100); break;
+                case 'sqrt':
+                    var sv = parseFloat(display);
+                    display = sv >= 0 ? fmt(Math.sqrt(sv)) : "ERRO";
+                    break;
+                case 'pow':
+                    prev = parseFloat(display); op = 'pow'; newNum = true;
+                    expr = display + " ^"; break;
+                case 'inv':
+                    var iv = parseFloat(display);
+                    display = iv !== 0 ? fmt(1/iv) : "ERRO";
+                    break;
+
+                // --- Registros HP12C ---
+                // Guardar valor atual no registro
+                case 'n':   reg.n   = parseFloat(display); expr = "n = " + display;   newNum=true; break;
+                case 'i':   reg.i   = parseFloat(display); expr = "i = " + display;   newNum=true; break;
+                case 'pv':  reg.pv  = parseFloat(display); expr = "PV = " + display;  newNum=true; break;
+                case 'pmt': reg.pmt = parseFloat(display); expr = "PMT = " + display; newNum=true; break;
+                case 'fv':  reg.fv  = parseFloat(display); expr = "FV = " + display;  newNum=true; break;
+
+                // Calcular n
+                case 'cn':
+                    if (reg.i!==null && reg.pv!==null && reg.pmt!==null && reg.fv!==null) {
+                        var cn = calcN(reg.i, reg.pv, reg.pmt, reg.fv);
+                        display = fmt(cn); reg.n = cn; expr = "n = ?";
+                    } else { display = "FALTA"; }
+                    newNum = true; break;
+
+                // Calcular i
+                case 'ci':
+                    if (reg.n!==null && reg.pv!==null && reg.pmt!==null && reg.fv!==null) {
+                        var ci = calcI(reg.n, reg.pv, reg.pmt, reg.fv);
+                        display = fmt(ci); reg.i = ci; expr = "i = ?";
+                    } else { display = "FALTA"; }
+                    newNum = true; break;
+
+                // Calcular PV
+                case 'cpv':
+                    if (reg.n!==null && reg.i!==null && reg.pmt!==null && reg.fv!==null) {
+                        var ri = reg.i/100;
+                        var cpv;
+                        if (Math.abs(ri) < 1e-9) {
+                            cpv = -reg.pmt * reg.n - reg.fv;
+                        } else {
+                            var x = Math.pow(1+ri, reg.n);
+                            cpv = -(reg.pmt*(1 - 1/x)/ri + reg.fv/x);
+                        }
+                        display = fmt(cpv); reg.pv = cpv; expr = "PV = ?";
+                    } else { display = "FALTA"; }
+                    newNum = true; break;
+
+                // Calcular PMT
+                case 'cpmt':
+                    if (reg.n!==null && reg.i!==null && reg.pv!==null && reg.fv!==null) {
+                        var ri2 = reg.i/100;
+                        var cpmt;
+                        if (Math.abs(ri2) < 1e-9) {
+                            cpmt = -(reg.pv + reg.fv) / reg.n;
+                        } else {
+                            var x2 = Math.pow(1+ri2, reg.n);
+                            cpmt = -(reg.pv*x2 + reg.fv)/(x2-1)*ri2;
+                        }
+                        display = fmt(cpmt); reg.pmt = cpmt; expr = "PMT = ?";
+                    } else { display = "FALTA"; }
+                    newNum = true; break;
+
+                // Calcular FV
+                case 'cfv':
+                    if (reg.n!==null && reg.i!==null && reg.pv!==null && reg.pmt!==null) {
+                        var ri3 = reg.i/100;
+                        var cfv;
+                        if (Math.abs(ri3) < 1e-9) {
+                            cfv = -reg.pv - reg.pmt * reg.n;
+                        } else {
+                            var x3 = Math.pow(1+ri3, reg.n);
+                            cfv = -reg.pv*x3 - reg.pmt*(x3-1)/ri3;
+                        }
+                        display = fmt(cfv); reg.fv = cfv; expr = "FV = ?";
+                    } else { display = "FALTA"; }
+                    newNum = true; break;
+
+                // ENT: empurra valor na pilha (modo RPN auxiliar)
+                case 'enter':
+                    rpnStack.push(parseFloat(display));
+                    newNum = true;
+                    expr = "▲ " + display;
+                    break;
+            }
+            upd();
+        };
+
+        function calc(o, a, b) {
+            switch(o) {
+                case '+': return a + b;
+                case '-': return a - b;
+                case '*': return a * b;
+                case '/': return b !== 0 ? a / b : Infinity;
+                case 'pow': return Math.pow(a, b);
+            }
+            return b;
+        }
+    })();
+    </script>
+    """
+    components.html(calc_html, height=420, scrolling=False)
 
 # --- ESTADO DA SESSÃO ---
 if "logado" not in st.session_state:
@@ -208,54 +697,38 @@ if "logado" not in st.session_state:
         "data_prova": "", "frase_pessoal": ""
     })
 
-# --- FUNÇÕES CORE E NOVA GAMIFICAÇÃO ANCORD ---
+# --- FUNÇÕES CORE E GAMIFICAÇÃO ANCORD ---
 def calcular_gamificacao(df_user):
-    """Calcula XP e Nível baseado no histórico de simulados e módulos concluídos"""
     xp = len(df_user) * 150
-    
     simulados_passados = set()
     for _, row in df_user.iterrows():
         nota = pd.to_numeric(str(row['Nota (%)']).replace(',', '.'), errors='coerce')
         if pd.notna(nota) and nota >= 70.0:
             simulados_passados.add(row['Simulado'])
-            
     total_modulos = len(SIMULADOS_ORDEM)
-    
     if len(simulados_passados) < total_modulos:
-        if xp < 300: 
-            nivel = "Iniciante (Fase de Base)"
-        elif xp < 750: 
-            nivel = "Em Construção Teórica"
-        elif xp < 1500: 
-            nivel = "Avançando no Edital"
-        else: 
-            nivel = "Experiente (Faltam Módulos)"
+        if xp < 300: nivel = "Iniciante (Fase de Base)"
+        elif xp < 750: nivel = "Em Construção Teórica"
+        elif xp < 1500: nivel = "Avançando no Edital"
+        else: nivel = "Experiente (Faltam Módulos)"
     else:
-        if xp < 2000: 
-            nivel = "Pronto para a ANCORD ✅"
-        else: 
-            nivel = "Elite ANCORD 🏆 (Aprovação Certa)"
-            
+        if xp < 2000: nivel = "Pronto para a ANCORD ✅"
+        else: nivel = "Elite ANCORD 🏆 (Aprovação Certa)"
     return xp, nivel
 
 def selecionar_questoes_balanceadas(banco, modulos, total_desejado=20):
-    """Seleciona questões dando prioridade absoluta às questões ainda não vistas."""
     if "questoes_vistas" not in st.session_state:
         st.session_state.questoes_vistas = set()
-
     questoes_por_modulo = {mod:[] for mod in modulos}
-    
     for q in banco:
         if q["modulo"] in modulos:
             questoes_por_modulo[q["modulo"]].append(q)
-            
     for mod in modulos:
         nao_vistas =[q for q in questoes_por_modulo[mod] if q["id"] not in st.session_state.questoes_vistas]
         vistas =[q for q in questoes_por_modulo[mod] if q["id"] in st.session_state.questoes_vistas]
         random.shuffle(nao_vistas)
         random.shuffle(vistas)
         questoes_por_modulo[mod] = nao_vistas + vistas
-
     total_disponivel = sum(len(qs) for qs in questoes_por_modulo.values())
     if total_disponivel <= total_desejado:
         todas =[q for qs in questoes_por_modulo.values() for q in qs]
@@ -263,40 +736,33 @@ def selecionar_questoes_balanceadas(banco, modulos, total_desejado=20):
             st.session_state.questoes_vistas.add(q["id"])
         random.shuffle(todas)
         return todas
-        
     selecionadas =[]
     modulos_restantes =[mod for mod in modulos if len(questoes_por_modulo[mod]) > 0]
     vagas = total_desejado
-    
     while vagas > 0 and modulos_restantes:
         cota = vagas // len(modulos_restantes)
         resto = vagas % len(modulos_restantes)
         novos_modulos_restantes =[]
-        
         for i, mod in enumerate(modulos_restantes):
             cota_atual = cota + (1 if i < resto else 0)
             disponivel = len(questoes_por_modulo[mod])
-            
             if disponivel <= cota_atual:
                 selecionadas.extend(questoes_por_modulo[mod])
                 vagas -= disponivel
                 questoes_por_modulo[mod] =[]
             else:
                 novos_modulos_restantes.append(mod)
-                
         if len(novos_modulos_restantes) == len(modulos_restantes):
             for i, mod in enumerate(novos_modulos_restantes):
                 cota_atual = cota + (1 if i < resto else 0)
                 escolhidas = questoes_por_modulo[mod][:cota_atual]
                 selecionadas.extend(escolhidas)
-                questoes_por_modulo[mod] = questoes_por_modulo[mod][cota_atual:] 
-                vagas -= cota_atual
+                questoes_por_modulo[mod] = questoes_por_modulo[mod][cota_atual:]
+            vagas -= cota_atual
             break
         modulos_restantes = novos_modulos_restantes
-        
     for q in selecionadas:
         st.session_state.questoes_vistas.add(q["id"])
-        
     random.shuffle(selecionadas)
     return selecionadas
 
@@ -344,19 +810,16 @@ if not st.session_state.logado:
                             st.session_state.logado = True
                             st.session_state.usuario = usuario_formatado
                             
-                            # Carregar Foto
                             if 'Foto' in df_usuarios.columns and not user_match.empty:
                                 foto_b64 = user_match['Foto'].values[0]
                                 if pd.notna(foto_b64) and foto_b64 != "":
                                     st.session_state.foto_perfil = foto_b64
                             
-                            # Carregar Data da Prova
                             if 'Data_Prova' in df_usuarios.columns and not user_match.empty:
                                 dp_val = user_match['Data_Prova'].values[0]
                                 if pd.notna(dp_val) and str(dp_val).strip() != "":
                                     st.session_state.data_prova = str(dp_val).strip()
                             
-                            # Carregar Frase Pessoal
                             if 'Frase_Pessoal' in df_usuarios.columns and not user_match.empty:
                                 fp_val = user_match['Frase_Pessoal'].values[0]
                                 if pd.notna(fp_val) and str(fp_val).strip() != "":
@@ -384,7 +847,6 @@ if not st.session_state.logado:
                             except:
                                 st.session_state.simulado_atual_indice = 0
 
-                            # Lógica de Primeiro Acesso: Forçar preenchimento do perfil
                             if not st.session_state.data_prova or not st.session_state.frase_pessoal:
                                 st.session_state.page = "Perfil"
                             else:
@@ -397,14 +859,12 @@ if not st.session_state.logado:
                         st.error(f"Falha de conexão com os servidores. {e}")
 
 else:
-    # Verificador de Perfil Pendente e Simulado em andamento
     is_perfil_pendente = not st.session_state.data_prova or not st.session_state.frase_pessoal
     is_simulado = st.session_state.page == "Simulado"
 
-    # --- TOP NAVIGATION BAR INVISÍVEL (Apenas para o Perfil no Canto Direito) ---
+    # --- TOP NAVIGATION BAR ---
     col_vazio, col_perfil = st.columns([9, 1])
     with col_perfil:
-        # Trava o acesso ao perfil se o perfil estiver pendente ou durante o simulado
         if st.button("👤 Meu Perfil", disabled=(is_perfil_pendente or is_simulado), use_container_width=True):
             st.session_state.page = "Perfil"
             st.rerun()
@@ -424,7 +884,6 @@ else:
 
         frase_sidebar = f'<div style="font-size: 10px; color: #AAB8CF; margin-top: 5px; font-style: italic; white-space: normal; line-height: 1.2;">"{st.session_state.frase_pessoal}"</div>' if st.session_state.frase_pessoal else ''
         
-        # Lógica da Contagem Regressiva para a Sidebar
         countdown_html = ""
         if st.session_state.data_prova:
             try:
@@ -468,18 +927,34 @@ else:
             else:
                 menu_idx = 0
                 
-            # Trava o rádio menu lateral durante o simulado
-            menu = st.radio("Módulos de Avaliação",["Dashboard Principal", "Evolução e IA"], index=menu_idx, label_visibility="collapsed", disabled=is_simulado)
-        
-        # BOTÃO SAIR NO FUNDO ESQUERDO
+            # O radio de navegação fica desabilitado apenas durante o simulado
+            menu = st.radio(
+                "Módulos de Avaliação",
+                ["Dashboard Principal", "Evolução e IA"],
+                index=menu_idx,
+                label_visibility="collapsed",
+                disabled=is_simulado
+            )
+
+        # --- CALCULADORA HP12C CONDICIONAL ---
+        # Aparece na sidebar apenas quando o simulado selecionado contém Matemática Financeira,
+        # inclusive durante a execução da prova — sem bloquear nenhuma outra funcionalidade.
+        if st.session_state.simulado_nome and simulado_tem_matematica(st.session_state.simulado_nome):
+            st.markdown(
+                "<div style='font-size: 12px; color: #64748B; font-weight: 600; text-transform: uppercase; "
+                "letter-spacing: 1px; margin: 18px 0 6px 5px;'>Calculadora Financeira</div>",
+                unsafe_allow_html=True
+            )
+            render_hp12c()
+
+        # BOTÃO SAIR
         st.markdown("<div style='height: 35vh;'></div>", unsafe_allow_html=True)
         st.divider()
-        # Trava o botão de logout (Sair) durante o simulado
         if st.button("🚪 Sair do Sistema", use_container_width=True, disabled=is_simulado):
             st.session_state.clear()
             st.rerun()
 
-    # Controle Roteamento
+    # Controle de Roteamento
     if is_perfil_pendente:
         st.session_state.page = "Perfil"
     else:
@@ -537,7 +1012,7 @@ else:
                     else:
                         st.button("Bloqueado", key=f"btn_{i}", disabled=True, use_container_width=True)
 
-    # --- TELA DE PERFIL PREMIUM E PREPARAÇÃO ANCORD ---
+    # --- TELA DE PERFIL ---
     elif st.session_state.page == "Perfil":
         st.markdown(premium_page_header(
             "Meu Perfil",
@@ -569,7 +1044,6 @@ else:
                             img = Image.open(uploaded_file)
                             if img.mode in ("RGBA", "P"):
                                 img = img.convert("RGB")
-                            # Forçar o redimensionamento exato/proporcional
                             img.thumbnail((120, 120))
                             buffered = BytesIO()
                             img.save(buffered, format="JPEG", quality=50, optimize=True)
@@ -636,7 +1110,6 @@ else:
                 else:
                     st.success("🤖 **Mentor IA:** Parabéns! Você já varreu todos os módulos do edital da ANCORD. Agora a estratégia muda: foque em refazer os simulados de forma intercalada, estude suas fraquezas apontadas no Radar (aba Evolução) e foque na gestão de tempo para simular a prova.")
 
-            # NOVA SEÇÃO: Planejamento e Motivação
             with st.container(border=True):
                 st.markdown("### 🗓️ Planejamento e Motivação")
                 
@@ -678,8 +1151,6 @@ else:
                                 
                                 st.success("Planejamento e frase atualizados com sucesso!")
                                 time.sleep(1)
-                                
-                                # Redireciona para Home (Dashboard Principal) de forma automática e libera o menu
                                 st.session_state.page = "Home"
                                 st.rerun()
                             except Exception as e:
@@ -693,6 +1164,10 @@ else:
             "logo_interna",
             "PROTOCOLO DE AVALIAÇÃO"
         ), unsafe_allow_html=True)
+        
+        # Aviso sobre calculadora se for simulado de matemática
+        if simulado_tem_matematica(st.session_state.simulado_nome):
+            st.success("🧮 **Calculadora HP12C disponível** na barra lateral durante esta prova.")
         
         st.markdown("""
         <div style="background: rgba(234, 179, 8, 0.1); border-left: 4px solid #EAB308; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
@@ -807,7 +1282,6 @@ else:
 
         percentual = (acertos / total_questoes) * 100 if total_questoes > 0 else 0
 
-        # SALVAMENTO NA PLANILHA
         if not st.session_state.resultado_salvo:
             with st.spinner("Salvando telemetria na nuvem..."):
                 try:
@@ -864,7 +1338,7 @@ else:
             st.session_state.page = "Home"
             st.rerun()
 
-    # --- TELA EVOLUÇÃO E IA COM CORREÇÃO E ANÁLISE COMPLETA ---
+    # --- TELA EVOLUÇÃO E IA ---
     elif st.session_state.page == "Evolução":
         st.markdown(premium_page_header(
             "Inteligência e Evolução", 
@@ -882,7 +1356,6 @@ else:
                 if not df_user.empty:
                     df_user.reset_index(drop=True, inplace=True)
                     
-                    # 1. PROCESSAR TEMPO DE FORMA ESTRUTURADA
                     tempos_segundos =[]
                     total_secs = 0
                     valid_times = 0
@@ -904,10 +1377,8 @@ else:
                     media_secs_questao = total_secs / (valid_times * 20) if valid_times > 0 else 0
                     avg_score = df_user['Nota (%)'].mean()
                     
-                    # Criando rótulo com iteração segura
                     df_user['Rotulo'] =[f"{i+1}ª T. ({row['Simulado'][:12]}...)" for i, row in df_user.iterrows()]
 
-                    # --- HEADERS: KPIS ---
                     col1, col2, col3, col4 = st.columns(4)
                     col1.metric("Média de Acertos", f"{avg_score:.1f}%")
                     col2.metric("Simulados Realizados", len(df_user))
@@ -916,7 +1387,6 @@ else:
                     
                     st.divider()
 
-                    # --- GRÁFICOS DE LINHA E TEMPO ---
                     col_chart1, col_chart2 = st.columns(2)
                     with col_chart1:
                         st.markdown("### 📈 Evolução Histórica (Notas)")
@@ -942,7 +1412,6 @@ else:
                     
                     st.divider()
 
-                    # --- RADAR E IA ---
                     module_scores = {}
                     for _, row in df_user.iterrows():
                         if 'Detalhes_Modulos' in df_user.columns and pd.notna(row['Detalhes_Modulos']) and str(row['Detalhes_Modulos']).strip() != "":
