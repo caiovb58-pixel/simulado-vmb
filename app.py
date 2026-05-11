@@ -405,7 +405,7 @@ else:
     col_vazio, col_perfil = st.columns([9, 1])
     with col_perfil:
         # Trava o acesso ao perfil se o perfil estiver pendente ou durante o simulado
-        if st.button("⚙️ Meu Perfil", disabled=(is_perfil_pendente or is_simulado), use_container_width=True):
+        if st.button("👤 Meu Perfil", disabled=(is_perfil_pendente or is_simulado), use_container_width=True):
             st.session_state.page = "Perfil"
             st.rerun()
 
