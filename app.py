@@ -208,18 +208,35 @@ if "logado" not in st.session_state:
 
 # --- FUNÇÕES CORE E NOVA GAMIFICAÇÃO ANCORD ---
 def calcular_gamificacao(df_user):
-    """Calcula XP e Nível baseado no histórico de simulados (Status ANCORD)"""
+    """Calcula XP e Nível baseado no histórico de simulados e módulos concluídos"""
     xp = len(df_user) * 150
-    if xp < 300: 
-        nivel = "Iniciante (Fase de Base)"
-    elif xp < 750: 
-        nivel = "Em Construção Teórica"
-    elif xp < 1200: 
-        nivel = "Quase Lá (Ajustes Finais)"
-    elif xp < 2000: 
-        nivel = "Pronto para a ANCORD ✅"
-    else: 
-        nivel = "Elite ANCORD 🏆 (Aprovação Certa)"
+    
+    # Identificar quantos simulados únicos o usuário já passou com >= 70%
+    simulados_passados = set()
+    for _, row in df_user.iterrows():
+        nota = pd.to_numeric(str(row['Nota (%)']).replace(',', '.'), errors='coerce')
+        if pd.notna(nota) and nota >= 70.0:
+            simulados_passados.add(row['Simulado'])
+            
+    total_modulos = len(SIMULADOS_ORDEM)
+    
+    if len(simulados_passados) < total_modulos:
+        # Ainda não completou todo o edital (mesmo se tiver muito XP)
+        if xp < 300: 
+            nivel = "Iniciante (Fase de Base)"
+        elif xp < 750: 
+            nivel = "Em Construção Teórica"
+        elif xp < 1500: 
+            nivel = "Avançando no Edital"
+        else: 
+            nivel = "Experiente (Faltam Módulos)"
+    else:
+        # Completou todos os módulos com nota de aprovação
+        if xp < 2000: 
+            nivel = "Pronto para a ANCORD ✅"
+        else: 
+            nivel = "Elite ANCORD 🏆 (Aprovação Certa)"
+            
     return xp, nivel
 
 def selecionar_questoes_balanceadas(banco, modulos, total_desejado=20):
@@ -508,28 +525,40 @@ else:
                 st.write(f"**Pontuação Geral:** {st.session_state.xp_usuario} XP")
                 
                 st.divider()
-                st.markdown("#### 🎯 Termômetro de Prontidão para a Prova")
                 
-                xp_atual = st.session_state.xp_usuario
-                meta_xp = 1500
-                progresso = min(int((xp_atual / meta_xp) * 100), 100)
+                # Buscar o histórico atualizado do usuário para saber as missões concluídas
+                try:
+                    conn = st.connection("gsheets", type=GSheetsConnection)
+                    df_historico = conn.read(worksheet="Historico", ttl=0)
+                    df_user_hist = df_historico[df_historico['Usuario'] == st.session_state.usuario]
+                except:
+                    df_user_hist = pd.DataFrame()
+                    
+                simulados_passados = set()
+                if not df_user_hist.empty:
+                    for _, row in df_user_hist.iterrows():
+                        nota = pd.to_numeric(str(row['Nota (%)']).replace(',', '.'), errors='coerce')
+                        if pd.notna(nota) and nota >= 70.0:
+                            simulados_passados.add(row['Simulado'])
+
+                total_modulos = len(SIMULADOS_ORDEM)
+                modulos_concluidos = len(simulados_passados)
+                
+                st.markdown("#### 🎯 Termômetro de Prontidão para a Prova")
+                progresso = int((modulos_concluidos / total_modulos) * 100)
                 
                 st.progress(progresso)
-                st.caption(f"Status atual: **{progresso}% de prontidão** (Baseado em Volume e Acertos)")
+                st.caption(f"Status atual: **{progresso}% do edital coberto** ({modulos_concluidos}/{total_modulos} Módulos Concluídos)")
                 
                 st.markdown("<br>", unsafe_allow_html=True)
-                st.markdown("#### 🧠 Feedback do Mentor IA")
+                st.markdown("#### 🧠 Mentor IA - Diagnóstico de Estudos")
                 
-                if xp_atual < 300:
-                    st.error("🤖 **Mentor IA:** Você está na fase de fundação. Seu foco não deve ser a prova agora, mas sim errar bastante nos simulados para fixar a teoria base.")
-                elif xp_atual < 750:
-                    st.warning("🤖 **Mentor IA:** Você já tem uma boa fundação teórica, mas falta a malícia da prova. Identifique pegadinhas da ANCORD no gabarito analítico.")
-                elif xp_atual < 1200:
-                    st.info("🤖 **Mentor IA:** Muito bom! Você já possui o conhecimento técnico necessário. Agora é hora de preencher as lacunas olhando seu Radar de Competências na aba Evolução.")
-                elif xp_atual < 2000:
-                    st.success("🤖 **Mentor IA:** Você atingiu a Prontidão Elite! Suas métricas apontam para uma aprovação segura. Recomendamos realizar o agendamento oficial da prova da ANCORD.")
+                if modulos_concluidos == 0:
+                    st.info("🤖 **Mentor IA:** Você está no início da sua jornada. Faça os primeiros simulados para identificarmos seu nível. O foco agora é construir base teórica.")
+                elif modulos_concluidos < total_modulos:
+                    st.warning(f"🤖 **Mentor IA:** Você já dominou {modulos_concluidos} etapas do edital, mas ainda faltam módulos essenciais. Continue avançando nas missões bloqueadas. Dica: Se esbarrar em um módulo de baixa nota, revise a teoria e faça anotações dos erros antes de refazer o simulado.")
                 else:
-                    st.success("🤖 **Mentor IA:** Nível de Domínio Master. Você não só passará na prova, como gabaritará várias disciplinas. Mantenha as revisões leves até o dia D.")
+                    st.success("🤖 **Mentor IA:** Parabéns! Você já varreu todos os módulos do edital da ANCORD. Agora a estratégia muda: foque em refazer os simulados de forma intercalada, estude suas fraquezas apontadas no Radar (aba Evolução) e foque na gestão de tempo para simular a prova.")
 
     # --- TELA DE INSTRUÇÕES ---
     elif st.session_state.page == "Instrucoes":
@@ -795,7 +824,7 @@ else:
                             try:
                                 detalhes = json.loads(str(row['Detalhes_Modulos']))
                                 for mod, score in detalhes.items():
-                                    if mod not in module_scores: module_scores[mod] = []
+                                    if mod not in module_scores: module_scores[mod] =[]
                                     module_scores[mod].append(score)
                             except Exception:
                                 pass
@@ -831,22 +860,22 @@ else:
                         weak_mods =[mod for mod, score in sorted_mods if score < 70]
                         strong_mods =[mod for mod, score in sorted_mods if score >= 85]
 
-                        st.markdown("""<div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);"><p style="color:#8B949E; font-size:14px; margin-bottom:5px;">ANÁLISE HEURÍSTICA DE DESEMPENHO</p>""", unsafe_allow_html=True)
+                        st.markdown("""<div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);"><p style="color:#8B949E; font-size:14px; margin-bottom:5px;">DIAGNÓSTICO TÁTICO DE ESTUDOS</p>""", unsafe_allow_html=True)
 
                         if weak_mods:
-                            st.markdown(f"**🚨 Foco de Estudo:** Detectei falhas em **{weak_mods[0]}**. A prova da ANCORD exige mínimo de 50% em módulos específicos. Reforce a teoria urgentemente.", unsafe_allow_html=True)
+                            st.markdown(f"**🚨 Foco de Melhoria:** Notei que você está escorregando em **{weak_mods[0]}** (Média: {dict(sorted_mods)[weak_mods[0]]:.1f}%).<br>💡 *Plano de Ação:* Pause a execução de simulados por um momento, volte no material teórico desse módulo e anote os seus erros principais identificados no relatório da missão.", unsafe_allow_html=True)
                         if strong_mods:
-                            st.markdown(f"<br>**🏆 Ponto Forte:** O módulo **{strong_mods[-1]}** está excelente. Mantenha com revisões ativas.", unsafe_allow_html=True)
+                            st.markdown(f"<br>**🏆 Ponto Forte:** O módulo **{strong_mods[-1]}** está validado e bem absorvido (Média: {dict(sorted_mods)[strong_mods[-1]]:.1f}%).<br>💡 *Como reforçar:* Não gaste tanta energia revisando a teoria básica daqui, continue fazendo as questões só para manter a memória fresca.", unsafe_allow_html=True)
 
-                        st.markdown("<br>**⏱️ Gestão de Tempo:**", unsafe_allow_html=True)
+                        st.markdown("<br>**⏱️ Termômetro de Agilidade:**", unsafe_allow_html=True)
                         if media_secs_questao > 90:
-                            st.markdown("⚠️ *Lento:* Você demora mais de 1m30s por questão. Na prova oficial (120 minutos / 80 questões), o ideal é 1m30s. Treine agilidade.")
+                            st.markdown("⚠️ Você demora mais de 1m30s por questão. Na prova oficial (120 min), o tempo é curto. Tente focar diretamente no verbo principal e nas palavras-chave finais do enunciado.")
                         elif media_secs_questao < 40 and valid_times > 0:
-                            st.markdown("⚡ *Rápido demais:* Menos de 40s por questão pode indicar leitura desatenta. Cuidado com cascas de banana.")
+                            st.markdown("⚡ Menos de 40s por questão. Cuidado com o ímpeto e a ansiedade! A prova da ANCORD contém pegadinhas que se escondem justamente no final da frase.")
                         elif valid_times > 0:
-                            st.markdown("✅ *Ritmo Perfeito:* Seu tempo médio é excelente para a aprovação.")
+                            st.markdown("✅ Excelente ritmo de leitura e raciocínio! Mantenha essa cadência de resolução (entre 1m e 1m30s por questão).")
 
-                        st.markdown("<br>🕵️‍♂️ **Alerta de Pegadinhas (Padrão ANCORD):**<br>Redobre a atenção quando a questão contiver as palavras: <span style='color:#EF4444; font-weight:bold;'>EXCETO, APENAS, SEMPRE, OBRIGATORIAMENTE, GARANTIDO.</span> A ANCORD as utiliza para invalidar alternativas longas.", unsafe_allow_html=True)
+                        st.markdown("<br>🕵️‍♂️ **Alerta do Mentor (Padrão ANCORD):**<br>Redobre a atenção quando a questão contiver as palavras <span style='color:#EF4444; font-weight:bold;'>EXCETO, APENAS, SEMPRE, OBRIGATORIAMENTE, SOMENTE.</span> Elas costumam invalidar aquela alternativa específica.", unsafe_allow_html=True)
 
                         st.markdown("</div>", unsafe_allow_html=True)
 
