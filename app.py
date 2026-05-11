@@ -153,7 +153,7 @@ def premium_illustration(kind):
     import base64
     if kind == "logo_abertura":
         try:
-            with open("Logo_VMB_V.png", "rb") as f:
+            with open("VMB_V_Branco.png", "rb") as f:
                 data = base64.b64encode(f.read()).decode()
             return f"<div style='display:flex; justify-content:center; align-items:center; height:100%;'><img src='data:image/png;base64,{data}' style='width:100%; max-width:280px; object-fit:contain; filter: drop-shadow(0 0 25px rgba(37, 99, 235, 0.3));'></div>"
         except: pass 
@@ -269,7 +269,7 @@ if not st.session_state.logado:
     
     with col2:
         try:
-            with open("Logo_VMB_V.png", "rb") as f:
+            with open("VMB_V_Branco.png", "rb") as f:
                 data = base64.b64encode(f.read()).decode()
             st.markdown(f"""
             <div style='text-align: center; margin-bottom: 20px;'>
