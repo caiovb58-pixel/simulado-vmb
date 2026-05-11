@@ -265,7 +265,7 @@ def selecionar_questoes_balanceadas(banco, modulos, total_desejado=20):
         return todas
         
     selecionadas =[]
-    modulos_restantes = [mod for mod in modulos if len(questoes_por_modulo[mod]) > 0]
+    modulos_restantes =[mod for mod in modulos if len(questoes_por_modulo[mod]) > 0]
     vagas = total_desejado
     
     while vagas > 0 and modulos_restantes:
@@ -384,7 +384,12 @@ if not st.session_state.logado:
                             except:
                                 st.session_state.simulado_atual_indice = 0
 
-                            st.session_state.page = "Home"
+                            # Lógica de Primeiro Acesso: Forçar preenchimento do perfil
+                            if not st.session_state.data_prova or not st.session_state.frase_pessoal:
+                                st.session_state.page = "Perfil"
+                            else:
+                                st.session_state.page = "Home"
+                            
                             st.rerun()
                         else:
                             st.error("Acesso negado. Credenciais inválidas.")
@@ -392,10 +397,13 @@ if not st.session_state.logado:
                         st.error(f"Falha de conexão com os servidores. {e}")
 
 else:
+    # Verificador de Perfil Pendente
+    is_perfil_pendente = not st.session_state.data_prova or not st.session_state.frase_pessoal
+
     # --- TOP NAVIGATION BAR INVISÍVEL (Apenas para o Perfil no Canto Direito) ---
     col_vazio, col_perfil = st.columns([9, 1])
     with col_perfil:
-        if st.button("⚙️ Meu Perfil", use_container_width=True):
+        if st.button("⚙️ Meu Perfil", disabled=is_perfil_pendente, use_container_width=True):
             st.session_state.page = "Perfil"
             st.rerun()
 
@@ -413,6 +421,22 @@ else:
             foto_html = f'<img src="data:image/jpeg;base64,{st.session_state.foto_perfil}" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid #3B82F6; box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);">'
 
         frase_sidebar = f'<div style="font-size: 10px; color: #AAB8CF; margin-top: 5px; font-style: italic; white-space: normal; line-height: 1.2;">"{st.session_state.frase_pessoal}"</div>' if st.session_state.frase_pessoal else ''
+        
+        # Lógica da Contagem Regressiva para a Sidebar
+        countdown_html = ""
+        if st.session_state.data_prova:
+            try:
+                exam_date = datetime.strptime(st.session_state.data_prova, "%Y-%m-%d").date()
+                hoje = datetime.now().date()
+                diff = (exam_date - hoje).days
+                if diff > 0:
+                    countdown_html = f'<div style="font-size: 11px; font-weight: 800; color: #FBBF24; margin-top: 6px;">⏳ FALTAM {diff} DIAS</div>'
+                elif diff == 0:
+                    countdown_html = f'<div style="font-size: 11px; font-weight: 800; color: #EF4444; margin-top: 6px;">🚨 A PROVA É HOJE!</div>'
+                else:
+                    countdown_html = f'<div style="font-size: 11px; font-weight: 800; color: #94A3B8; margin-top: 6px;">🗓️ PROVA FINALIZADA</div>'
+            except:
+                pass
 
         sidebar_html = f"""
         <div style="background: linear-gradient(145deg, rgba(37, 99, 235, 0.1), rgba(15, 23, 42, 0.4)); padding: 16px; border-radius: 16px; border: 1px solid rgba(59, 130, 246, 0.2); margin-bottom: 24px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
@@ -421,6 +445,7 @@ else:
                 <div style="font-size: 10px; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">Status Atual</div>
                 <div style="font-size: 15px; font-weight: 700; color: #F8FAFC; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{st.session_state.usuario}</div>
                 <div style="font-size: 11px; font-weight: 600; color: #60A5FA; margin-top: 2px;">{st.session_state.nivel_usuario}</div>
+                {countdown_html}
                 {frase_sidebar}
             </div>
         </div>
@@ -430,15 +455,18 @@ else:
         # MENU LATERAL
         st.markdown("<div style='font-size: 12px; color: #64748B; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; margin-left: 5px;'>Navegação</div>", unsafe_allow_html=True)
         
-        # Define dinamicamente o item selecionado no menu dependendo da página
-        if st.session_state.page == "Perfil":
-            menu_idx = None
-        elif st.session_state.page == "Evolução":
-            menu_idx = 1
+        if is_perfil_pendente:
+            st.warning("⚠️ Planejamento Pendente. Preencha seu perfil para liberar as missões.")
+            menu = None
         else:
-            menu_idx = 0
-            
-        menu = st.radio("Módulos de Avaliação", ["Dashboard Principal", "Evolução e IA"], index=menu_idx, label_visibility="collapsed")
+            if st.session_state.page == "Perfil":
+                menu_idx = None
+            elif st.session_state.page == "Evolução":
+                menu_idx = 1
+            else:
+                menu_idx = 0
+                
+            menu = st.radio("Módulos de Avaliação",["Dashboard Principal", "Evolução e IA"], index=menu_idx, label_visibility="collapsed")
         
         # BOTÃO SAIR NO FUNDO ESQUERDO
         st.markdown("<div style='height: 35vh;'></div>", unsafe_allow_html=True)
@@ -448,12 +476,15 @@ else:
             st.rerun()
 
     # Controle Roteamento
-    if menu == "Evolução e IA" and st.session_state.page != "Evolução":
-        st.session_state.page = "Evolução"
-        st.rerun()
-    elif menu == "Dashboard Principal" and st.session_state.page not in["Home", "Instrucoes", "Simulado", "Resultado"]:
-        st.session_state.page = "Home"
-        st.rerun()
+    if is_perfil_pendente:
+        st.session_state.page = "Perfil"
+    else:
+        if menu == "Evolução e IA" and st.session_state.page != "Evolução":
+            st.session_state.page = "Evolução"
+            st.rerun()
+        elif menu == "Dashboard Principal" and st.session_state.page not in["Home", "Instrucoes", "Simulado", "Resultado"]:
+            st.session_state.page = "Home"
+            st.rerun()
 
     # --- HOME / DASHBOARD ---
     if st.session_state.page == "Home":
@@ -510,6 +541,9 @@ else:
             "logo_interna",
             "CONFIGURAÇÕES E PRONTIDÃO"
         ), unsafe_allow_html=True)
+        
+        if is_perfil_pendente:
+            st.info("👋 **Bem-vindo!** Antes de acessar suas missões, defina sua **Data da Prova** e o seu **Mantra Pessoal** no painel de Planejamento abaixo e clique em Salvar.")
         
         col_foto, col_info = st.columns([1, 2])
         
@@ -602,21 +636,6 @@ else:
             with st.container(border=True):
                 st.markdown("### 🗓️ Planejamento e Motivação")
                 
-                if st.session_state.data_prova:
-                    try:
-                        exam_date = datetime.strptime(st.session_state.data_prova, "%Y-%m-%d").date()
-                        hoje = datetime.now().date()
-                        diff = (exam_date - hoje).days
-                        
-                        if diff > 0:
-                            st.info(f"⏳ **Contagem Regressiva:** Faltam exatos **{diff} dias** para a sua prova da ANCORD!")
-                        elif diff == 0:
-                            st.warning("🚨 **É HOJE!** Mantenha a calma, lembre-se do treinamento e faça uma excelente prova!")
-                        else:
-                            st.error(f"🗓️ A data da sua prova ({exam_date.strftime('%d/%m/%Y')}) já passou. Atualize seu calendário se for necessário.")
-                    except:
-                        pass
-                
                 col_date, col_phrase = st.columns([1, 1.5])
                 
                 with col_date:
@@ -630,31 +649,37 @@ else:
                     nova_frase = st.text_input("Sua Frase Pessoal / Mantra", value=st.session_state.frase_pessoal, placeholder="Ex: Foguete não tem ré!", max_chars=80)
                     
                 if st.button("Salvar Planejamento na Nuvem", use_container_width=True):
-                    with st.spinner("Sincronizando com o servidor..."):
-                        try:
-                            conn = st.connection("gsheets", type=GSheetsConnection)
-                            df_usuarios = conn.read(worksheet="Usuarios", ttl=0)
-                            
-                            if 'Data_Prova' not in df_usuarios.columns:
-                                df_usuarios['Data_Prova'] = ""
-                            if 'Frase_Pessoal' not in df_usuarios.columns:
-                                df_usuarios['Frase_Pessoal'] = ""
+                    if not nova_data or not nova_frase.strip():
+                        st.error("⚠️ Para prosseguir, defina a data da prova e sua frase motivacional.")
+                    else:
+                        with st.spinner("Sincronizando com o servidor..."):
+                            try:
+                                conn = st.connection("gsheets", type=GSheetsConnection)
+                                df_usuarios = conn.read(worksheet="Usuarios", ttl=0)
                                 
-                            idx_user = df_usuarios['Usuario'].astype(str).str.strip().str.lower() == st.session_state.usuario.lower()
-                            df_usuarios.loc[idx_user, 'Frase_Pessoal'] = nova_frase
-                            df_usuarios.loc[idx_user, 'Data_Prova'] = str(nova_data) if nova_data else ""
-                            
-                            df_usuarios = df_usuarios.fillna("")
-                            conn.update(worksheet="Usuarios", data=df_usuarios)
-                            
-                            st.session_state.frase_pessoal = nova_frase
-                            st.session_state.data_prova = str(nova_data) if nova_data else ""
-                            
-                            st.success("Planejamento e frase atualizados com sucesso!")
-                            time.sleep(1)
-                            st.rerun()
-                        except Exception as e:
-                            st.error(f"Erro ao salvar informações. Verifique as colunas na aba Usuarios. Erro: {e}")
+                                if 'Data_Prova' not in df_usuarios.columns:
+                                    df_usuarios['Data_Prova'] = ""
+                                if 'Frase_Pessoal' not in df_usuarios.columns:
+                                    df_usuarios['Frase_Pessoal'] = ""
+                                    
+                                idx_user = df_usuarios['Usuario'].astype(str).str.strip().str.lower() == st.session_state.usuario.lower()
+                                df_usuarios.loc[idx_user, 'Frase_Pessoal'] = nova_frase
+                                df_usuarios.loc[idx_user, 'Data_Prova'] = str(nova_data)
+                                
+                                df_usuarios = df_usuarios.fillna("")
+                                conn.update(worksheet="Usuarios", data=df_usuarios)
+                                
+                                st.session_state.frase_pessoal = nova_frase
+                                st.session_state.data_prova = str(nova_data)
+                                
+                                st.success("Planejamento e frase atualizados com sucesso!")
+                                time.sleep(1)
+                                
+                                # Redireciona para Home (Dashboard Principal) de forma automática e libera o menu
+                                st.session_state.page = "Home"
+                                st.rerun()
+                            except Exception as e:
+                                st.error(f"Erro ao salvar informações. Verifique as colunas na aba Usuarios. Erro: {e}")
 
     # --- TELA DE INSTRUÇÕES ---
     elif st.session_state.page == "Instrucoes":
