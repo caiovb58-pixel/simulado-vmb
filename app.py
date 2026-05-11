@@ -375,7 +375,16 @@ else:
         
         # MENU LATERAL
         st.markdown("<div style='font-size: 12px; color: #64748B; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; margin-left: 5px;'>Navegação</div>", unsafe_allow_html=True)
-        menu = st.radio("Módulos de Avaliação", ["Dashboard Principal", "Evolução e IA"], label_visibility="collapsed")
+        
+        # Define dinamicamente o item selecionado no menu dependendo da página
+        if st.session_state.page == "Perfil":
+            menu_idx = None
+        elif st.session_state.page == "Evolução":
+            menu_idx = 1
+        else:
+            menu_idx = 0
+            
+        menu = st.radio("Módulos de Avaliação", ["Dashboard Principal", "Evolução e IA"], index=menu_idx, label_visibility="collapsed")
         
         # BOTÃO SAIR NO FUNDO ESQUERDO
         st.markdown("<div style='height: 35vh;'></div>", unsafe_allow_html=True)
@@ -384,11 +393,11 @@ else:
             st.session_state.clear()
             st.rerun()
 
-    # Controle Roteamento (Lidar com botão isolado)
-    if menu == "Evolução e IA" and st.session_state.page != "Evolução" and st.session_state.page != "Perfil":
+    # Controle Roteamento
+    if menu == "Evolução e IA" and st.session_state.page != "Evolução":
         st.session_state.page = "Evolução"
         st.rerun()
-    elif menu == "Dashboard Principal" and st.session_state.page not in["Home", "Instrucoes", "Simulado", "Resultado", "Perfil"]:
+    elif menu == "Dashboard Principal" and st.session_state.page not in["Home", "Instrucoes", "Simulado", "Resultado"]:
         st.session_state.page = "Home"
         st.rerun()
 
@@ -742,7 +751,7 @@ else:
                     avg_score = df_user['Nota (%)'].mean()
                     
                     # Criando rótulo com iteração segura
-                    df_user['Rotulo'] = [f"{i+1}ª T. ({row['Simulado'][:12]}...)" for i, row in df_user.iterrows()]
+                    df_user['Rotulo'] =[f"{i+1}ª T. ({row['Simulado'][:12]}...)" for i, row in df_user.iterrows()]
 
                     # --- HEADERS: KPIS ---
                     col1, col2, col3, col4 = st.columns(4)
