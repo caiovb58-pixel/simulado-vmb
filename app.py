@@ -42,7 +42,7 @@ def simulado_tem_matematica(nome_simulado):
     """Verifica se o simulado selecionado contém módulos de Matemática Financeira."""
     if not nome_simulado:
         return False
-    modulos = DIC_SIMULADOS.get(nome_simulado, [])
+    modulos = DIC_SIMULADOS.get(nome_simulado,[])
     return any(m in MODULOS_MATEMATICA for m in modulos)
 
 # --- CSS PREMIUM (Injeção de Estilo) ---
@@ -277,6 +277,7 @@ def inject_custom_css():
                 font-size: 14px !important;
                 padding: 6px 0 !important;
             }
+        }
 
         /* Smartphones muito pequenos */
         @media (max-width: 480px) {
@@ -342,272 +343,35 @@ def premium_metric_card(label, value, hint=""):
 # --- HP12C FLUTUANTE PREMIUM ---
 def inject_hp12c():
     """
-    Injeta via st.markdown a calculadora HP12C como FAB flutuante.
-    Usa st.markdown (unsafe_allow_html) para que o CSS position:fixed
-    e o JavaScript sejam interpretados no documento principal do Streamlit,
-    sem a limitação de sandboxing de components.html.
+    Injeta via st.markdown um FAB flutuante que abre a calculadora do 
+    Professor Lucas Silva em uma nova aba de forma responsiva.
     """
     st.markdown("""
     <style>
-    #hp12c-fab {
+    .hp-fab {
         position: fixed;
         bottom: 25px;
         right: 25px;
         width: 68px;
         height: 68px;
         border-radius: 50%;
-        border: none;
-        cursor: pointer;
-        z-index: 999999;
-        background: linear-gradient(135deg, #2563EB, #1D4ED8);
-        color: white;
+        background: linear-gradient(135deg, #2563EB, #1D4ED8) !important;
+        color: white !important;
         font-size: 28px;
         box-shadow: 0 10px 30px rgba(37,99,235,0.45), 0 0 0 1px rgba(255,255,255,0.08);
         transition: all 0.25s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none !important;
+        z-index: 999999;
     }
-    #hp12c-fab:hover {
+    .hp-fab:hover {
         transform: scale(1.08);
         box-shadow: 0 15px 40px rgba(37,99,235,0.65), 0 0 20px rgba(37,99,235,0.35);
     }
-    #hp12c-overlay {
-        position: fixed; inset: 0;
-        background: rgba(0,0,0,0.6);
-        backdrop-filter: blur(8px);
-        z-index: 999997;
-        display: none;
-    }
-    #hp12c-modal {
-        position: fixed;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-        width: 400px; max-width: 96vw;
-        background: #0f172a;
-        border-radius: 20px;
-        border: 1px solid rgba(255,255,255,0.09);
-        box-shadow: 0 24px 64px rgba(0,0,0,0.7);
-        z-index: 999998;
-        display: none;
-        overflow: hidden;
-        font-family: Inter, sans-serif;
-    }
-    #hp12c-header {
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 14px 18px;
-        background: rgba(255,255,255,0.03);
-        border-bottom: 1px solid rgba(255,255,255,0.06);
-        color: #f8fafc; font-weight: 700; font-size: 14px; letter-spacing: -0.01em;
-    }
-    #hp12c-close {
-        cursor: pointer; font-size: 20px; opacity: 0.6; transition: opacity 0.2s;
-        background: none; border: none; color: white; line-height: 1;
-    }
-    #hp12c-close:hover { opacity: 1; }
-    /* ---- display ---- */
-    #hp12c-body { padding: 14px 14px 16px; }
-    #hp12c-disp-wrap {
-        background: #0a1a0a; border: 1px solid #1c3a1c; border-radius: 10px;
-        padding: 10px 14px 8px; margin-bottom: 12px;
-    }
-    #hp12c-expr { font-size: 10px; color: #4a8a4a; font-family: monospace; min-height: 14px; text-align: right; }
-    #hp12c-disp { font-size: 28px; font-weight: 700; color: #7CFC00; font-family: 'Courier New', monospace; text-align: right; letter-spacing: 1px; }
-    /* ---- keyboard ---- */
-    .hpgrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-bottom: 6px; }
-    .hpbtn {
-        padding: 9px 4px 7px; border: none; border-radius: 7px;
-        font-size: 10px; font-weight: 700; cursor: pointer;
-        color: #fff; text-align: center; line-height: 1.2;
-        transition: transform 0.08s, filter 0.08s;
-    }
-    .hpbtn:active { transform: scale(0.90); filter: brightness(1.25); }
-    .hpbtn sub { display: block; font-size: 7px; font-weight: 500; color: rgba(255,255,255,0.55); margin-top: 1px; }
-    .hpn   { background: #1e3a5f; border: 1px solid #2d5080; }
-    .hpop  { background: #7c3a00; border: 1px solid #a05010; }
-    .hpfn  { background: #14381a; border: 1px solid #245a28; color: #7CFC00; }
-    .hpfn sub { color: rgba(124,252,0,0.55); }
-    .hpsp  { background: #2e1a1a; border: 1px solid #5a2a2a; }
-    .hpeq  { background: linear-gradient(135deg,#1D4ED8,#3B82F6); border: none; font-size: 16px; }
-    .hp2   { grid-column: span 2; }
     </style>
-
-    <button id="hp12c-fab" title="Calculadora HP12C">🧮</button>
-    <div id="hp12c-overlay"></div>
-    <div id="hp12c-modal">
-      <div id="hp12c-header">
-        <span>🧮 HP 12C — Financeira</span>
-        <button id="hp12c-close" title="Fechar">✕</button>
-      </div>
-      <div id="hp12c-body">
-        <div id="hp12c-disp-wrap">
-          <div id="hp12c-expr"></div>
-          <div id="hp12c-disp">0</div>
-        </div>
-        <!-- Linha financeira: armazenar -->
-        <div class="hpgrid">
-          <button class="hpbtn hpfn" onclick="hp('n')">n<sub>períodos</sub></button>
-          <button class="hpbtn hpfn" onclick="hp('i')">i %<sub>taxa</sub></button>
-          <button class="hpbtn hpfn" onclick="hp('pv')">PV<sub>valor pres.</sub></button>
-          <button class="hpbtn hpfn" onclick="hp('pmt')">PMT<sub>pagamento</sub></button>
-          <button class="hpbtn hpfn" onclick="hp('fv')">FV<sub>valor fut.</sub></button>
-        </div>
-        <!-- Linha financeira: calcular -->
-        <div class="hpgrid">
-          <button class="hpbtn hpfn" onclick="hp('cn')">▶n<sub>calc n</sub></button>
-          <button class="hpbtn hpfn" onclick="hp('ci')">▶i<sub>calc i%</sub></button>
-          <button class="hpbtn hpfn" onclick="hp('cpv')">▶PV<sub>calc PV</sub></button>
-          <button class="hpbtn hpfn" onclick="hp('cpmt')">▶PMT<sub>calc PMT</sub></button>
-          <button class="hpbtn hpfn" onclick="hp('cfv')">▶FV<sub>calc FV</sub></button>
-        </div>
-        <!-- Linha 3 -->
-        <div class="hpgrid">
-          <button class="hpbtn hpsp" onclick="hp('cls')">CLR</button>
-          <button class="hpbtn hpsp" onclick="hp('ce')">CE</button>
-          <button class="hpbtn hpsp" onclick="hp('pm')">±</button>
-          <button class="hpbtn hpsp" onclick="hp('pct')">%</button>
-          <button class="hpbtn hpop" onclick="hp('/')">÷</button>
-        </div>
-        <!-- Linhas numéricas -->
-        <div class="hpgrid">
-          <button class="hpbtn hpn" onclick="hp('7')">7</button>
-          <button class="hpbtn hpn" onclick="hp('8')">8</button>
-          <button class="hpbtn hpn" onclick="hp('9')">9</button>
-          <button class="hpbtn hpsp" onclick="hp('sqrt')">√x</button>
-          <button class="hpbtn hpop" onclick="hp('*')">×</button>
-        </div>
-        <div class="hpgrid">
-          <button class="hpbtn hpn" onclick="hp('4')">4</button>
-          <button class="hpbtn hpn" onclick="hp('5')">5</button>
-          <button class="hpbtn hpn" onclick="hp('6')">6</button>
-          <button class="hpbtn hpsp" onclick="hp('pow')">xʸ</button>
-          <button class="hpbtn hpop" onclick="hp('-')">−</button>
-        </div>
-        <div class="hpgrid">
-          <button class="hpbtn hpn" onclick="hp('1')">1</button>
-          <button class="hpbtn hpn" onclick="hp('2')">2</button>
-          <button class="hpbtn hpn" onclick="hp('3')">3</button>
-          <button class="hpbtn hpsp" onclick="hp('inv')">1/x</button>
-          <button class="hpbtn hpop" onclick="hp('+')">+</button>
-        </div>
-        <div class="hpgrid">
-          <button class="hpbtn hpn hp2" onclick="hp('0')">0</button>
-          <button class="hpbtn hpn" onclick="hp('.')">.</button>
-          <button class="hpbtn hpsp" onclick="hp('ent')">ENT</button>
-          <button class="hpbtn hpeq" onclick="hp('=')">=</button>
-        </div>
-      </div>
-    </div>
-
-    <script>
-    (function(){
-      var reg={n:null,i:null,pv:null,pmt:null,fv:null};
-      var disp="0", expr="", op=null, prev=null, fresh=true, stk=[];
-
-      function fmt(v){
-        if(!isFinite(v)) return "ERRO";
-        return parseFloat(v.toFixed(8)).toString();
-      }
-      function upd(){
-        document.getElementById("hp12c-disp").textContent = disp;
-        document.getElementById("hp12c-expr").textContent = expr;
-      }
-      function calcI(n,pv,pmt,fv){
-        var i=0.1;
-        for(var k=0;k<300;k++){
-          var r=i,f,df,x;
-          if(Math.abs(r)<1e-9){f=pv+pmt*n+fv;df=0;}
-          else{x=Math.pow(1+r,n);f=pv*x+pmt*(x-1)/r+fv;df=pv*n*Math.pow(1+r,n-1)+pmt*(n*Math.pow(1+r,n-1)*r-(x-1))/(r*r);}
-          if(Math.abs(df)<1e-15)break;
-          var ni=r-f/df;
-          if(Math.abs(ni-r)<1e-10){i=ni;break;}
-          i=ni;
-        }
-        return i*100;
-      }
-      function calcN(i,pv,pmt,fv){
-        var r=i/100;
-        if(Math.abs(r)<1e-9) return -(pv+fv)/pmt;
-        return Math.log((pmt/r-fv)/(pv+pmt/r))/Math.log(1+r);
-      }
-      function arith(o,a,b){
-        switch(o){case'+':return a+b;case'-':return a-b;case'*':return a*b;case'/':return b?a/b:Infinity;case'^':return Math.pow(a,b);}
-        return b;
-      }
-
-      window.hp=function(k){
-        // digit / dot
-        if(!isNaN(k)||k==='.'){
-          if(fresh){disp=(k==='.')?'0.':k;fresh=false;}
-          else{
-            if(k==='.'&&disp.includes('.'))return;
-            disp=(disp==='0'&&k!=='.')?k:disp+k;
-          }
-          upd();return;
-        }
-        var v=parseFloat(disp);
-        switch(k){
-          case'cls':disp='0';expr='';op=null;prev=null;fresh=true;reg={n:null,i:null,pv:null,pmt:null,fv:null};stk=[];break;
-          case'ce':disp='0';fresh=true;break;
-          case'pm':disp=fmt(-v);break;
-          case'pct':disp=fmt(v/100);break;
-          case'sqrt':disp=v>=0?fmt(Math.sqrt(v)):'ERRO';break;
-          case'inv':disp=v?fmt(1/v):'ERRO';break;
-          case'pow':prev=v;op='^';fresh=true;expr=disp+' ^';break;
-          case'+':case'-':case'*':case'/':
-            if(op&&!fresh){var r2=arith(op,prev,v);disp=fmt(r2);prev=r2;}else{prev=v;}
-            op=k;fresh=true;
-            expr=disp+' '+{'+':'+','-':'−','*':'×','/':'÷'}[k];
-            break;
-          case'=':
-            if(op){disp=fmt(arith(op,prev,v));op=null;prev=null;expr='';}
-            fresh=true;break;
-          case'ent':stk.push(v);fresh=true;expr='▲ '+disp;break;
-          // store
-          case'n':reg.n=v;expr='n = '+disp;fresh=true;break;
-          case'i':reg.i=v;expr='i = '+disp;fresh=true;break;
-          case'pv':reg.pv=v;expr='PV = '+disp;fresh=true;break;
-          case'pmt':reg.pmt=v;expr='PMT = '+disp;fresh=true;break;
-          case'fv':reg.fv=v;expr='FV = '+disp;fresh=true;break;
-          // calc
-          case'cn':
-            if(reg.i!=null&&reg.pv!=null&&reg.pmt!=null&&reg.fv!=null){disp=fmt(calcN(reg.i,reg.pv,reg.pmt,reg.fv));expr='▶ n';}else{disp='FALTA';}fresh=true;break;
-          case'ci':
-            if(reg.n!=null&&reg.pv!=null&&reg.pmt!=null&&reg.fv!=null){disp=fmt(calcI(reg.n,reg.pv,reg.pmt,reg.fv));expr='▶ i%';}else{disp='FALTA';}fresh=true;break;
-          case'cpv':
-            if(reg.n!=null&&reg.i!=null&&reg.pmt!=null&&reg.fv!=null){
-              var ri=reg.i/100,cpv;
-              if(Math.abs(ri)<1e-9){cpv=-reg.pmt*reg.n-reg.fv;}
-              else{var xp=Math.pow(1+ri,reg.n);cpv=-(reg.pmt*(1-1/xp)/ri+reg.fv/xp);}
-              disp=fmt(cpv);expr='▶ PV';
-            }else{disp='FALTA';}fresh=true;break;
-          case'cpmt':
-            if(reg.n!=null&&reg.i!=null&&reg.pv!=null&&reg.fv!=null){
-              var ri2=reg.i/100,cpmt2;
-              if(Math.abs(ri2)<1e-9){cpmt2=-(reg.pv+reg.fv)/reg.n;}
-              else{var xp2=Math.pow(1+ri2,reg.n);cpmt2=-(reg.pv*xp2+reg.fv)/(xp2-1)*ri2;}
-              disp=fmt(cpmt2);expr='▶ PMT';
-            }else{disp='FALTA';}fresh=true;break;
-          case'cfv':
-            if(reg.n!=null&&reg.i!=null&&reg.pv!=null&&reg.pmt!=null){
-              var ri3=reg.i/100,cfv3;
-              if(Math.abs(ri3)<1e-9){cfv3=-reg.pv-reg.pmt*reg.n;}
-              else{var xp3=Math.pow(1+ri3,reg.n);cfv3=-reg.pv*xp3-reg.pmt*(xp3-1)/ri3;}
-              disp=fmt(cfv3);expr='▶ FV';
-            }else{disp='FALTA';}fresh=true;break;
-        }
-        upd();
-      };
-
-      // modal open/close
-      var fab=document.getElementById('hp12c-fab');
-      var modal=document.getElementById('hp12c-modal');
-      var overlay=document.getElementById('hp12c-overlay');
-      var closeBtn=document.getElementById('hp12c-close');
-      fab.onclick=function(){modal.style.display='block';overlay.style.display='block';};
-      function closeModal(){modal.style.display='none';overlay.style.display='none';}
-      overlay.onclick=closeModal;
-      closeBtn.onclick=closeModal;
-      document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
-    })();
-    </script>
+    <a href="https://hp12c.professorlucassilva.com.br/" target="_blank" class="hp-fab" title="Calculadora HP12C (Abrir em nova aba)">🧮</a>
     """, unsafe_allow_html=True)
 
 # --- ESTADO DA SESSÃO ---
@@ -641,52 +405,45 @@ def calcular_gamificacao(df_user):
     return xp, nivel
 
 def selecionar_questoes_balanceadas(banco, modulos, total_desejado=20):
+    """
+    Seleciona exatas 'total_desejado' de questões do banco, de maneira circular 
+    (round-robin) para garantir que cada módulo tenha o balanço exato possível.
+    """
     if "questoes_vistas" not in st.session_state:
         st.session_state.questoes_vistas = set()
+        
+    # Agrupa as questões por módulo
     questoes_por_modulo = {mod:[] for mod in modulos}
     for q in banco:
         if q["modulo"] in modulos:
             questoes_por_modulo[q["modulo"]].append(q)
+            
+    # Embaralha as questões dando prioridade às não vistas
     for mod in modulos:
-        nao_vistas =[q for q in questoes_por_modulo[mod] if q["id"] not in st.session_state.questoes_vistas]
-        vistas =[q for q in questoes_por_modulo[mod] if q["id"] in st.session_state.questoes_vistas]
+        nao_vistas = [q for q in questoes_por_modulo[mod] if q["id"] not in st.session_state.questoes_vistas]
+        vistas = [q for q in questoes_por_modulo[mod] if q["id"] in st.session_state.questoes_vistas]
         random.shuffle(nao_vistas)
         random.shuffle(vistas)
         questoes_por_modulo[mod] = nao_vistas + vistas
-    total_disponivel = sum(len(qs) for qs in questoes_por_modulo.values())
-    if total_disponivel <= total_desejado:
-        todas =[q for qs in questoes_por_modulo.values() for q in qs]
-        for q in todas:
-            st.session_state.questoes_vistas.add(q["id"])
-        random.shuffle(todas)
-        return todas
+        
     selecionadas =[]
-    modulos_restantes =[mod for mod in modulos if len(questoes_por_modulo[mod]) > 0]
-    vagas = total_desejado
-    while vagas > 0 and modulos_restantes:
-        cota = vagas // len(modulos_restantes)
-        resto = vagas % len(modulos_restantes)
-        novos_modulos_restantes =[]
-        for i, mod in enumerate(modulos_restantes):
-            cota_atual = cota + (1 if i < resto else 0)
-            disponivel = len(questoes_por_modulo[mod])
-            if disponivel <= cota_atual:
-                selecionadas.extend(questoes_por_modulo[mod])
-                vagas -= disponivel
-                questoes_por_modulo[mod] =[]
+    modulos_cycle = list(modulos)
+    
+    # Distribuição Round-Robin (pega 1 de cada até encher 20)
+    while len(selecionadas) < total_desejado and modulos_cycle:
+        for mod in list(modulos_cycle):
+            if len(selecionadas) >= total_desejado:
+                break
+            if len(questoes_por_modulo[mod]) > 0:
+                selecionadas.append(questoes_por_modulo[mod].pop(0))
             else:
-                novos_modulos_restantes.append(mod)
-        if len(novos_modulos_restantes) == len(modulos_restantes):
-            for i, mod in enumerate(novos_modulos_restantes):
-                cota_atual = cota + (1 if i < resto else 0)
-                escolhidas = questoes_por_modulo[mod][:cota_atual]
-                selecionadas.extend(escolhidas)
-                questoes_por_modulo[mod] = questoes_por_modulo[mod][cota_atual:]
-            vagas -= cota_atual
-            break
-        modulos_restantes = novos_modulos_restantes
+                modulos_cycle.remove(mod)
+                
+    # Salva na sessão o ID das selecionadas para não repetir em curto prazo
     for q in selecionadas:
         st.session_state.questoes_vistas.add(q["id"])
+        
+    # Mistura tudo antes de entregar o simulado
     random.shuffle(selecionadas)
     return selecionadas
 
@@ -1080,13 +837,13 @@ else:
         
         # Aviso sobre calculadora se for simulado de matemática
         if simulado_tem_matematica(st.session_state.simulado_nome):
-            st.success("🧮 **Calculadora HP12C disponível** durante esta prova — clique no botão flutuante 🧮 no canto inferior direito da tela.")
+            st.success("🧮 **Calculadora HP12C disponível** durante esta prova — clique no botão flutuante 🧮 no canto inferior direito da tela ou utilize a versão embutida.")
         
         st.markdown("""
         <div style="background: rgba(234, 179, 8, 0.1); border-left: 4px solid #EAB308; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
             <ul style="color: #D1D5DB; margin-bottom: 0;">
                 <li><b>Tempo restrito:</b> Exatos 30 minutos. O cronômetro entrará em modo crítico nos últimos 5 minutos.</li>
-                <li><b>Estrutura:</b> 20 questões táticas, distribuídas uniformemente.</li>
+                <li><b>Estrutura:</b> Exatas 20 questões táticas, distribuídas uniformemente por módulos.</li>
                 <li><b>Integridade:</b> Simule o ambiente oficial. Sem consultas, sem interrupções.</li>
                 <li><b>Alerta do Sistema:</b> Não atualize a página (F5), ou a missão será abortada com perda total de dados.</li>
             </ul>
@@ -1111,9 +868,12 @@ else:
 
     # --- EXECUÇÃO DO SIMULADO ---
     elif st.session_state.page == "Simulado" and st.session_state.quiz_atual:
-        # HP12C FLUTUANTE — aparece apenas nas provas de Matemática Financeira
+        # HP12C — Injeta o botão flutuante e (bônus) o expander com iframe direto na página
         if simulado_tem_matematica(st.session_state.simulado_nome):
             inject_hp12c()
+            with st.expander("🧮 Calculadora HP12C (Versão Embutida)"):
+                components.iframe("https://hp12c.professorlucassilva.com.br/", height=450, scrolling=True)
+
         timer_container = st.empty()
         with timer_container:
             js_timer = """
