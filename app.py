@@ -406,20 +406,32 @@ def calcular_gamificacao(df_user):
 
 def selecionar_questoes_balanceadas(banco, modulos, total_desejado=20):
     """
-    Seleciona exatas 'total_desejado' de questões do banco, de maneira circular 
-    (round-robin) para garantir que cada módulo tenha o balanço exato possível.
+    Seleciona EXATAS 'total_desejado' de questões. 
+    Resolve problemas de digitação no BD (ex: espaços sobrando) 
+    e recarrega as questões infinitamente se o módulo for muito pequeno para bater a meta.
     """
     if "questoes_vistas" not in st.session_state:
         st.session_state.questoes_vistas = set()
         
-    # Agrupa as questões por módulo
-    questoes_por_modulo = {mod:[] for mod in modulos}
+    # Limpa nomes para evitar que erro de digitação/espaços no DB ignore questões
+    modulos_normalizados = {m.strip().lower(): m.strip() for m in modulos}
+    
+    questoes_por_modulo = {m.strip():[] for m in modulos}
+    todas_do_modulo = {m.strip():[] for m in modulos}
+    
+    # 1. Puxa as questões do banco
     for q in banco:
-        if q["modulo"] in modulos:
-            questoes_por_modulo[q["modulo"]].append(q)
+        q_mod_norm = str(q.get("modulo", "")).strip().lower()
+        if q_mod_norm in modulos_normalizados:
+            mod_original = modulos_normalizados[q_mod_norm]
+            # Cria uma cópia limpa para corrigir bugs de string nas métricas
+            q_copy = q.copy()
+            q_copy["modulo"] = mod_original
+            questoes_por_modulo[mod_original].append(q_copy)
+            todas_do_modulo[mod_original].append(q_copy)
             
-    # Embaralha as questões dando prioridade às não vistas
-    for mod in modulos:
+    # 2. Prepara e embaralha as questões dando prioridade às não vistas
+    for mod in modulos_normalizados.values():
         nao_vistas = [q for q in questoes_por_modulo[mod] if q["id"] not in st.session_state.questoes_vistas]
         vistas = [q for q in questoes_por_modulo[mod] if q["id"] in st.session_state.questoes_vistas]
         random.shuffle(nao_vistas)
@@ -427,23 +439,31 @@ def selecionar_questoes_balanceadas(banco, modulos, total_desejado=20):
         questoes_por_modulo[mod] = nao_vistas + vistas
         
     selecionadas =[]
-    modulos_cycle = list(modulos)
     
-    # Distribuição Round-Robin (pega 1 de cada até encher 20)
-    while len(selecionadas) < total_desejado and modulos_cycle:
-        for mod in list(modulos_cycle):
+    # Módulos que realmente possuem questões
+    modulos_cycle = [m for m in modulos_normalizados.values() if len(todas_do_modulo[m]) > 0]
+    
+    if not modulos_cycle:
+        return[] # Fail-safe se não houver NENHUMA questão para nenhum dos módulos selecionados
+        
+    # 3. Laço Infinito até dar 20 questões cravadas (Round-Robin)
+    while len(selecionadas) < total_desejado:
+        for mod in modulos_cycle:
             if len(selecionadas) >= total_desejado:
                 break
-            if len(questoes_por_modulo[mod]) > 0:
-                selecionadas.append(questoes_por_modulo[mod].pop(0))
-            else:
-                modulos_cycle.remove(mod)
+            
+            # Se acabou a fila de questões desse módulo, RECARREGA (Garante que nunca entregue menos de 20)
+            if len(questoes_por_modulo[mod]) == 0:
+                recarregadas = list(todas_do_modulo[mod])
+                random.shuffle(recarregadas)
+                questoes_por_modulo[mod] = recarregadas
                 
-    # Salva na sessão o ID das selecionadas para não repetir em curto prazo
+            selecionadas.append(questoes_por_modulo[mod].pop(0))
+            
+    # Atualiza a memória de questões já vistas
     for q in selecionadas:
         st.session_state.questoes_vistas.add(q["id"])
         
-    # Mistura tudo antes de entregar o simulado
     random.shuffle(selecionadas)
     return selecionadas
 
@@ -947,7 +967,7 @@ else:
         
         desempenho_modulos = {}
         for idx, q in enumerate(st.session_state.quiz_atual):
-            mod = q['modulo']
+            mod = q['modulo'].strip()
             if mod not in desempenho_modulos:
                 desempenho_modulos[mod] = {"total": 0, "acertos": 0}
             desempenho_modulos[mod]["total"] += 1
@@ -999,7 +1019,7 @@ else:
             status_color = "#10B981" if acertou else "#EF4444"
             status_text = "Acertou" if acertou else "Errou"
             
-            with st.expander(f"Q{idx+1} - {status_text} | {q['modulo']}"):
+            with st.expander(f"Q{idx+1} - {status_text} | {q['modulo'].strip()}"):
                 st.write(f"**{q['pergunta']}**")
                 st.markdown(f"<span style='color:{status_color}; font-weight:bold;'>Sua marcação:</span> {resp_usuario if resp_usuario else 'Em branco'}", unsafe_allow_html=True)
                 if not acertou:
@@ -1094,16 +1114,18 @@ else:
                             try:
                                 detalhes = json.loads(str(row['Detalhes_Modulos']))
                                 for mod, score in detalhes.items():
-                                    if mod not in module_scores: module_scores[mod] =[]
-                                    module_scores[mod].append(score)
+                                    mod_clean = mod.strip()
+                                    if mod_clean not in module_scores: module_scores[mod_clean] =[]
+                                    module_scores[mod_clean].append(score)
                             except Exception:
                                 pass
                         else:
                             sim_name = row['Simulado']
                             if sim_name in DIC_SIMULADOS:
                                 for mod in DIC_SIMULADOS[sim_name]:
-                                    if mod not in module_scores: module_scores[mod] =[]
-                                    module_scores[mod].append(row['Nota (%)'])
+                                    mod_clean = mod.strip()
+                                    if mod_clean not in module_scores: module_scores[mod_clean] =[]
+                                    module_scores[mod_clean].append(row['Nota (%)'])
 
                     avg_module_scores = {mod: sum(scores)/len(scores) for mod, scores in module_scores.items()}
 
