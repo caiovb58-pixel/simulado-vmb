@@ -407,44 +407,72 @@ def calcular_gamificacao(df_user):
 def selecionar_questoes_balanceadas(banco, modulos, total_desejado=20):
     """
     Seleciona EXATAS 'total_desejado' de questões. 
-    Resolve problemas de digitação no BD (ex: espaços sobrando) 
+    Resolve problemas de digitação no BD (ex: espaços sobrando, plurais/singulares e acentos) 
     e recarrega as questões infinitamente se o módulo for muito pequeno para bater a meta.
     """
     if "questoes_vistas" not in st.session_state:
         st.session_state.questoes_vistas = set()
         
-    # Limpa nomes para evitar que erro de digitação/espaços no DB ignore questões
-    modulos_normalizados = {m.strip().lower(): m.strip() for m in modulos}
+    # Função robusta para limpar e unificar plurais/acentos/espaços
+    def normalize_name(name):
+        s = str(name).strip().lower()
+        mapa_acentos = {
+            'á':'a', 'à':'a', 'ã':'a', 'â':'a',
+            'é':'e', 'ê':'e', 'í':'i',
+            'ó':'o', 'õ':'o', 'ô':'o',
+            'ú':'u', 'ç':'c'
+        }
+        for k, v in mapa_acentos.items():
+            s = s.replace(k, v)
+        # Remove 's' no final das palavras para unificar singular e plural
+        return ' '.join([w[:-1] if w.endswith('s') and len(w) > 2 else w for w in s.split()])
+        
+    modulos_normalizados = {normalize_name(m): m.strip() for m in modulos}
     
-    questoes_por_modulo = {m.strip():[] for m in modulos}
-    todas_do_modulo = {m.strip():[] for m in modulos}
+    questoes_por_modulo = {m.strip(): [] for m in modulos}
+    todas_do_modulo = {m.strip(): [] for m in modulos}
     
     # 1. Puxa as questões do banco
     for q in banco:
-        q_mod_norm = str(q.get("modulo", "")).strip().lower()
-        if q_mod_norm in modulos_normalizados:
-            mod_original = modulos_normalizados[q_mod_norm]
-            # Cria uma cópia limpa para corrigir bugs de string nas métricas
-            q_copy = q.copy()
-            q_copy["modulo"] = mod_original
-            questoes_por_modulo[mod_original].append(q_copy)
-            todas_do_modulo[mod_original].append(q_copy)
+        q_mod_norm = normalize_name(q.get("modulo", ""))
+        
+        # Tenta match exato primeiro
+        matched = False
+        for mod_key, mod_original in modulos_normalizados.items():
+            if mod_key == q_mod_norm:
+                q_copy = q.copy()
+                q_copy["modulo"] = mod_original
+                questoes_por_modulo[mod_original].append(q_copy)
+                todas_do_modulo[mod_original].append(q_copy)
+                matched = True
+                break
+                
+        # Se não houver match exato, tenta match parcial (ordenando por tamanho da string para maior especificidade primeiro)
+        if not matched:
+            sorted_mods = sorted(modulos_normalizados.items(), key=lambda x: len(x[0]), reverse=True)
+            for mod_key, mod_original in sorted_mods:
+                if mod_key in q_mod_norm or q_mod_norm in mod_key:
+                    q_copy = q.copy()
+                    q_copy["modulo"] = mod_original
+                    questoes_por_modulo[mod_original].append(q_copy)
+                    todas_do_modulo[mod_original].append(q_copy)
+                    break
             
     # 2. Prepara e embaralha as questões dando prioridade às não vistas
     for mod in modulos_normalizados.values():
-        nao_vistas = [q for q in questoes_por_modulo[mod] if q["id"] not in st.session_state.questoes_vistas]
-        vistas = [q for q in questoes_por_modulo[mod] if q["id"] in st.session_state.questoes_vistas]
+        nao_vistas = [q for q in questoes_por_modulo[mod] if q.get("id") not in st.session_state.questoes_vistas]
+        vistas = [q for q in questoes_por_modulo[mod] if q.get("id") in st.session_state.questoes_vistas]
         random.shuffle(nao_vistas)
         random.shuffle(vistas)
         questoes_por_modulo[mod] = nao_vistas + vistas
         
-    selecionadas =[]
+    selecionadas = []
     
     # Módulos que realmente possuem questões
     modulos_cycle = [m for m in modulos_normalizados.values() if len(todas_do_modulo[m]) > 0]
     
     if not modulos_cycle:
-        return[] # Fail-safe se não houver NENHUMA questão para nenhum dos módulos selecionados
+        return [] # Fail-safe se não houver NENHUMA questão para nenhum dos módulos selecionados
         
     # 3. Laço Infinito até dar 20 questões cravadas (Round-Robin)
     while len(selecionadas) < total_desejado:
@@ -462,7 +490,7 @@ def selecionar_questoes_balanceadas(banco, modulos, total_desejado=20):
             
     # Atualiza a memória de questões já vistas
     for q in selecionadas:
-        st.session_state.questoes_vistas.add(q["id"])
+        st.session_state.questoes_vistas.add(q.get("id"))
         
     random.shuffle(selecionadas)
     return selecionadas
@@ -936,7 +964,7 @@ else:
                 st.markdown(f"<span style='color: #8B949E; font-size: 12px;'>MÓDULO: {q['modulo'].upper()}</span>", unsafe_allow_html=True)
                 st.write(q['pergunta'])
                 opcoes =[f"{k}) {v}" for k, v in q.get("opcoes", {}).items()]
-                chave_unica = f"rad_{st.session_state.simulado_atual_indice}_{q['id']}_{idx}"
+                chave_unica = f"rad_{st.session_state.simulado_atual_indice}_{q.get('id', idx)}_{idx}"
                 respostas_locais[idx] = st.radio("Selecione:", opcoes, key=chave_unica, index=None, label_visibility="collapsed")
                 st.markdown("<hr style='opacity: 0.2;'>", unsafe_allow_html=True)
             
