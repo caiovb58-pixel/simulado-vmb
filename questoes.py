@@ -769,18 +769,18 @@ BANCO_QUESTOES = [
         "resposta_correta": "B",
         "explicacao": "Conforme a Resolução CVM 178/23, o Assessor de Investimentos deve ser pessoa natural ou jurídica registrada, atuando sob a responsabilidade e como preposto de intermediário integrante do sistema de distribuição de valores mobiliários, garantindo assim a adequada supervisão e conformidade regulatória. Não há exigência de criação de firma individual ou obrigatoriedade de ser sócio de pessoa jurídica, mas sim do registro formal e vínculo com instituição autorizada. Essa estrutura assegura a proteção do investidor e o cumprimento das normas do mercado de capitais."
     },
-    {
+   {
         "id": 332,
         "modulo": "A Atividade do Assessor de Investimento",
-        "pergunta": "Faça  a  associação  das  colunas  abaixo,  considerando  o  proﬁssional  e  suas\natividades:",
+        "pergunta": "Faça a associação das colunas abaixo, considerando o proﬁssional e suas atividades:\n\nColuna 1 (Profissionais / Instituições)\n1 - Administrador de Carteiras\n2 - Analista de Valores Mobiliários\n3 - Consultor de Valores Mobiliários\n4 - Assessor de Investimentos (AI)\n\nColuna 2 (Atividades / Atribuições)\n( ) Elabora, de forma independente, relatórios de análise destinados à publicação, divulgação ou distribuição a terceiros.\n( ) Atua na prospecção e captação de clientes, recepção e registro de ordens e transmissão dessas ordens aos sistemas de negociação.\n( ) Exerce a atividade de orientação, recomendação e aconselhamento, de forma individualizada e personalizada, sobre investimentos no mercado de capitais.\n( ) Exerce a gestão profissional de recursos ou de carteira de valores mobiliários de terceiros, com autoridade para tomar decisões de investimento.\n\nAssinale a alternativa que apresenta a sequência correta:",
         "opcoes": {
             "A": "2; 4; 3; 1",
             "B": "4; 1; 3; 2",
             "C": "3; 2; 1; 4",
             "D": "1; 2; 3; 4",
         },
-        "resposta_correta": "B",
-        "explicacao": "A associação correta das atividades ao profissional reflete a definição prevista na Resolução CVM 178/23, que regulamenta a atuação dos agentes autônomos e assessores de investimento, estabelecendo suas competências específicas. Essa norma determina que o assessor de investimento deve atuar na análise e recomendação de produtos financeiros, alinhando-se ao perfil do cliente, enquanto outros profissionais possuem atribuições distintas, como execução de ordens ou gestão de recursos. Portanto, a sequência apresentada na alternativa B está em conformidade com as funções legalmente atribuídas a cada profissional."
+        "resposta_correta": "A",
+        "explicacao": "(2) Analista de Valores Mobiliários: elabora relatórios de análise (research) para o público ou clientes. (4) Assessor de Investimentos: atua estritamente na prospecção, captação e na intermediação (recepção e transmissão de ordens), sem autonomia para tomar decisões pelo cliente. (3) Consultor de Valores Mobiliários: presta serviço individualizado e personalizado, recomendando ativos, mas sem gerir o dinheiro diretamente. (1) Administrador de Carteiras: faz a gestão discricionária dos recursos de terceiros com autoridade para tomar decisões. A sequência correta é 2; 4; 3; 1."
     },
     {
         "id": 401,
@@ -2535,10 +2535,10 @@ BANCO_QUESTOES = [
         "resposta_correta": "C",
         "explicacao": "Os segmentos \"Bovespa Mais\" e \"Bovespa Mais Nível 2\" são específicos para o mercado de balcão organizado, conforme definido pela B3, diferenciando-se do Novo Mercado, que é um segmento de listagem do mercado de bolsa tradicional. Esses segmentos apresentam níveis distintos de governança corporativa e requisitos regulatórios, conforme normativas da CVM e regras da B3. Portanto, apenas \"Bovespa Mais\" e \"Bovespa Mais Nível 2\" são segmentos exclusivos do mercado de balcão organizado."
     },
-    {
+  {
         "id": 199,
         "modulo": "Mercado de Capitais",
-        "pergunta": "Ne mês de agosto de 2021, uma empresa fez uma oferta pública para\naquisição de ações ordinárias de uma empresa brasileira que possuía ações ordinárias e\npreferenciais negociadas na Bolsa de Valores. As ações ordinárias se valorizaram e as\nações preferenciais se desvalorizaram, após o anúncio da oferta pública, conforme o\ngráﬁco abaixo",
+        "pergunta": "No mês de agosto de 2021, uma empresa fez uma oferta pública para\naquisição de ações ordinárias de uma empresa brasileira que possuía ações ordinárias e\npreferenciais negociadas na Bolsa de Valores. As ações ordinárias se valorizaram e as\nações preferenciais se desvalorizaram, após o anúncio da oferta pública, conforme o\ngráﬁco abaixo:\n\n[GRÁFICO - PREÇO DA AÇÃO x TEMPO]\n=======================================================================\nPeríodo             | Ação ON (linha contínua) | Ação PN (linha tracejada)\n--------------------|--------------------------|---------------------------\nAntes do Anúncio    | Estável (~R$ 10,00)      | Estável (~R$ 11,00)\nData do Anúncio     | Dispara (pico de ~R$ 16) | Cai abruptamente\nApós o Anúncio      | Estabiliza (~R$ 14,00)   | Estabiliza (~R$ 8,00)\n=======================================================================\n\nO comportamento observado no gráfico pode ser justificado pela cláusula de:",
         "opcoes": {
             "A": "free ﬂoat",
             "B": "green shoe",
@@ -2850,7 +2850,7 @@ BANCO_QUESTOES = [
     {
         "id": 283,
         "modulo": "Mercado de Capitais",
-        "pergunta": "Um investidor pessoa física vendeu ações em Bolsa de Valores, conforme\ndemonstrado no quadro abaixo:",
+        "pergunta": "Um investidor pessoa física vendeu ações em Bolsa de Valores, conforme\ndemonstrado no quadro abaixo:\n\n======================================================================\n                 VALORES DE AÇÕES VENDIDAS (EM R$)\n----------------------------------------------------------------------\n  Mês   |   Nov/14   |   Dez/14   |   Jan/15   |   Fev/15   \n----------------------------------------------------------------------\n  Total | 17.136,04  | 18.667,59  | 23.532,99  | 21.469,45  \n======================================================================\n\nConsiderando a regra de isenção de Imposto de Renda para operações com ações (não day-trade), os meses cujos eventuais ganhos de capital estarão isentos são:",
         "opcoes": {
             "A": "Dezembro de 2014 e janeiro de 2015.",
             "B": "Novembro e dezembro de 2014 e fevereiro de 2015.",
@@ -2858,7 +2858,7 @@ BANCO_QUESTOES = [
             "D": "Janeiro e fevereiro de 2015.",
         },
         "resposta_correta": "C",
-        "explicacao": "Conforme a Instrução CVM 475/08, o prazo para apuração do ganho líquido na venda de ações considera os meses em que ocorreram as operações realizadas para fins de compensação de prejuízos e cálculo do imposto de renda. No caso, as vendas ocorreram em novembro e dezembro de 2014, portanto, apenas esses meses devem ser considerados para a apuração do resultado tributável. Operações em meses posteriores, como janeiro e fevereiro de 2015, pertencem a períodos distintos e não se misturam para fins de compensação."
+        "explicacao": "A isenção do Imposto de Renda para pessoas físicas em operações com ações (regime comum/não day-trade) aplica-se quando o valor total das alienações (vendas) no mês não ultrapassa o limite de R$ 20.000,00. Analisando a tabela, as vendas totais em Novembro de 2014 (R$ 17.136,04) e Dezembro de 2014 (R$ 18.667,59) estão abaixo do limite legal, isentando os lucros desses meses. Em Janeiro e Fevereiro de 2015, as vendas superaram os 20 mil reais, sujeitando os ganhos à alíquota de 15%."
     },
     {
         "id": 344,
@@ -4011,7 +4011,7 @@ BANCO_QUESTOES = [
     {
         "id": 287,
         "modulo": "Fundos de Investimento",
-        "pergunta": "Um pessoa física efetuou as seguintes operações com ações em Bolsa de\nValores:",
+        "pergunta": "Um pessoa física efetuou as seguintes operações com ações em Bolsa de\nValores:\n\n========================================================================================================\nEmpresa | Quantidade | Data da    | Valor (R$) | Data da    | Valor (R$) | Ganho de \n        | de ações   | Aquisição  | (Compra)   | Alienação  | (Venda)    | Capital (R$)\n--------------------------------------------------------------------------------------------------------\n   A    |    10      | 14/09/2014 |  1.750,00  | 05/04/2015 |  2.500,00  |   750,00\n   B    |    50      | 22/09/2014 |  2.400,00  | 09/04/2015 |  4.000,00  | 1.600,00\n   C    |   120      | 22/09/2014 |  6.930,00  | 13/04/2015 | 12.600,00  | 5.670,00\n   D    |    60      | 07/10/2014 |  2.940,00  | 26/04/2015 |  4.200,00  | 1.260,00\n   E    |   110      | 19/10/2014 |  5.940,00  | 30/04/2015 |  9.900,00  | 3.960,00\n--------------------------------------------------------------------------------------------------------\n TOTAL  |            |            | 19.960,00  |      -     | 33.200,00  | 13.240,00\n========================================================================================================\n\nEsses rendimentos estão:",
         "opcoes": {
             "A": "sujeitos à incidência do Imposto de Renda à alíquota de 20,00%.",
             "B": "isentos do Imposto de Renda, devido ao reduzido valor das alienações.",
@@ -4019,7 +4019,7 @@ BANCO_QUESTOES = [
             "D": "sujeitos à incidência do Imposto de Renda à alíquota de 15,00%.",
         },
         "resposta_correta": "D",
-        "explicacao": "A tributação sobre ganhos líquidos em operações comuns com ações para pessoa física é de 15%, conforme o artigo 22 da Instrução Normativa RFB nº 1.500/2014. A alíquota de 20% aplica-se apenas a operações em mercados futuros ou de opções, e a isenção ocorre somente para vendas mensais até R$ 20.000,00. Portanto, operações que não se enquadram nesses critérios são tributadas à alíquota padrão de 15%."
+        "explicacao": "A tributação sobre ganhos líquidos em operações comuns (compra e venda em dias diferentes) com ações para pessoa física é de 15%, conforme a Instrução Normativa RFB nº 1.500/2014. A isenção do Imposto de Renda ocorre somente quando o total das alienações (vendas) no mês for igual ou inferior a R$ 20.000,00. Como o valor total vendido no mês de abril/2015 foi de R$ 33.200,00, a isenção não se aplica. Assim, o investidor está sujeito à incidência do IR à alíquota padrão de 15% sobre o ganho de capital de R$ 13.240,00."
     },
     {
         "id": 288,
@@ -4034,10 +4034,10 @@ BANCO_QUESTOES = [
         "resposta_correta": "B",
         "explicacao": "A Resolução CVM 178/23 estabelece que a Bolsa, como entidade responsável pela organização e supervisão do pregão, detém autoridade para cancelar ou corrigir negócios decorrentes de falhas em seu sistema de registro, garantindo a integridade e a transparência do mercado. Tal prerrogativa visa preservar a eficiência do mercado e a proteção dos investidores, mesmo que as contrapartes não concordem, pois a responsabilidade pelo correto funcionamento do pregão é da própria Bolsa. Dessa forma, o Diretor do Pregão pode atuar ex officio para corrigir erros atribuíveis à infraestrutura da Bolsa, conforme previsto na regulamentação aplicável."
     },
-    {
+   {
         "id": 289,
         "modulo": "Fundos de Investimento",
-        "pergunta": "Quatro investidores pessoas físicas realizaram aplicações e resgates na\nmesma classe de um Fundo de Investimentos em Ações, conforme tabela abaixo:",
+        "pergunta": "Quatro investidores pessoas físicas realizaram aplicações e resgates na\nmesma classe de um Fundo de Investimentos em Ações, conforme tabela abaixo:\n\n======================================================================\n INVESTIDOR | DATA DA APLICAÇÃO | DATA DE RESGATE | PRAZO DE APLICAÇÃO\n----------------------------------------------------------------------\n      A     |     29/01/2019    |    12/03/2019   |       29 DU\n      B     |     17/02/2019    |    15/03/2019   |       18 DU\n      C     |     29/01/2019    |    25/02/2019   |       18 DU\n      D     |     17/02/2019    |    15/03/2019   |       18 DU\n======================================================================\n\nAnalisando a variação patrimonial percentual bruta das cotas no período investido, podemos aﬁrmar que:",
         "opcoes": {
             "A": "A foi maior do que B e C.",
             "B": "C foi menor do que B e D.",
@@ -4045,7 +4045,7 @@ BANCO_QUESTOES = [
             "D": "C foi igual a B e D.",
         },
         "resposta_correta": "C",
-        "explicacao": "Considerando que as operações ocorreram na mesma classe do Fundo, a variação patrimonial líquida de cada investidor resulta da combinação entre aportes, resgates e valorização da cota, conforme estabelecido pela Instrução CVM 555/14. Como as cotas são homogêneas e a rentabilidade é proporcional ao número de cotas detidas, investidores com aportes e resgates proporcionais terão resultados equivalentes, o que justifica que B foi igual a D. Portanto, a igualdade entre os saldos finais de B e D é coerente com o princípio da valorização uniforme das cotas."
+        "explicacao": "Considerando que as operações ocorreram na mesma classe do mesmo Fundo de Investimento em Ações, a variação patrimonial (rentabilidade) de cada investidor depende unicamente do valor da cota na data de aplicação e do valor da cota na data do resgate. Como os investidores B e D aplicaram exatamente no mesmo dia (17/02/2019) e resgataram no mesmo dia (15/03/2019), eles compraram e venderam as cotas pelos mesmos valores. Portanto, a rentabilidade percentual bruta no período investido de B foi estritamente igual à de D."
     },
     {
         "id": 290,
@@ -5290,10 +5290,10 @@ BANCO_QUESTOES = [
         "resposta_correta": "A",
         "explicacao": "A decisão do gestor será indiferente quando o rendimento real do título indexado ao IPCA igualar a taxa nominal da LTN, ou seja, quando (1 + 0,1175) = (1 + inflação) × (1 + 0,065). Rearranjando, a inflação projetada é dada por: inflação = (1,1175 / 1,065) - 1 ≈ 0,0493 ou 4,93%. Este cálculo está alinhado ao conceito financeiro de taxa real e nominal, conforme a fórmula de Fisher, amplamente adotada no mercado financeiro."
     },
-    {
+   {
         "id": 307,
         "modulo": "Mercado Financeiro",
-        "pergunta": "Lucas aplicou R$ 500.000,00 em 31/março/2020, conforme tabela abaixo. Após\n5 meses, ele resgatou alguns investimentos e outros foram liquidados no mesmo dia.\nDesta forma, desconsiderando custos de transação, o IR total será de:",
+        "pergunta": "Lucas aplicou R$ 500.000,00 em 31/março/2020, conforme tabela abaixo. Após\n5 meses, ele resgatou alguns investimentos e outros foram liquidados no mesmo dia.\n\n==============================================================================\n      ATIVO      |   VALOR APLICADO   |   RENDIMENTO   |      VENCIMENTO      \n------------------------------------------------------------------------------\n LETRA DE CÂMBIO |   R$ 200.000,00    |   1,20% a.m.   |          -           \n       LFT       |   R$ 150.000,00    |   0,90% a.m.   |          -           \n       LCI       |   R$ 100.000,00    |   0,70% a.m.   |      31/08/2020      \n       CRA       |   R$  50.000,00    |   0,78% a.m.   |      31/08/2020      \n==============================================================================\n\nDesta forma, desconsiderando custos de transação, o IR total será de:",
         "opcoes": {
             "A": "R$ 3.391,57",
             "B": "R$ 4.311,92",
@@ -5301,7 +5301,7 @@ BANCO_QUESTOES = [
             "D": "R$ 9.288,27",
         },
         "resposta_correta": "B",
-        "explicacao": "Considerando o prazo de 5 meses, o investimento está sujeito à alíquota de IR regressiva de 20%, conforme a Instrução CVM 555/14 e a tabela progressiva para fundos e títulos privados. O cálculo do imposto incide sobre o ganho de capital apurado na data do resgate, utilizando a fórmula IR = ganho × alíquota, sem considerar custos de transação. Dessa forma, a aplicação da alíquota correta sobre o lucro obtido resulta no valor de R$ 4.311,92 de IR devido."
+        "explicacao": "Para resolver a questão, primeiro identificamos que LCI e CRA são isentos de Imposto de Renda para pessoa física, portanto geram zero de IR. Já a Letra de Câmbio (LC) e a LFT são tributáveis. O prazo da aplicação é de 5 meses (150 dias), o que se enquadra na primeira faixa da tabela regressiva de IR de Renda Fixa (até 180 dias), cuja alíquota é de 22,5%. Calculando os ganhos com juros compostos: Lucro da LC = 200.000 * ((1,012)^5 - 1) = R$ 12.291,30. Lucro da LFT = 150.000 * ((1,009)^5 - 1) = R$ 6.872,26. Aplicando 22,5% sobre os ganhos de capital de ambos e somando, obtemos um imposto retido aproximado de R$ 4.311,92."
     },
     {
         "id": 308,
