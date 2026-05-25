@@ -2537,18 +2537,19 @@ BANCO_QUESTOES = [
         "explicacao": "Os segmentos \"Bovespa Mais\" e \"Bovespa Mais Nível 2\" são específicos para o mercado de balcão organizado, conforme definido pela B3, diferenciando-se do Novo Mercado, que é um segmento de listagem do mercado de bolsa tradicional. Esses segmentos apresentam níveis distintos de governança corporativa e requisitos regulatórios, conforme normativas da CVM e regras da B3. Portanto, apenas \"Bovespa Mais\" e \"Bovespa Mais Nível 2\" são segmentos exclusivos do mercado de balcão organizado."
     },
   {
-        "id": 199,
-        "modulo": "Mercado de Capitais",
-        "pergunta": "No mês de agosto de 2021, uma empresa fez uma oferta pública para\naquisição de ações ordinárias de uma empresa brasileira que possuía ações ordinárias e\npreferenciais negociadas na Bolsa de Valores. As ações ordinárias se valorizaram e as\nações preferenciais se desvalorizaram, após o anúncio da oferta pública, conforme o\ngráﬁco abaixo:\n\n[GRÁFICO - PREÇO DA AÇÃO x TEMPO]\n=======================================================================\nPeríodo             | Ação ON (linha contínua) | Ação PN (linha tracejada)\n--------------------|--------------------------|---------------------------\nAntes do Anúncio    | Estável (~R$ 10,00)      | Estável (~R$ 11,00)\nData do Anúncio     | Dispara (pico de ~R$ 16) | Cai abruptamente\nApós o Anúncio      | Estabiliza (~R$ 14,00)   | Estabiliza (~R$ 8,00)\n=======================================================================\n\nO comportamento observado no gráfico pode ser justificado pela cláusula de:",
-        "opcoes": {
-            "A": "free ﬂoat",
-            "B": "green shoe",
-            "C": "tag along",
-            "D": "drag along",
-        },
-        "resposta_correta": "C",
-        "explicacao": "A cláusula de tag along (Resolução CVM 319/99, art. 4º, § 4º) assegura aos acionistas minoritários o direito de vender suas ações nas mesmas condições oferecidas aos controladores em uma oferta pública, justificando a valorização das ações ordinárias (com direito a voto) frente à oferta. A valorização das ações ordinárias reflete a expectativa de proteção e equalização de direitos, enquanto as preferenciais, sem essa proteção, podem desvalorizar-se. Portanto, o mercado reage positivamente ao tag along por garantir maior segurança jurídica aos acionistas ordinários."
+    "id": 199,
+    "modulo": "Mercado de Capitais",
+    "pergunta": "No mês de agosto de 2021, uma empresa fez uma oferta pública para aquisição de ações ordinárias de uma empresa brasileira que possuía ações ordinárias e preferenciais negociadas na Bolsa de Valores. As ações ordinárias se valorizaram e as ações preferenciais se desvalorizaram após o anúncio da oferta pública, conforme o gráfico abaixo:\n\nO comportamento observado no gráfico pode ser justificado pela cláusula de:",
+    "imagem": "Q 199.jpg",
+    "opcoes": {
+        "A": "free float",
+        "B": "green shoe",
+        "C": "tag along",
+        "D": "drag along"
     },
+    "resposta_correta": "C",
+    "explicacao": "A cláusula de tag along (Resolução CVM 319/99, art. 4º, § 4º) assegura aos acionistas minoritários o direito de vender suas ações nas mesmas condições oferecidas aos controladores em uma oferta pública, justificando a valorização das ações ordinárias (com direito a voto) frente à oferta. A valorização das ações ordinárias reflete a expectativa de proteção e equalização de direitos, enquanto as preferenciais, sem essa proteção, podem desvalorizar-se. Portanto, o mercado reage positivamente ao tag along por garantir maior segurança jurídica aos acionistas ordinários."
+},
     {
         "id": 200,
         "modulo": "Mercado de Capitais",
