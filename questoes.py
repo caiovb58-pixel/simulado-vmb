@@ -2080,7 +2080,7 @@ BANCO_QUESTOES = [
     },
     "resposta_correta": "A",
     "explicacao": "O investidor deve pagar imposto de renda sobre o lucro tributável, considerando a alíquota de 15% para operações comuns, e o valor de R$ 2.000,00 corresponde exatamente a essa aplicação sobre o ganho apurado. A alternativa A é correta porque o lucro superou o limite de isenção de R$ 20.000,00 e a alíquota aplicada está correta."
-}
+},
     {
         "id": 104,
         "modulo": "Mercado de Capitais",
