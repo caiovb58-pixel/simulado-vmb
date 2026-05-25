@@ -2067,19 +2067,20 @@ BANCO_QUESTOES = [
         "resposta_correta": "D",
         "explicacao": "A Resolução CVM 178/23 estabelece que, para cancelar seu registro como companhia aberta, a sociedade anônima deve realizar uma Oferta Pública de Aquisição (OPA) para adquirir os valores mobiliários que emitiu, garantindo aos acionistas o direito de venda. Esse procedimento assegura a liquidez e a justa avaliação dos papéis, transferindo os recursos da compra diretamente aos acionistas, conforme os princípios de proteção ao investidor e transparência exigidos pela legislação. Portanto, a OPA é o mecanismo regulatório adequado para a saída do mercado, respeitando os direitos dos acionistas."
     },
-    {
-        "id": 43,
-        "modulo": "Mercado de Capitais",
-        "pergunta": "Qual o valor total de imposto de renda que deverá ser pago, de um investidor\nque realizou as operações abaixo na bolsa de valores?",
-        "opcoes": {
-            "A": "R$ 2.000,00",
-            "B": "R$ 2.100,00",
-            "C": "R$ 2.800,00",
-            "D": "Isento de IR, vide que lucrou menos de R$ 20.000,00",
-        },
-        "resposta_correta": "A",
-        "explicacao": "O investidor deve pagar imposto de renda sobre o lucro tributável, considerando a alíquota de 15% para operações comuns, e o valor de R$ 2.000,00 corresponde exatamente a essa aplicação sobre o ganho apurado. A alternativa A é correta porque o lucro superou o limite de isenção de R$ 20.000,00 e a alíquota aplicada está correta."
+  {
+    "id": 43,
+    "modulo": "Mercado de Capitais",
+    "pergunta": "Qual o valor total de imposto de renda que deverá ser pago, de um investidor\nque realizou as operações abaixo na bolsa de valores?",
+    "imagem": "Q 43.jpg",
+    "opcoes": {
+        "A": "R$ 2.000,00",
+        "B": "R$ 2.100,00",
+        "C": "R$ 2.800,00",
+        "D": "Isento de IR, vide que lucrou menos de R$ 20.000,00"
     },
+    "resposta_correta": "A",
+    "explicacao": "O investidor deve pagar imposto de renda sobre o lucro tributável, considerando a alíquota de 15% para operações comuns, e o valor de R$ 2.000,00 corresponde exatamente a essa aplicação sobre o ganho apurado. A alternativa A é correta porque o lucro superou o limite de isenção de R$ 20.000,00 e a alíquota aplicada está correta."
+}
     {
         "id": 104,
         "modulo": "Mercado de Capitais",
@@ -2847,19 +2848,20 @@ BANCO_QUESTOES = [
         "resposta_correta": "B",
         "explicacao": "A oferta descrita caracteriza-se como \"oferta com garantia firme\", conforme previsto na Instrução CVM 400/03, na qual o coordenador se compromete contratualmente a subscrever integralmente a emissão, assumindo o risco de colocação dos valores mobiliários no mercado. Essa modalidade assegura à companhia emissora a captação do montante total previamente acordado, transferindo ao banco coordenador o risco de venda dos papéis. Diferentemente do regime de melhores esforços, onde o intermediário apenas tenta distribuir os títulos sem garantia de subscrição total, a garantia firme confere maior segurança à emissão."
     },
-    {
-        "id": 283,
-        "modulo": "Mercado de Capitais",
-        "pergunta": "Um investidor pessoa física vendeu ações em Bolsa de Valores, conforme\ndemonstrado no quadro abaixo:\n\n======================================================================\n                 VALORES DE AÇÕES VENDIDAS (EM R$)\n----------------------------------------------------------------------\n  Mês   |   Nov/14   |   Dez/14   |   Jan/15   |   Fev/15   \n----------------------------------------------------------------------\n  Total | 17.136,04  | 18.667,59  | 23.532,99  | 21.469,45  \n======================================================================\n\nConsiderando a regra de isenção de Imposto de Renda para operações com ações (não day-trade), os meses cujos eventuais ganhos de capital estarão isentos são:",
-        "opcoes": {
-            "A": "Dezembro de 2014 e janeiro de 2015.",
-            "B": "Novembro e dezembro de 2014 e fevereiro de 2015.",
-            "C": "Novembro e dezembro de 2014.",
-            "D": "Janeiro e fevereiro de 2015.",
-        },
-        "resposta_correta": "C",
-        "explicacao": "A isenção do Imposto de Renda para pessoas físicas em operações com ações (regime comum/não day-trade) aplica-se quando o valor total das alienações (vendas) no mês não ultrapassa o limite de R$ 20.000,00. Analisando a tabela, as vendas totais em Novembro de 2014 (R$ 17.136,04) e Dezembro de 2014 (R$ 18.667,59) estão abaixo do limite legal, isentando os lucros desses meses. Em Janeiro e Fevereiro de 2015, as vendas superaram os 20 mil reais, sujeitando os ganhos à alíquota de 15%."
+   {
+    "id": 283,
+    "modulo": "Mercado de Capitais",
+    "pergunta": "Um investidor pessoa física vendeu ações em Bolsa de Valores, conforme demonstrado no quadro abaixo:\n\nConsiderando a regra de isenção de Imposto de Renda para operações com ações (não day-trade), os meses cujos eventuais ganhos de capital estarão isentos são:",
+    "imagem": "Q 283.jpg",
+    "opcoes": {
+        "A": "Dezembro de 2014 e janeiro de 2015.",
+        "B": "Novembro e dezembro de 2014 e fevereiro de 2015.",
+        "C": "Novembro e dezembro de 2014.",
+        "D": "Janeiro e fevereiro de 2015."
     },
+    "resposta_correta": "C",
+    "explicacao": "A isenção do Imposto de Renda para pessoas físicas em operações com ações (regime comum/não day-trade) aplica-se quando o valor total das alienações (vendas) no mês não ultrapassa o limite de R$ 20.000,00. Analisando a tabela, as vendas totais em Novembro de 2014 (R$ 17.136,04) e Dezembro de 2014 (R$ 18.667,59) estão abaixo do limite legal, isentando os lucros desses meses. Em Janeiro e Fevereiro de 2015, as vendas superaram os 20 mil reais, sujeitando os ganhos à alíquota de 15%."
+},
     {
         "id": 344,
         "modulo": "Mercado de Capitais",
@@ -4008,19 +4010,20 @@ BANCO_QUESTOES = [
         "resposta_correta": "D",
         "explicacao": "A ordem administrada é aquela em que o investidor especifica apenas a quantidade e as características dos ativos a serem negociados, delegando à sociedade corretora a decisão sobre o momento e as condições da execução, conforme definido pela Resolução CVM 555/14, que regula a atuação dos fundos de investimento e das instituições intermediárias. Essa modalidade garante maior flexibilidade na execução, alinhando-se à gestão profissional e à otimização do preço de mercado. Diferentemente das ordens limitadas ou à mercado, a ordem administrada não fixa preço ou prazo, cabendo à corretora administrar a melhor oportunidade."
     },
-    {
-        "id": 287,
-        "modulo": "Fundos de Investimento",
-        "pergunta": "Um pessoa física efetuou as seguintes operações com ações em Bolsa de\nValores:\n\n========================================================================================================\nEmpresa | Quantidade | Data da    | Valor (R$) | Data da    | Valor (R$) | Ganho de \n        | de ações   | Aquisição  | (Compra)   | Alienação  | (Venda)    | Capital (R$)\n--------------------------------------------------------------------------------------------------------\n   A    |    10      | 14/09/2014 |  1.750,00  | 05/04/2015 |  2.500,00  |   750,00\n   B    |    50      | 22/09/2014 |  2.400,00  | 09/04/2015 |  4.000,00  | 1.600,00\n   C    |   120      | 22/09/2014 |  6.930,00  | 13/04/2015 | 12.600,00  | 5.670,00\n   D    |    60      | 07/10/2014 |  2.940,00  | 26/04/2015 |  4.200,00  | 1.260,00\n   E    |   110      | 19/10/2014 |  5.940,00  | 30/04/2015 |  9.900,00  | 3.960,00\n--------------------------------------------------------------------------------------------------------\n TOTAL  |            |            | 19.960,00  |      -     | 33.200,00  | 13.240,00\n========================================================================================================\n\nEsses rendimentos estão:",
-        "opcoes": {
-            "A": "sujeitos à incidência do Imposto de Renda à alíquota de 20,00%.",
-            "B": "isentos do Imposto de Renda, devido ao reduzido valor das alienações.",
-            "C": "isentos do Imposto de Renda, devido ao reduzido valor de aquisição das ações.",
-            "D": "sujeitos à incidência do Imposto de Renda à alíquota de 15,00%.",
-        },
-        "resposta_correta": "D",
-        "explicacao": "A tributação sobre ganhos líquidos em operações comuns (compra e venda em dias diferentes) com ações para pessoa física é de 15%, conforme a Instrução Normativa RFB nº 1.500/2014. A isenção do Imposto de Renda ocorre somente quando o total das alienações (vendas) no mês for igual ou inferior a R$ 20.000,00. Como o valor total vendido no mês de abril/2015 foi de R$ 33.200,00, a isenção não se aplica. Assim, o investidor está sujeito à incidência do IR à alíquota padrão de 15% sobre o ganho de capital de R$ 13.240,00."
+  {
+    "id": 287,
+    "modulo": "Fundos de Investimento",
+    "pergunta": "Uma pessoa física efetuou as seguintes operações com ações em Bolsa de Valores, conforme demonstrado no quadro abaixo:\n\nEsses rendimentos estão:",
+    "imagem": "Q 287.jpg",
+    "opcoes": {
+        "A": "sujeitos à incidência do Imposto de Renda à alíquota de 20,00%.",
+        "B": "isentos do Imposto de Renda, devido ao reduzido valor das alienações.",
+        "C": "isentos do Imposto de Renda, devido ao reduzido valor de aquisição das ações.",
+        "D": "sujeitos à incidência do Imposto de Renda à alíquota de 15,00%."
     },
+    "resposta_correta": "D",
+    "explicacao": "A tributação sobre ganhos líquidos em operações comuns (compra e venda em dias diferentes) com ações para pessoa física é de 15%, conforme a Instrução Normativa RFB nº 1.500/2014. A isenção do Imposto de Renda ocorre somente quando o total das alienações (vendas) no mês for igual ou inferior a R$ 20.000,00. Como o valor total vendido no mês de abril/2015 foi de R$ 33.200,00, a isenção não se aplica. Assim, o investidor está sujeito à incidência do IR à alíquota padrão de 15% sobre o ganho de capital de R$ 13.240,00."
+},
     {
         "id": 288,
         "modulo": "Fundos de Investimento",
@@ -4034,19 +4037,20 @@ BANCO_QUESTOES = [
         "resposta_correta": "B",
         "explicacao": "A Resolução CVM 178/23 estabelece que a Bolsa, como entidade responsável pela organização e supervisão do pregão, detém autoridade para cancelar ou corrigir negócios decorrentes de falhas em seu sistema de registro, garantindo a integridade e a transparência do mercado. Tal prerrogativa visa preservar a eficiência do mercado e a proteção dos investidores, mesmo que as contrapartes não concordem, pois a responsabilidade pelo correto funcionamento do pregão é da própria Bolsa. Dessa forma, o Diretor do Pregão pode atuar ex officio para corrigir erros atribuíveis à infraestrutura da Bolsa, conforme previsto na regulamentação aplicável."
     },
-   {
-        "id": 289,
-        "modulo": "Fundos de Investimento",
-        "pergunta": "Quatro investidores pessoas físicas realizaram aplicações e resgates na\nmesma classe de um Fundo de Investimentos em Ações, conforme tabela abaixo:\n\n======================================================================\n INVESTIDOR | DATA DA APLICAÇÃO | DATA DE RESGATE | PRAZO DE APLICAÇÃO\n----------------------------------------------------------------------\n      A     |     29/01/2019    |    12/03/2019   |       29 DU\n      B     |     17/02/2019    |    15/03/2019   |       18 DU\n      C     |     29/01/2019    |    25/02/2019   |       18 DU\n      D     |     17/02/2019    |    15/03/2019   |       18 DU\n======================================================================\n\nAnalisando a variação patrimonial percentual bruta das cotas no período investido, podemos aﬁrmar que:",
-        "opcoes": {
-            "A": "A foi maior do que B e C.",
-            "B": "C foi menor do que B e D.",
-            "C": "B foi igual a D.",
-            "D": "C foi igual a B e D.",
-        },
-        "resposta_correta": "C",
-        "explicacao": "Considerando que as operações ocorreram na mesma classe do mesmo Fundo de Investimento em Ações, a variação patrimonial (rentabilidade) de cada investidor depende unicamente do valor da cota na data de aplicação e do valor da cota na data do resgate. Como os investidores B e D aplicaram exatamente no mesmo dia (17/02/2019) e resgataram no mesmo dia (15/03/2019), eles compraram e venderam as cotas pelos mesmos valores. Portanto, a rentabilidade percentual bruta no período investido de B foi estritamente igual à de D."
+  {
+    "id": 289,
+    "modulo": "Fundos de Investimento",
+    "pergunta": "Quatro investidores pessoas físicas realizaram aplicações e resgates na mesma classe de um Fundo de Investimentos em Ações, conforme tabela abaixo:\n\nAnalisando a variação patrimonial percentual bruta das cotas no período investido, podemos afirmar que:",
+    "imagem": "Q 289.jpg",
+    "opcoes": {
+        "A": "A foi maior do que B e C.",
+        "B": "C foi menor do que B e D.",
+        "C": "B foi igual a D.",
+        "D": "C foi igual a B e D."
     },
+    "resposta_correta": "C",
+    "explicacao": "Considerando que as operações ocorreram na mesma classe do mesmo Fundo de Investimento em Ações, a variação patrimonial (rentabilidade) de cada investidor depende unicamente do valor da cota na data de aplicação e do valor da cota na data do resgate. Como os investidores B e D aplicaram exatamente no mesmo dia (17/02/2019) e resgataram no mesmo dia (15/03/2019), eles compraram e venderam as cotas pelos mesmos valores. Portanto, a rentabilidade percentual bruta no período investido de B foi estritamente igual à de D."
+},
     {
         "id": 290,
         "modulo": "Fundos de Investimento",
@@ -5290,19 +5294,20 @@ BANCO_QUESTOES = [
         "resposta_correta": "A",
         "explicacao": "A decisão do gestor será indiferente quando o rendimento real do título indexado ao IPCA igualar a taxa nominal da LTN, ou seja, quando (1 + 0,1175) = (1 + inflação) × (1 + 0,065). Rearranjando, a inflação projetada é dada por: inflação = (1,1175 / 1,065) - 1 ≈ 0,0493 ou 4,93%. Este cálculo está alinhado ao conceito financeiro de taxa real e nominal, conforme a fórmula de Fisher, amplamente adotada no mercado financeiro."
     },
-   {
-        "id": 307,
-        "modulo": "Mercado Financeiro",
-        "pergunta": "Lucas aplicou R$ 500.000,00 em 31/março/2020, conforme tabela abaixo. Após\n5 meses, ele resgatou alguns investimentos e outros foram liquidados no mesmo dia.\n\n==============================================================================\n      ATIVO      |   VALOR APLICADO   |   RENDIMENTO   |      VENCIMENTO      \n------------------------------------------------------------------------------\n LETRA DE CÂMBIO |   R$ 200.000,00    |   1,20% a.m.   |          -           \n       LFT       |   R$ 150.000,00    |   0,90% a.m.   |          -           \n       LCI       |   R$ 100.000,00    |   0,70% a.m.   |      31/08/2020      \n       CRA       |   R$  50.000,00    |   0,78% a.m.   |      31/08/2020      \n==============================================================================\n\nDesta forma, desconsiderando custos de transação, o IR total será de:",
-        "opcoes": {
-            "A": "R$ 3.391,57",
-            "B": "R$ 4.311,92",
-            "C": "R$ 7.127,38",
-            "D": "R$ 9.288,27",
-        },
-        "resposta_correta": "B",
-        "explicacao": "Para resolver a questão, primeiro identificamos que LCI e CRA são isentos de Imposto de Renda para pessoa física, portanto geram zero de IR. Já a Letra de Câmbio (LC) e a LFT são tributáveis. O prazo da aplicação é de 5 meses (150 dias), o que se enquadra na primeira faixa da tabela regressiva de IR de Renda Fixa (até 180 dias), cuja alíquota é de 22,5%. Calculando os ganhos com juros compostos: Lucro da LC = 200.000 * ((1,012)^5 - 1) = R$ 12.291,30. Lucro da LFT = 150.000 * ((1,009)^5 - 1) = R$ 6.872,26. Aplicando 22,5% sobre os ganhos de capital de ambos e somando, obtemos um imposto retido aproximado de R$ 4.311,92."
+  {
+    "id": 307,
+    "modulo": "Mercado Financeiro",
+    "pergunta": "Lucas aplicou R$ 500.000,00 em 31/março/2020, conforme tabela abaixo. Após 5 meses, ele resgatou alguns investimentos e outros foram liquidados no mesmo dia.\n\nDesta forma, desconsiderando custos de transação, o IR total será de:",
+    "imagem": "Q 307.jpg",
+    "opcoes": {
+        "A": "R$ 3.391,57",
+        "B": "R$ 4.311,92",
+        "C": "R$ 7.127,38",
+        "D": "R$ 9.288,27"
     },
+    "resposta_correta": "B",
+    "explicacao": "Para resolver a questão, primeiro identificamos que LCI e CRA são isentos de Imposto de Renda para pessoa física, portanto geram zero de IR. Já a Letra de Câmbio (LC) e a LFT são tributáveis. O prazo da aplicação é de 5 meses (150 dias), o que se enquadra na primeira faixa da tabela regressiva de IR de Renda Fixa (até 180 dias), cuja alíquota é de 22,5%. Calculando os ganhos com juros compostos: Lucro da LC = 200.000 * ((1,012)^5 - 1) = R$ 12.291,30. Lucro da LFT = 150.000 * ((1,009)^5 - 1) = R$ 6.872,26. Aplicando 22,5% sobre os ganhos de capital de ambos e somando, obtemos um imposto retido aproximado de R$ 4.311,92."
+},
     {
         "id": 308,
         "modulo": "Mercado Financeiro",
@@ -6095,19 +6100,20 @@ BANCO_QUESTOES = [
         "resposta_correta": "A",
         "explicacao": "No mercado de opções, conforme definido pela CVM e práticas de mercado, o titular da opção possui o direito de exercer o contrato, enquanto o lançador assume a obrigação caso o titular exerça esse direito, configurando a assimetria típica desse instrumento derivativo. Essa estrutura está alinhada à Resolução CVM 178/2023, que regula derivativos, garantindo que somente o lançador tenha obrigações vinculadas ao contrato. Portanto, a alternativa A é correta, pois reflete a natureza unilateral do direito e da obrigação entre as partes."
     },
-    {
-        "id": 398,
-        "modulo": "Matemática Financeira",
-        "pergunta": "Os  gráﬁcos  representados  pelas  Figuras  1  e  2  indicam  lucros  obtidos  com\nestratégias,  utilizando  opções  de  compra  ou  de  venda  de  ações:",
-        "opcoes": {
-            "A": "subir, pelo ganho ser o valor do prêmio; e cair, pelo ganho ser o valor do\nprêmio.",
-            "B": "subir, pelo ganho ser o valor do prêmio; e subir, pelo ganho ser maior quanto\nmaior for o preço da ação na data do exercício.",
-            "C": "cair, pelo ganho ser maior quanto menor for o preço da ação na data do\nexercício; e subir, pelo ganho ser maior quanto maior for o preço da ação na\ndata do exercício.",
-            "D": "cair, pelo ganho ser maior quanto menor for preço da ação na data do exercício;\ne cair, pelo ganho ser o valor do prêmio.",
-        },
-        "resposta_correta": "A",
-        "explicacao": "A opção de compra (call) gera lucro quando o preço da ação sobe, pois o ganho máximo é limitado ao prêmio recebido pelo vendedor, enquanto a opção de venda (put) gera lucro quando o preço da ação cai, também limitado ao prêmio recebido. Essa relação está fundamentada no conceito de payoff de opções, conforme descrito na Circular BACEN 3.691/13, que regula derivativos, onde o prêmio representa o ganho máximo para o lançador. Portanto, o gráfico indica ganhos fixos iguais ao valor do prêmio, independentemente da variação do preço da ação, caracterizando a estratégia de venda de opções."
+   {
+    "id": 398,
+    "modulo": "Matemática Financeira",
+    "pergunta": "Os gráficos representados pelas Figuras 1 e 2 indicam lucros obtidos com estratégias, utilizando opções de compra ou de venda de ações:",
+    "imagem": "Q 398.jpg",
+    "opcoes": {
+        "A": "subir, pelo ganho ser o valor do prêmio; e cair, pelo ganho ser o valor do\nprêmio.",
+        "B": "subir, pelo ganho ser o valor do prêmio; e subir, pelo ganho ser maior quanto\nmaior for o preço da ação na data do exercício.",
+        "C": "cair, pelo ganho ser maior quanto menor for o preço da ação na data do\nexercício; e subir, pelo ganho ser maior quanto maior for o preço da ação na\ndata do exercício.",
+        "D": "cair, pelo ganho ser maior quanto menor for preço da ação na data do exercício;\ne cair, pelo ganho ser o valor do prêmio."
     },
+    "resposta_correta": "A",
+    "explicacao": "A opção de compra (call) gera lucro quando o preço da ação sobe, pois o ganho máximo é limitado ao prêmio recebido pelo vendedor, enquanto a opção de venda (put) gera lucro quando o preço da ação cai, também limitado ao prêmio recebido. Essa relação está fundamentada no conceito de payoff de opções, conforme descrito na Circular BACEN 3.691/13, que regula derivativos, onde o prêmio representa o ganho máximo para o lançador. Portanto, o gráfico indica ganhos fixos iguais ao valor do prêmio, independentemente da variação do preço da ação, caracterizando a estratégia de venda de opções."
+},
     {
         "id": 477,
         "modulo": "Matemática Financeira",
@@ -6121,19 +6127,20 @@ BANCO_QUESTOES = [
         "resposta_correta": "A",
         "explicacao": "Para reduzir o risco de oscilação da taxa de juros em uma carteira pós-fixada, o investidor deve se proteger contra a alta das taxas, o que implica ganhar valor quando as taxas sobem. Vender contratos futuros de DI é uma estratégia de hedge que se beneficia da alta da taxa de juros, compensando a desvalorização dos ativos pós-fixados, conforme prática comum no mercado financeiro regulamentado pela BM&FBOVESPA e alinhada à gestão de risco prevista na Resolução CMN 4.539/16. Assim, a alternativa correta é vender contratos futuros de DI para neutralizar o risco de aumento das taxas."
     },
-    {
-        "id": 478,
-        "modulo": "Matemática Financeira",
-        "pergunta": "Os dois gráﬁcos abaixo representam respectivamente:",
-        "opcoes": {
-            "A": "Lançador de uma opção de compra (Call) e o Lançador de uma opção de venda\n(Put)",
-            "B": "Lançador de uma opção de compra (Call) e o Titular de uma opção de venda\n(Put)",
-            "C": "Lançador de uma opção de venda (Put) e o Lançador de uma opção de compra\n(Call)",
-            "D": "Titular de uma opção de venda (Put) e o Titular de uma opção de compra (Call)",
-        },
-        "resposta_correta": "B",
-        "explicacao": "A primeira curva representa o lançamento (venda) de uma opção de compra (Call), cuja obrigação é entregar o ativo ao preço de exercício, limitando o ganho ao prêmio recebido e expondo-se a perdas ilimitadas. A segunda curva ilustra a posição do titular (comprador) de uma opção de venda (Put), que tem o direito de vender o ativo pelo preço de exercício, com perda limitada ao prêmio pago e ganho potencialmente significativo se o preço do ativo cair. Esses perfis estão alinhados aos conceitos de opções descritos na Resolução CVM 588/17, onde o titular detém direitos e o lançador assume obrigações correspondentes."
+   {
+    "id": 478,
+    "modulo": "Matemática Financeira",
+    "pergunta": "Os dois gráficos abaixo representam respectivamente:",
+    "imagem": "Q 478.jpg",
+    "opcoes": {
+        "A": "Lançador de uma opção de compra (Call) e o Lançador de uma opção de venda\n(Put)",
+        "B": "Lançador de uma opção de compra (Call) e o Titular de uma opção de venda\n(Put)",
+        "C": "Lançador de uma opção de venda (Put) e o Lançador de uma opção de compra\n(Call)",
+        "D": "Titular de uma opção de venda (Put) e o Titular de uma opção de compra (Call)"
     },
+    "resposta_correta": "B",
+    "explicacao": "A primeira curva representa o lançamento (venda) de uma opção de compra (Call), cuja obrigação é entregar o ativo ao preço de exercício, limitando o ganho ao prêmio recebido e expondo-se a perdas ilimitadas. A segunda curva ilustra a posição do titular (comprador) de uma opção de venda (Put), que tem o direito de vender o ativo pelo preço de exercício, com perda limitada ao prêmio pago e ganho potencialmente significativo se o preço do ativo cair. Esses perfis estão alinhados aos conceitos de opções descritos na Resolução CVM 588/17, onde o titular detém direitos e o lançador assume obrigações correspondentes."
+},
 
     # ==========================================
     # MÓDULO: GESTÃO DE RISCO
