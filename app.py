@@ -45,6 +45,68 @@ def simulado_tem_matematica(nome_simulado):
     modulos = DIC_SIMULADOS.get(nome_simulado,[])
     return any(m in MODULOS_MATEMATICA for m in modulos)
 
+# --- IMAGENS DAS QUESTÕES ---
+# Pasta onde ficam as imagens (tabelas/gráficos) referenciadas pelo campo "imagem"
+# de cada questão em questoes.py. Os arquivos devem estar nesta pasta dentro do repositório.
+PASTA_IMAGENS = "imagens"
+
+def _localizar_imagem(nome_arquivo):
+    """Procura o arquivo de imagem em alguns locais prováveis e retorna o caminho
+    encontrado, ou None se não existir em lugar nenhum."""
+    if not nome_arquivo:
+        return None
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    # nomes a tentar: original, sem espaços e com underscore (robustez p/ deploy)
+    variantes = [nome_arquivo]
+    for v in (nome_arquivo.replace(" ", ""), nome_arquivo.replace(" ", "_")):
+        if v not in variantes:
+            variantes.append(v)
+    # diretórios a tentar: pasta de imagens e a raiz do app
+    diretorios = [os.path.join(base_dir, PASTA_IMAGENS), base_dir, PASTA_IMAGENS, "."]
+    for d in diretorios:
+        for v in variantes:
+            caminho = os.path.join(d, v)
+            if os.path.exists(caminho):
+                return caminho
+    return None
+
+def exibir_imagem_questao(q):
+    """Exibe a imagem associada à questão (se houver). Não quebra o app caso o
+    arquivo esteja ausente — apenas avisa discretamente.
+
+    Usa base64 dentro de um <img> (mesmo padrão dos logos do app) para conseguir
+    envolver a imagem num cartão branco, deixando tabelas/gráficos legíveis sobre
+    o tema escuro."""
+    nome = q.get("imagem")
+    if not nome:
+        return
+    caminho = _localizar_imagem(nome)
+    if not caminho:
+        st.warning(
+            f"⚠️ Imagem da questão não encontrada: '{nome}'. "
+            f"Coloque o arquivo na pasta '{PASTA_IMAGENS}/' do repositório."
+        )
+        return
+    try:
+        ext = os.path.splitext(caminho)[1].lower().lstrip(".")
+        mime = "jpeg" if ext in ("jpg", "jpeg") else (ext or "png")
+        with open(caminho, "rb") as f:
+            b64 = base64.b64encode(f.read()).decode()
+        st.markdown(
+            f"""
+            <div style='background:#FFFFFF; padding:12px; border-radius:10px;
+                        margin:10px 0; text-align:center;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.35);'>
+                <img src='data:image/{mime};base64,{b64}'
+                     style='max-width:100%; height:auto; border-radius:4px;'>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    except Exception:
+        # fallback simples caso algo dê errado na codificação
+        st.image(caminho)
+
 # --- CSS PREMIUM (Injeção de Estilo) ---
 def inject_custom_css():
     st.markdown("""
@@ -963,6 +1025,7 @@ else:
                 st.markdown(f"#### Questão {idx+1}")
                 st.markdown(f"<span style='color: #8B949E; font-size: 12px;'>MÓDULO: {q['modulo'].upper()}</span>", unsafe_allow_html=True)
                 st.write(q['pergunta'])
+                exibir_imagem_questao(q)
                 opcoes =[f"{k}) {v}" for k, v in q.get("opcoes", {}).items()]
                 chave_unica = f"rad_{st.session_state.simulado_atual_indice}_{q.get('id', idx)}_{idx}"
                 respostas_locais[idx] = st.radio("Selecione:", opcoes, key=chave_unica, index=None, label_visibility="collapsed")
@@ -1049,6 +1112,7 @@ else:
             
             with st.expander(f"Q{idx+1} - {status_text} | {q['modulo'].strip()}"):
                 st.write(f"**{q['pergunta']}**")
+                exibir_imagem_questao(q)
                 st.markdown(f"<span style='color:{status_color}; font-weight:bold;'>Sua marcação:</span> {resp_usuario if resp_usuario else 'Em branco'}", unsafe_allow_html=True)
                 if not acertou:
                     st.markdown(f"<span style='color:#10B981; font-weight:bold;'>Correta:</span> {letra_correta}) {texto_correto}", unsafe_allow_html=True)
