@@ -4068,7 +4068,10 @@ BANCO_QUESTOES = [
     {
         "id": 291,
         "modulo": "Fundos de Investimento",
-        "pergunta": "O gestor de um fundo de investimentos está adquirindo ativos de renda ﬁxa\npara a carteira de uma classe. Ele está comprando LFT (Tesouro Seli",
+        "pergunta": "O gestor de um fundo de investimentos está adquirindo ativos de renda ﬁxa\npara a carteira de uma classe. Ele está comprando LFT (Tesouro Selic), CDB da maior
+instituição financeira do país (rating AAA) e Debêntures de uma empresa aberta com
+rating CCC, que está com valor de mercado muito abaixo do seu par. O percentual máximo
+que ele poderá alocar em cada um desses ativos nessa carteira, respectivamente, é de:",
         "opcoes": {
             "A": "80%, 40% e 20%",
             "B": "100%, 20% e 5%",
