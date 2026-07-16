@@ -3494,7 +3494,11 @@ BANCO_QUESTOES = [
     {
         "id": 52,
         "modulo": "Fundos de Investimento",
-        "pergunta": "A classe dos fundos classiﬁcados como \"Dívida Externa\" deverão aplicar no\nmínimo  ___  de  seu  (su",
+        "pergunta": "A classe dos fundos classiﬁcados como \"Dívida Externa\" deverão aplicar no\nmínimo  ___  de  seu  (sua) _______em títulos representativos da dívida externa de
+responsabilidade da União, sendo permitida a aplicação dos recursos remanescentes em
+operações de derivativos , no Brasil, exclusivamente para fins de proteção da sua carteira
+(hedge) ou mantê-los em conta de depósito à vista em nome da classe do fundo,
+observando, no conjunto, o limite de _____do Patrimônio Líquido respectivo.",
         "opcoes": {
             "A": "90% / carteira / 10%",
             "B": "80% / patrimônio líquido / 10%",
