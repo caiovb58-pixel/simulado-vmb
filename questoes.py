@@ -3657,7 +3657,8 @@ observando, no conjunto, o limite de _____do Patrimônio Líquido respectivo.",
         "pergunta": "Segundo a Resolução CVM 175 (e suas atualizações), em regra geral, o prazo\nmáximo para o pagamento do resgate de um fundo de investimentos:",
         "opcoes": {
             "A": "dias corridos, contados da data da\nconversão de cotas.",
-            "B": "não poderá ser superior a 30 (trint",
+            "B": "não poderá ser superior a 30 (trinta) dias corridos, contados da data da
+conversão de cotas.",
             "C": "será decidido pela assembleia de cotistas, por maioria de votos.",
             "D": "N/A",
         },
