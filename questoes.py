@@ -3491,14 +3491,10 @@ BANCO_QUESTOES = [
         "resposta_correta": "A",
         "explicacao": "De acordo com a Instrução CVM nº 555/14, os fundos de investimento são classificados conforme a composição predominante de sua carteira em renda fixa, ações, multimercado e cambial, refletindo diferentes estratégias e níveis de risco. Essa classificação é fundamental para garantir transparência e adequação do produto ao perfil do investidor. Portanto, a alternativa correta é a que apresenta essas quatro categorias: renda fixa, ações, multimercado e cambial."
     },
-    {
+   {
         "id": 52,
         "modulo": "Fundos de Investimento",
-        "pergunta": "A classe dos fundos classiﬁcados como \"Dívida Externa\" deverão aplicar no\nmínimo  ___  de  seu  (sua) _______em títulos representativos da dívida externa de
-responsabilidade da União, sendo permitida a aplicação dos recursos remanescentes em
-operações de derivativos , no Brasil, exclusivamente para fins de proteção da sua carteira
-(hedge) ou mantê-los em conta de depósito à vista em nome da classe do fundo,
-observando, no conjunto, o limite de _____do Patrimônio Líquido respectivo.",
+        "pergunta": "A classe dos fundos classiﬁcados como \"Dívida Externa\" deverão aplicar no\nmínimo  ___  de  seu  (sua) _______em títulos representativos da dívida externa de\nresponsabilidade da União, sendo permitida a aplicação dos recursos remanescentes em\noperações de derivativos , no Brasil, exclusivamente para fins de proteção da sua carteira\n(hedge) ou mantê-los em conta de depósito à vista em nome da classe do fundo,\nobservando, no conjunto, o limite de _____do Patrimônio Líquido respectivo.",
         "opcoes": {
             "A": "90% / carteira / 10%",
             "B": "80% / patrimônio líquido / 10%",
@@ -3657,8 +3653,7 @@ observando, no conjunto, o limite de _____do Patrimônio Líquido respectivo.",
         "pergunta": "Segundo a Resolução CVM 175 (e suas atualizações), em regra geral, o prazo\nmáximo para o pagamento do resgate de um fundo de investimentos:",
         "opcoes": {
             "A": "dias corridos, contados da data da\nconversão de cotas.",
-            "B": "não poderá ser superior a 30 (trinta) dias corridos, contados da data da
-conversão de cotas.",
+            "B": "não poderá ser superior a 30 (trinta) dias corridos, contados da data da\nconversão de cotas.",
             "C": "será decidido pela assembleia de cotistas, por maioria de votos.",
             "D": "N/A",
         },
@@ -4073,10 +4068,7 @@ conversão de cotas.",
     {
         "id": 291,
         "modulo": "Fundos de Investimento",
-        "pergunta": "O gestor de um fundo de investimentos está adquirindo ativos de renda ﬁxa\npara a carteira de uma classe. Ele está comprando LFT (Tesouro Selic), CDB da maior
-instituição financeira do país (rating AAA) e Debêntures de uma empresa aberta com
-rating CCC, que está com valor de mercado muito abaixo do seu par. O percentual máximo
-que ele poderá alocar em cada um desses ativos nessa carteira, respectivamente, é de:",
+        "pergunta": "O gestor de um fundo de investimentos está adquirindo ativos de renda ﬁxa\npara a carteira de uma classe. Ele está comprando LFT (Tesouro Selic), CDB da maior\ninstituição financeira do país (rating AAA) e Debêntures de uma empresa aberta com\nrating CCC, que está com valor de mercado muito abaixo do seu par. O percentual máximo\nque ele poderá alocar em cada um desses ativos nessa carteira, respectivamente, é de:",
         "opcoes": {
             "A": "80%, 40% e 20%",
             "B": "100%, 20% e 5%",
