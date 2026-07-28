@@ -4354,7 +4354,8 @@ BANCO_QUESTOES = [
     {
         "id": 378,
         "modulo": "Fundos de Investimento",
-        "pergunta": "A alternativa abaixo que representa a relação entre as taxas de desconto\nracional (i) e comercial(",
+        "pergunta": "A alternativa abaixo que representa a relação entre as taxas de desconto\nracional (i) e comercial(d), considerando o regime de capitalização simples e o tempo
+unitário é",
         "opcoes": {
             "A": "i = d x (1-",
             "B": "i = d x (1+",
