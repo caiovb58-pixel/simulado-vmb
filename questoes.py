@@ -1888,7 +1888,8 @@ BANCO_QUESTOES = [
     {
         "id": 29,
         "modulo": "Mercado de Capitais",
-        "pergunta": "O Commercial Papers (Nota Promissóri",
+        "pergunta": "O Commercial Papers (Nota Promissória) é um tipo de ativo de emissão das
+companhias com prazo máximo de vencimento de:",
         "opcoes": {
             "A": "360 dias após a data da sua emissão.",
             "B": "720 dias após a data de sua emissão.",
@@ -3321,7 +3322,10 @@ BANCO_QUESTOES = [
     {
         "id": 439,
         "modulo": "Mercado de Capitais",
-        "pergunta": "No tocante ao segmento de mercado da B3 (antiga Bovesp",
+        "pergunta": "No tocante ao segmento de mercado da B3 (antiga Bovespa), onde são
+negociadas ações de empresas comprometidas com as práticas da boa governança
+corporativa, a manutenção em circulação de uma parcela mínima (free floating) de 25% é
+exigência",
         "opcoes": {
             "A": "só da Bovespa Mais e da Bovespa Mais Nível 2 e a partir do 7º ano de listagem.",
             "B": "padrão de qualquer empresa listada em bolsa.",
@@ -5194,7 +5198,8 @@ BANCO_QUESTOES = [
     {
         "id": 225,
         "modulo": "Mercado Financeiro",
-        "pergunta": "Calcule o preço unitário de uma LTN, considerando os seguintes prazos e\nvencimentos  do  DI-Futuro  (DU;  Tax",
+        "pergunta": "Calcule o preço unitário de uma LTN, considerando os seguintes prazos e\nvencimentos  do  DI-Futuro  (DU;  Taxa) no momento da operação: (110; 14,08).
+Considerando um prêmio de 12 pontos base para a LTN, o resultado desse cálculo é:",
         "opcoes": {
             "A": "943,687686",
             "B": "944,120861",
@@ -5563,7 +5568,7 @@ BANCO_QUESTOES = [
     {
         "id": 152,
         "modulo": "Outros Produtos de Investimento",
-        "pergunta": "A principal diferença entre o mercado futuro e o NDF (Non Deliverable\nForwar",
+        "pergunta": "A principal diferença entre o mercado futuro e o NDF (Non Deliverable\nForwar) é que:",
         "opcoes": {
             "A": "O NDF efetua ajustes diários, enquanto o mercado futuro não possui.",
             "B": "O NDF é tributado como renda ﬁxa, enquanto o mercado futuro é tributado\ncomo renda variável.",
