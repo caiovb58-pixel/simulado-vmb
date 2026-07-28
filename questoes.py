@@ -769,7 +769,7 @@ BANCO_QUESTOES = [
         "resposta_correta": "B",
         "explicacao": "Conforme a Resolução CVM 178/23, o Assessor de Investimentos deve ser pessoa natural ou jurídica registrada, atuando sob a responsabilidade e como preposto de intermediário integrante do sistema de distribuição de valores mobiliários, garantindo assim a adequada supervisão e conformidade regulatória. Não há exigência de criação de firma individual ou obrigatoriedade de ser sócio de pessoa jurídica, mas sim do registro formal e vínculo com instituição autorizada. Essa estrutura assegura a proteção do investidor e o cumprimento das normas do mercado de capitais."
     },
-   {
+ {
         "id": 332,
         "modulo": "A Atividade do Assessor de Investimento",
         "pergunta": "Faça a associação das colunas abaixo, considerando o proﬁssional e suas atividades:\n\nColuna 1 (Profissionais / Instituições)\n1 - Administrador de Carteiras\n2 - Analista de Valores Mobiliários\n3 - Consultor de Valores Mobiliários\n4 - Assessor de Investimentos (AI)\n\nColuna 2 (Atividades / Atribuições)\n( ) Elabora, de forma independente, relatórios de análise destinados à publicação, divulgação ou distribuição a terceiros.\n( ) Atua na prospecção e captação de clientes, recepção e registro de ordens e transmissão dessas ordens aos sistemas de negociação.\n( ) Exerce a atividade de orientação, recomendação e aconselhamento, de forma individualizada e personalizada, sobre investimentos no mercado de capitais.\n( ) Exerce a gestão profissional de recursos ou de carteira de valores mobiliários de terceiros, com autoridade para tomar decisões de investimento.\n\nAssinale a alternativa que apresenta a sequência correta:",
@@ -1888,8 +1888,7 @@ BANCO_QUESTOES = [
     {
         "id": 29,
         "modulo": "Mercado de Capitais",
-        "pergunta": "O Commercial Papers (Nota Promissória) é um tipo de ativo de emissão das
-companhias com prazo máximo de vencimento de:",
+        "pergunta": "O Commercial Papers (Nota Promissória) é um tipo de ativo de emissão das companhias com prazo máximo de vencimento de:",
         "opcoes": {
             "A": "360 dias após a data da sua emissão.",
             "B": "720 dias após a data de sua emissão.",
@@ -3322,10 +3321,7 @@ companhias com prazo máximo de vencimento de:",
     {
         "id": 439,
         "modulo": "Mercado de Capitais",
-        "pergunta": "No tocante ao segmento de mercado da B3 (antiga Bovespa), onde são
-negociadas ações de empresas comprometidas com as práticas da boa governança
-corporativa, a manutenção em circulação de uma parcela mínima (free floating) de 25% é
-exigência",
+        "pergunta": "No tocante ao segmento de mercado da B3 (antiga Bovespa), onde são negociadas ações de empresas comprometidas com as práticas da boa governança corporativa, a manutenção em circulação de uma parcela mínima (free floating) de 25% éexigência",
         "opcoes": {
             "A": "só da Bovespa Mais e da Bovespa Mais Nível 2 e a partir do 7º ano de listagem.",
             "B": "padrão de qualquer empresa listada em bolsa.",
@@ -5042,7 +5038,7 @@ exigência",
     {
         "id": 65,
         "modulo": "Mercado Financeiro",
-        "pergunta": "O  CDB  é  um  título  nominativo  privado,  emitido  por  instituições  ﬁnanceiras\nbancárias e vendidos ao público como forma de captação de recursos. Eles são negociados\ntanto  a  partir  de  uma  taxa  ﬁxa  de  juros  (preﬁxadas),  quanto  de  uma  taxa  vinculada  a\níndices  econômicos  (pós-ﬁxados).  Seus  prazos  e  condições  variam  de  instituição  para\ninstituição. Os impostos que incidem sobre as rentabilidades do CDB são o IOF (Imposto\nsobre Operações Financeiras) e o IR (Imposto de rend",
+        "pergunta": "O  CDB  é  um  título  nominativo  privado,  emitido  por  instituições  ﬁnanceiras\nbancárias e vendidos ao público como forma de captação de recursos. Eles são negociados\ntanto  a  partir  de  uma  taxa  ﬁxa  de  juros  (preﬁxadas),  quanto  de  uma  taxa  vinculada  a\níndices  econômicos  (pós-ﬁxados).  Seus  prazos  e  condições  variam  de  instituição  para\ninstituição. Os impostos que incidem sobre as rentabilidades do CDB são o IOF (Imposto\nsobre Operações Financeiras) e o IR (Imposto de renda) com as características:",
         "opcoes": {
             "A": "O IOF decrescente, de acordo com a duração da aplicação e isento a aplicação\ncom duração superior a 30 dias e o IR com alíquota de 15% constante.",
             "B": "O IOF decrescente, de acordo com a duração da aplicação e isento a aplicação\ncom duração superior a 30 dias e o IR decrescente de acordo com a duração da\naplicação e isento de IR para aplicação com prazo superior a 720 dias.",
@@ -5198,8 +5194,7 @@ exigência",
     {
         "id": 225,
         "modulo": "Mercado Financeiro",
-        "pergunta": "Calcule o preço unitário de uma LTN, considerando os seguintes prazos e\nvencimentos  do  DI-Futuro  (DU;  Taxa) no momento da operação: (110; 14,08).
-Considerando um prêmio de 12 pontos base para a LTN, o resultado desse cálculo é:",
+        "pergunta": "Calcule o preço unitário de uma LTN, considerando os seguintes prazos e\nvencimentos  do  DI-Futuro  (DU;  Taxa) no momento da operação: (110; 14,08). Considerando um prêmio de 12 pontos base para a LTN, o resultado desse cálculo é:",
         "opcoes": {
             "A": "943,687686",
             "B": "944,120861",
