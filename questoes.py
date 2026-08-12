@@ -3462,8 +3462,8 @@ BANCO_QUESTOES = [
             "C": "6 (seis); 12 (doze)",
             "D": "12 (doze); 12 (doze)",
         },
-        "resposta_correta": "C",
-        "explicacao": "De acordo com a Instrução CVM 555/14, toda divulgação de rentabilidade de fundos deve incluir a rentabilidade acumulada dos últimos 6 meses e o patrimônio líquido médio mensal dos últimos 12 meses ou desde a constituição, se mais recente, garantindo transparência e comparabilidade das informações para os investidores. Essa exigência visa evitar práticas comerciais enganosas, conforme princípios da Resolução CVM 178/23, ao fornecer um horizonte temporal suficiente para avaliação consistente do desempenho do fundo. Assim, a alternativa correta é a que preenche as lacunas com \"6 (seis); 12 (doze)\"."
+        "resposta_correta": "d",
+     "explicacao": "De acordo com a Instrução CVM 555/14 (e atualizado pela Resolução CVM 175/22), toda divulgação de rentabilidade de fundos deve incluir a rentabilidade acumulada dos últimos 12 meses e o patrimônio líquido médio mensal dos últimos 12 meses ou desde a constituição, se mais recente, garantindo transparência e comparabilidade das informações para os investidores. Essa exigência visa fornecer um horizonte temporal suficiente para avaliação consistente do desempenho do fundo. Assim, a alternativa correta é a que preenche as lacunas com \"12 (doze); 12 (doze)\"."
     },
     {
         "id": 50,
